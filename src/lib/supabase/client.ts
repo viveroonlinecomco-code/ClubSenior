@@ -8,16 +8,16 @@
 
 import { createBrowserClient } from '@supabase/ssr';
 
-let supabase: any = null;
+let cachedSupabase: any = null;
 let initialized = false;
 
 /**
  * Get or initialize Supabase client
  * Only evaluates env vars when first called (runtime, not build time)
  */
-function getSupabaseClient() {
+export function getSupabaseClient() {
   if (initialized) {
-    return supabase;
+    return cachedSupabase;
   }
 
   initialized = true;
@@ -28,7 +28,7 @@ function getSupabaseClient() {
   // Only initialize if we have valid credentials
   if (supabaseUrl && supabaseUrl.startsWith('https://') && supabaseAnonKey) {
     console.log('✅ Initializing Supabase client with credentials');
-    supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    cachedSupabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
   } else {
     // Return a dummy object that will fail gracefully if used
     if (typeof window !== 'undefined') {
@@ -39,7 +39,7 @@ function getSupabaseClient() {
       });
     }
     
-    supabase = {
+    cachedSupabase = {
       auth: {
         signInWithOtp: () => Promise.reject(new Error('Supabase not configured')),
         verifyOtp: () => Promise.reject(new Error('Supabase not configured')),
@@ -53,16 +53,11 @@ function getSupabaseClient() {
     };
   }
 
-  return supabase;
+  return cachedSupabase;
 }
 
-// Export lazy getter
-export const supabase = new Proxy({} as any, {
-  get: (target, prop) => {
-    const client = getSupabaseClient();
-    return client[prop];
-  }
-});
+// Export for backwards compatibility
+export const supabase = getSupabaseClient();
 
 /**
  * Sign in with email (passwordless OTP)
