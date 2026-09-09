@@ -77,7 +77,7 @@ async function sendOTPEmail(email: string, code: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <noreply@club-senior-tardes-cafe.resend.dev>',
+        from: 'ClubSenior <noreply@resend.dev>',
         to: email,
         subject: 'Tu Código de Verificación - ClubSenior',
         html: `
