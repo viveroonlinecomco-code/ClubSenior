@@ -2,45 +2,75 @@
  * Client-side Supabase client
  * Uses PUBLISHABLE_KEY (safe for browser)
  * Handles authentication and realtime subscriptions
+ * 
+ * IMPORTANT: Uses lazy initialization to avoid evaluating env vars at build time
  */
 
 import { createBrowserClient } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
 let supabase: any = null;
+let initialized = false;
 
-// Only initialize if we have valid credentials
-if (supabaseUrl && supabaseUrl.startsWith('https://') && supabaseAnonKey) {
-  supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
-} else {
-  // Return a dummy object that will fail gracefully if used
-  if (typeof window !== 'undefined') {
-    console.warn('⚠️ Supabase credentials not configured. Auth features will not work.');
+/**
+ * Get or initialize Supabase client
+ * Only evaluates env vars when first called (runtime, not build time)
+ */
+function getSupabaseClient() {
+  if (initialized) {
+    return supabase;
   }
-  
-  supabase = {
-    auth: {
-      signInWithOtp: () => Promise.reject(new Error('Supabase not configured')),
-      verifyOtp: () => Promise.reject(new Error('Supabase not configured')),
-      signOut: () => Promise.reject(new Error('Supabase not configured')),
-      getUser: () => Promise.reject(new Error('Supabase not configured')),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-    },
-    from: () => {
-      throw new Error('Supabase not configured');
-    },
-  };
+
+  initialized = true;
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  // Only initialize if we have valid credentials
+  if (supabaseUrl && supabaseUrl.startsWith('https://') && supabaseAnonKey) {
+    console.log('✅ Initializing Supabase client with credentials');
+    supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+  } else {
+    // Return a dummy object that will fail gracefully if used
+    if (typeof window !== 'undefined') {
+      console.warn('⚠️ Supabase credentials not configured:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseAnonKey,
+        urlValid: supabaseUrl?.startsWith('https://'),
+      });
+    }
+    
+    supabase = {
+      auth: {
+        signInWithOtp: () => Promise.reject(new Error('Supabase not configured')),
+        verifyOtp: () => Promise.reject(new Error('Supabase not configured')),
+        signOut: () => Promise.reject(new Error('Supabase not configured')),
+        getUser: () => Promise.reject(new Error('Supabase not configured')),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      },
+      from: () => {
+        throw new Error('Supabase not configured');
+      },
+    };
+  }
+
+  return supabase;
 }
 
-export { supabase };
+// Export lazy getter
+export const supabase = new Proxy({} as any, {
+  get: (target, prop) => {
+    const client = getSupabaseClient();
+    return client[prop];
+  }
+});
 
 /**
  * Sign in with email (passwordless OTP)
  */
 export async function signInWithEmail(email: string) {
-  if (!supabase?.auth?.signInWithOtp) {
+  const client = getSupabaseClient();
+  
+  if (!client?.auth?.signInWithOtp) {
     return {
       error: {
         message: 'Email verification not available. Please try again in a moment.',
@@ -51,7 +81,7 @@ export async function signInWithEmail(email: string) {
   }
   
   try {
-    return await supabase.auth.signInWithOtp({
+    return await client.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
@@ -72,7 +102,9 @@ export async function signInWithEmail(email: string) {
  * Verify OTP and get session
  */
 export async function verifyOtp(email: string, token: string) {
-  if (!supabase?.auth?.verifyOtp) {
+  const client = getSupabaseClient();
+  
+  if (!client?.auth?.verifyOtp) {
     return {
       error: {
         message: 'Verification not available. Please try again in a moment.',
@@ -83,7 +115,7 @@ export async function verifyOtp(email: string, token: string) {
   }
 
   try {
-    return await supabase.auth.verifyOtp({
+    return await client.auth.verifyOtp({
       email,
       token,
       type: 'email',
@@ -103,12 +135,14 @@ export async function verifyOtp(email: string, token: string) {
  * Sign out current user
  */
 export async function signOut() {
-  if (!supabase?.auth?.signOut) {
+  const client = getSupabaseClient();
+  
+  if (!client?.auth?.signOut) {
     return { error: null };
   }
 
   try {
-    return await supabase.auth.signOut();
+    return await client.auth.signOut();
   } catch (error) {
     return { error: null };
   }
@@ -118,7 +152,9 @@ export async function signOut() {
  * Get current session
  */
 export async function getSession() {
-  if (!supabase?.auth?.getSession) {
+  const client = getSupabaseClient();
+  
+  if (!client?.auth?.getSession) {
     return {
       data: { session: null },
       error: null,
@@ -126,7 +162,7 @@ export async function getSession() {
   }
 
   try {
-    return await supabase.auth.getSession();
+    return await client.auth.getSession();
   } catch (error) {
     return {
       data: { session: null },
@@ -139,14 +175,16 @@ export async function getSession() {
  * Get current user
  */
 export async function getCurrentUser() {
-  if (!supabase?.auth?.getUser) {
+  const client = getSupabaseClient();
+  
+  if (!client?.auth?.getUser) {
     return null;
   }
 
   try {
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+    } = await client.auth.getUser();
     return user;
   } catch (error) {
     return null;
@@ -159,7 +197,8 @@ export async function getCurrentUser() {
 export function onAuthStateChange(
   callback: (event: string, session: unknown) => void
 ) {
-  return supabase.auth.onAuthStateChange((event: string, session: unknown) => {
+  const client = getSupabaseClient();
+  return client.auth.onAuthStateChange((event: string, session: unknown) => {
     callback(event, session);
   });
 }
@@ -173,7 +212,8 @@ export function subscribeToTable(
   filter: { column: string; value: string },
   callback: (payload: Record<string, unknown>) => void
 ) {
-  return supabase
+  const client = getSupabaseClient();
+  return client
     .channel(`${table}-${filter.value}`)
     .on(
       'postgres_changes',
@@ -188,4 +228,4 @@ export function subscribeToTable(
     .subscribe();
 }
 
-export default supabase;
+export default getSupabaseClient;
