@@ -3,7 +3,16 @@
  * All functions use Supabase server client (service role key)
  */
 
-import { supabaseAdmin } from './server';
+// Dynamic import to avoid build-time initialization
+let supabaseAdminInstance: any = null;
+
+async function getSupabaseAdmin() {
+  if (!supabaseAdminInstance) {
+    const { supabaseAdmin } = await import('./server');
+    supabaseAdminInstance = supabaseAdmin;
+  }
+  return supabaseAdminInstance;
+}
 
 /**
  * Create user profile after OTP verification
@@ -16,7 +25,7 @@ export async function createUserProfile(
   phone?: string
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('profiles')
       .insert({
         id: userId,
@@ -52,7 +61,7 @@ export async function createParticipante(
   notas?: string
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('participantes')
       .insert({
         id: profileId,
@@ -84,7 +93,7 @@ export async function createParticipante(
 export async function getOrCreateDefaultCondominio(ciudad: string) {
   try {
     // Try to find existing condominio
-    const { data: existing } = await supabaseAdmin
+    const { data: existing } = await (await getSupabaseAdmin())
       .from('condominios')
       .select()
       .eq('nombre', 'Residencial Bogotá')
@@ -96,7 +105,7 @@ export async function getOrCreateDefaultCondominio(ciudad: string) {
     }
 
     // Create default condominio
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('condominios')
       .insert({
         nombre: 'Residencial Bogotá',
@@ -131,7 +140,7 @@ export async function createSuscripcion(
   estado: string = 'DATA_COMPLETED'
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('suscripciones')
       .insert({
         participante_id: participanteId,
@@ -159,7 +168,7 @@ export async function createSuscripcion(
  */
 export async function getPlanByNombre(nombre: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('planes')
       .select()
       .eq('nombre', nombre)
@@ -182,7 +191,7 @@ export async function getPlanByNombre(nombre: string) {
  */
 export async function getAllPlanes() {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('planes')
       .select()
       .eq('activo', true)
@@ -205,7 +214,7 @@ export async function getAllPlanes() {
  */
 export async function getSuscripcionForSponsor(sponsorId: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('suscripciones')
       .select(
         `
@@ -254,7 +263,7 @@ export async function getSuscripcionForSponsor(sponsorId: string) {
  */
 export async function getPaymentHistoryForSponsor(sponsorId: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('pagos')
       .select(
         `
@@ -291,7 +300,7 @@ export async function getWeeklyReportsForParticipante(
   limit: number = 4
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('reportes_semanales')
       .select()
       .eq('participante_id', participanteId)
@@ -315,7 +324,7 @@ export async function getWeeklyReportsForParticipante(
  */
 export async function getAttendanceStatsForParticipante(participanteId: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('asistencias')
       .select('asistio')
       .eq('participante_id', participanteId);
@@ -352,7 +361,7 @@ export async function updateSuscripcionStatus(
   estado: string
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('suscripciones')
       .update({ estado })
       .eq('id', suscripcionId)

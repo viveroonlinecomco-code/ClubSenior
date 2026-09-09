@@ -2,7 +2,16 @@
  * Facilitators and Activities Management
  */
 
-import { supabaseAdmin } from '@/lib/supabase/server';
+// Dynamic import to avoid build-time initialization
+let supabaseAdminInstance: any = null;
+
+async function getSupabaseAdmin() {
+  if (!supabaseAdminInstance) {
+    const { supabaseAdmin } = await import("@/lib/supabase/server");
+    supabaseAdminInstance = supabaseAdmin;
+  }
+  return supabaseAdminInstance;
+}
 
 /**
  * Create new facilitator
@@ -15,7 +24,7 @@ export async function createFacilitador(
 ) {
   try {
     // Create profile
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('profiles')
       .insert({
         email,
@@ -42,7 +51,7 @@ export async function createFacilitador(
  */
 export async function getAllFacilitadores() {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('profiles')
       .select()
       .order('created_at', { ascending: false });
@@ -74,7 +83,7 @@ export async function createActividad(
   capacidadMaxima: number
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('actividades')
       .insert({
         nombre,
@@ -107,7 +116,7 @@ export async function createActividad(
  */
 export async function getActividadesByCondominio(condominioId: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('actividades')
       .select(
         `
@@ -150,7 +159,7 @@ export async function recordAsistencia(
   asistio: boolean
 ) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('asistencias')
       .insert({
         actividad_id: actividadId,
@@ -184,7 +193,7 @@ export async function generateWeeklyReport(
 ) {
   try {
     // Count activities and attendance
-    const { data: asistencias, error: asError } = await supabaseAdmin
+    const { data: asistencias, error: asError } = await (await getSupabaseAdmin())
       .from('asistencias')
       .select()
       .eq('participante_id', participanteId);
@@ -194,7 +203,7 @@ export async function generateWeeklyReport(
     const inasistenciasCount = actividadesRealizadas - asistenciasCount;
 
     // Create report
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('reportes_semanales')
       .insert({
         participante_id: participanteId,
@@ -227,7 +236,7 @@ export async function generateWeeklyReport(
  */
 export async function getActivityParticipants(actividadId: string) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (await getSupabaseAdmin())
       .from('participantes')
       .select(
         `
