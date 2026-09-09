@@ -3,7 +3,15 @@
  * Handles payment processing and subscription state transitions
  */
 
-import { supabaseAdmin } from '@/lib/supabase/server';
+// Dynamic import
+let supabaseAdminInstance: any = null;
+async function getSupabaseAdmin() {
+  if (!supabaseAdminInstance) {
+    const { supabaseAdmin } = await import('@/lib/supabase/server');
+    supabaseAdminInstance = supabaseAdmin;
+  }
+  return supabaseAdminInstance;
+}
 import { createAuditLog, markWebhookProcessed } from '@/lib/supabase/server';
 import { getPaymentStatus } from '@/lib/wompi';
 import { sendPaymentConfirmationEmail, sendPaymentFailedEmail } from '@/services/notifications';
@@ -25,7 +33,7 @@ export async function processPaymentWebhook(
 ): Promise<{ success: boolean; error?: string; subscription_id?: string }> {
   try {
     // 1. Check for duplicate webhook (idempotency)
-    const { data: existingEvent, error: checkError } = await supabaseAdmin
+    const { data: existingEvent, error: checkError } = await (await getSupabaseAdmin())
       .from('webhook_events')
       .select('id, procesado')
       .eq('evento_id_externo', webhookId)
@@ -46,7 +54,7 @@ export async function processPaymentWebhook(
     }
 
     // 2. Record webhook event for idempotency
-    const { error: recordError } = await supabaseAdmin
+    const { error: recordError } = await (await getSupabaseAdmin())
       .from('webhook_events')
       .insert({
         evento_id_externo: webhookId,
@@ -61,7 +69,7 @@ export async function processPaymentWebhook(
     }
 
     // 3. Find payment by reference
-    const { data: payment, error: paymentError } = await supabaseAdmin
+    const { data: payment, error: paymentError } = await (await getSupabaseAdmin())
       .from('pagos')
       .select('id, suscripcion_id, estado, monto_cop')
       .eq('referencia_wompi', data.reference)
@@ -73,7 +81,7 @@ export async function processPaymentWebhook(
     }
 
     // 4. Get subscription to check current state
-    const { data: subscription, error: subError } = await supabaseAdmin
+    const { data: subscription, error: subError } = await (await getSupabaseAdmin())
       .from('suscripciones')
       .select('id, estado, sponsor_id, participante_id')
       .eq('id', payment.suscripcion_id)
@@ -96,7 +104,7 @@ export async function processPaymentWebhook(
 
     if (paymentStatus === 'APPROVED') {
       // Update payment to APPROVED
-      const { error: updatePaymentError } = await supabaseAdmin
+      const { error: updatePaymentError } = await (await getSupabaseAdmin())
         .from('pagos')
         .update({
           estado: 'APPROVED',
@@ -110,7 +118,7 @@ export async function processPaymentWebhook(
       }
 
       // Update subscription to ACTIVE
-      const { error: updateSubError } = await supabaseAdmin
+      const { error: updateSubError } = await (await getSupabaseAdmin())
         .from('suscripciones')
         .update({
           estado: 'ACTIVE',
@@ -137,13 +145,13 @@ export async function processPaymentWebhook(
       );
 
       // Send confirmation email
-      const { data: profile } = await supabaseAdmin
+      const { data: profile } = await (await getSupabaseAdmin())
         .from('profiles')
         .select('email, full_name')
         .eq('id', subscription.sponsor_id)
         .single();
 
-      const { data: participant } = await supabaseAdmin
+      const { data: participant } = await (await getSupabaseAdmin())
         .from('participantes')
         .select('nombre')
         .eq('id', subscription.participante_id)
@@ -161,7 +169,7 @@ export async function processPaymentWebhook(
       }
     } else if (paymentStatus === 'FAILED') {
       // Update payment to FAILED
-      const { error: updatePaymentError } = await supabaseAdmin
+      const { error: updatePaymentError } = await (await getSupabaseAdmin())
         .from('pagos')
         .update({
           estado: 'FAILED',
@@ -189,13 +197,13 @@ export async function processPaymentWebhook(
       );
 
       // Send failure email
-      const { data: profile } = await supabaseAdmin
+      const { data: profile } = await (await getSupabaseAdmin())
         .from('profiles')
         .select('email, full_name')
         .eq('id', subscription.sponsor_id)
         .single();
 
-      const { data: participant } = await supabaseAdmin
+      const { data: participant } = await (await getSupabaseAdmin())
         .from('participantes')
         .select('nombre')
         .eq('id', subscription.participante_id)
@@ -242,7 +250,7 @@ export async function getSubscriptionPaymentStatus(subscriptionId: string): Prom
   reference?: string;
 }> {
   try {
-    const { data: payment, error } = await supabaseAdmin
+    const { data: payment, error } = await (await getSupabaseAdmin())
       .from('pagos')
       .select('id, estado, referencia_wompi')
       .eq('suscripcion_id', subscriptionId)
@@ -273,7 +281,7 @@ export async function getSubscriptionByPaymentReference(reference: string): Prom
   sponsor_id?: string;
 } | null> {
   try {
-    const { data: payment, error } = await supabaseAdmin
+    const { data: payment, error } = await (await getSupabaseAdmin())
       .from('pagos')
       .select('suscripcion_id')
       .eq('referencia_wompi', reference)
@@ -283,7 +291,7 @@ export async function getSubscriptionByPaymentReference(reference: string): Prom
       return null;
     }
 
-    const { data: subscription, error: subError } = await supabaseAdmin
+    const { data: subscription, error: subError } = await (await getSupabaseAdmin())
       .from('suscripciones')
       .select('id, sponsor_id')
       .eq('id', payment.suscripcion_id)

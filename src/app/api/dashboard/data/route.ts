@@ -11,14 +11,22 @@ import {
   getWeeklyReportsForParticipante,
   getAttendanceStatsForParticipante,
 } from '@/lib/supabase/database';
-import { supabaseAdmin } from '@/lib/supabase/server';
+// Dynamic import
+let supabaseAdminInstance: any = null;
+async function getSupabaseAdmin() {
+  if (!supabaseAdminInstance) {
+    const { supabaseAdmin } = await import('@/lib/supabase/server');
+    supabaseAdminInstance = supabaseAdmin;
+  }
+  return supabaseAdminInstance;
+}
 
 export async function GET(request: NextRequest) {
   try {
     // Get current user
     const {
       data: { user },
-    } = await supabaseAdmin.auth.getUser();
+    } = await (await getSupabaseAdmin()).auth.getUser();
 
     if (!user) {
       return NextResponse.json(
