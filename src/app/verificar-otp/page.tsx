@@ -40,8 +40,29 @@ export default function VerificarOtpPage() {
       if (result.error) {
         setErrors({ token: result.error.message || 'Código inválido' });
       } else {
+        // Verify successful - create profile in database
+        const inscribirData = sessionStorage.getItem('inscribirData');
+        if (inscribirData) {
+          const data = JSON.parse(inscribirData);
+          
+          // Call API to create profile and participante
+          const profileResponse = await fetch('/api/auth/create-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          if (!profileResponse.ok) {
+            const errorData = await profileResponse.json();
+            setErrors({ token: errorData.error || 'Error al crear perfil' });
+            setLoading(false);
+            return;
+          }
+        }
+
         setSuccessMessage('✅ Correo verificado! Redirigiendo...');
         sessionStorage.removeItem('pendingEmail');
+        sessionStorage.removeItem('inscribirData');
         setTimeout(() => {
           router.push('/inscribir');
         }, 2000);

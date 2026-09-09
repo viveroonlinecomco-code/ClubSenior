@@ -2,33 +2,19 @@
 
 import { useState } from 'react';
 
-export default function PaymentHistory() {
-  const [expandedPayment, setExpandedPayment] = useState<string | null>(null);
+interface PaymentData {
+  id: string;
+  monto_cop: number;
+  estado: string;
+  created_at: string;
+}
 
-  const payments = [
-    {
-      id: 'pago_001',
-      fecha: '2026-09-01',
-      monto: 160000,
-      plan: 'Plan Individual',
-      estado: 'completado',
-      metodo: 'Tarjeta de Crédito',
-      ultimos4Digitos: '4242',
-      recibo: 'RCP-2026-0901-001',
-      proximaPago: '2026-10-01',
-    },
-    {
-      id: 'pago_002',
-      fecha: '2026-08-01',
-      monto: 160000,
-      plan: 'Plan Individual',
-      estado: 'completado',
-      metodo: 'Tarjeta de Crédito',
-      ultimos4Digitos: '4242',
-      recibo: 'RCP-2026-0801-001',
-      proximaPago: '2026-09-01',
-    },
-  ];
+interface PaymentHistoryProps {
+  pagos?: PaymentData[] | null;
+}
+
+export default function PaymentHistory({ pagos }: PaymentHistoryProps) {
+  const [expandedPayment, setExpandedPayment] = useState<string | null>(null);
 
   const formatearMoneda = (valor: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -38,144 +24,119 @@ export default function PaymentHistory() {
     }).format(valor);
   };
 
-  const formatearFecha = (fecha: string) => {
+  const formatDate = (fecha: string) => {
     return new Date(fecha).toLocaleDateString('es-CO', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
-  const totalPagado = payments.reduce((sum, p) => sum + p.monto, 0);
+  const getStatusColor = (estado: string) => {
+    switch (estado) {
+      case 'APPROVED':
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'PENDING':
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'FAILED':
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (!pagos || pagos.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow p-8 text-center">
+        <p className="text-gray-600">No hay pagos registrados</p>
+      </div>
+    );
+  }
+
+  const totalPagado = pagos
+    .filter(p => p.estado === 'APPROVED' || p.estado === 'approved')
+    .reduce((sum, p) => sum + p.monto_cop, 0);
+
+  const proximoPago = pagos[0];
 
   return (
-    <div className="space-y-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Historial de Pagos</h1>
-        <p className="text-gray-600">Administra y descarga tus recibos de suscripción</p>
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-gray-600 text-sm font-semibold mb-2">TOTAL PAGADO</div>
+          <p className="text-3xl font-bold text-green-600">
+            {formatearMoneda(totalPagado)}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-gray-600 text-sm font-semibold mb-2">NÚMERO DE PAGOS</div>
+          <p className="text-3xl font-bold text-blue-600">{pagos.length}</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-gray-600 text-sm font-semibold mb-2">PRÓXIMO PAGO</div>
+          <p className="text-lg font-bold text-gray-900">
+            {proximoPago ? formatearMoneda(proximoPago.monto_cop) : 'N/A'}
+          </p>
+          <p className="text-gray-600 text-xs mt-1">
+            {proximoPago ? formatDate(proximoPago.created_at) : '-'}
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600">
-          <p className="text-gray-600 text-sm font-semibold mb-2">TOTAL PAGADO</p>
-          <p className="text-3xl font-bold text-gray-900">{formatearMoneda(totalPagado)}</p>
-          <p className="text-gray-500 text-xs mt-2">{payments.length} pagos realizados</p>
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">Historial de Pagos</h2>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 border-l-4 border-green-600">
-          <p className="text-gray-600 text-sm font-semibold mb-2">PRÓXIMO PAGO</p>
-          <p className="text-3xl font-bold text-gray-900">{formatearMoneda(160000)}</p>
-          <p className="text-gray-500 text-xs mt-2">El {formatearFecha(payments[0].proximaPago)}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 border-l-4 border-green-600">
-          <p className="text-gray-600 text-sm font-semibold mb-2">ESTADO</p>
-          <p className="text-2xl font-bold text-green-600">✓ Al día</p>
-          <p className="text-gray-500 text-xs mt-2">Sin pagos pendientes</p>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {payments.map(payment => (
-          <div
-            key={payment.id}
-            className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden hover:shadow-lg transition"
-          >
-            <button
-              onClick={() => setExpandedPayment(expandedPayment === payment.id ? null : payment.id)}
-              className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition text-left"
+        <div className="divide-y divide-gray-200">
+          {pagos.map(pago => (
+            <div
+              key={pago.id}
+              className="p-6 hover:bg-gray-50 transition cursor-pointer"
+              onClick={() => setExpandedPayment(expandedPayment === pago.id ? null : pago.id)}
             >
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-xl">
-                    💳
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">{payment.plan}</p>
-                    <p className="text-sm text-gray-600">
-                      {formatearFecha(payment.fecha)} • Recibo: {payment.recibo}
-                    </p>
-                  </div>
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="font-semibold text-gray-900">
+                    {formatearMoneda(pago.monto_cop)}
+                  </p>
+                  <p className="text-gray-600 text-sm">{formatDate(pago.created_at)}</p>
                 </div>
-              </div>
-
-              <div className="text-right mr-4">
-                <p className="text-2xl font-bold text-gray-900">{formatearMoneda(payment.monto)}</p>
                 <span
-                  className={`inline-block text-xs font-bold px-3 py-1 rounded-full ${
-                    payment.estado === 'completado'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}
+                  className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                    pago.estado
+                  )}`}
                 >
-                  {payment.estado === 'completado' ? '✓ Completado' : '⏳ Pendiente'}
+                  {pago.estado === 'APPROVED' || pago.estado === 'approved'
+                    ? '✓ Aprobado'
+                    : pago.estado === 'PENDING' || pago.estado === 'pending'
+                      ? '⏳ Pendiente'
+                      : '✗ Fallido'}
                 </span>
               </div>
 
-              <div className={`transform transition text-gray-600 text-xl ${expandedPayment === payment.id ? 'rotate-180' : ''}`}>
-                ▼
-              </div>
-            </button>
-
-            {expandedPayment === payment.id && (
-              <div className="bg-gray-50 border-t border-gray-200 px-6 py-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">FECHA DE PAGO</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {formatearFecha(payment.fecha)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">MONTO</p>
-                    <p className="text-lg font-semibold text-gray-900">{formatearMoneda(payment.monto)}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">MÉTODO DE PAGO</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {payment.metodo} •••• {payment.ultimos4Digitos}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold mb-1">PRÓXIMO PAGO</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {formatearFecha(payment.proximaPago)}
-                    </p>
+              {expandedPayment === pago.id && (
+                <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
+                  <div className="space-y-2">
+                    <div>
+                      <span className="font-semibold text-gray-900">ID de Pago:</span> {pago.id}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-900">Estado:</span> {pago.estado}
+                    </div>
                   </div>
                 </div>
-
-                <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Suscripción mensual</span>
-                    <span className="font-semibold text-gray-900">{formatearMoneda(payment.monto)}</span>
-                  </div>
-                  <div className="border-t border-gray-300 pt-3 flex justify-between">
-                    <span className="text-gray-900 font-bold">TOTAL</span>
-                    <span className="text-lg font-bold text-blue-600">
-                      {formatearMoneda(payment.monto)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                    Descargar Recibo PDF
-                  </button>
-                  <button className="flex-1 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg transition">
-                    Ver Detalles
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
-        <p className="text-sm text-gray-700">
-          <strong>📋 Nota:</strong> Tus recibos están disponibles para descargar. Se enviarán automáticamente
-          a tu correo electrónico después de cada pago.
-        </p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
