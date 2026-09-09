@@ -60,31 +60,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleSignInWithEmail = async (email: string) => {
     setError(null);
     try {
-      const result = await signInWithEmail(email);
-      if (result.error) {
-        setError(result.error.message);
+      // Use custom OTP endpoint instead of Supabase
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          error: {
+            message: errorData.error || 'Error sending OTP',
+          },
+        };
       }
-      return result;
+
+      const data = await response.json();
+      return { data };
     } catch (err: any) {
       setError(err.message);
-      return { error: err };
+      return { error: { message: err.message } };
     }
   };
 
   const handleVerifyOtp = async (email: string, token: string) => {
     setError(null);
     try {
-      const result = await verifyOtp(email, token);
-      if (result.data?.user) {
-        setUser(result.data.user);
+      // Use custom OTP verification endpoint
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code: token }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return {
+          error: {
+            message: errorData.error || 'Error verifying OTP',
+          },
+        };
       }
-      if (result.error) {
-        setError(result.error.message);
-      }
-      return result;
+
+      // For now, just return success - in production, you'd create a session
+      const data = await response.json();
+      return { data };
     } catch (err: any) {
       setError(err.message);
-      return { error: err };
+      return { error: { message: err.message } };
     }
   };
 
