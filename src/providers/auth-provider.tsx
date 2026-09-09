@@ -15,7 +15,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   error: string | null;
-  signInWithEmail: (email: string) => Promise<{ error: any }>;
+  signInWithEmail: (email: string) => Promise<{ error?: any; data?: any }>;
   verifyOtp: (email: string, token: string) => Promise<{ data?: any; error?: any }>;
   signOut: () => Promise<void>;
 }
