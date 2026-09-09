@@ -6,12 +6,12 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://popgpdhtyhckvkjmiknq.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'sk-placeholder-for-build-only-do-not-use';
 
-// Use dummy values for build time, actual values at runtime from Vercel env vars
-const url = supabaseUrl || 'https://placeholder.supabase.co';
-const key = supabaseServiceKey || 'placeholder-key';
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ SUPABASE_SERVICE_ROLE_KEY not set. Server operations will fail at runtime.');
+}
 
 /**
  * Admin client with full database access
@@ -21,7 +21,7 @@ const key = supabaseServiceKey || 'placeholder-key';
  * - Audit logging
  * - Backend business logic
  */
-export const supabaseAdmin = createClient(url, key, {
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,

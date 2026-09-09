@@ -1,10 +1,14 @@
 'use client';
 
 import "./globals.css";
-import { AuthProvider } from "@/providers/auth-provider";
+import dynamic from 'next/dynamic';
+import { ReactNode } from 'react';
 
-// Note: metadata is only supported in Server Components
-// export const metadata: Metadata = { ... }
+// Lazy load AuthProvider to avoid Supabase initialization at build time
+const AuthProvider = dynamic(
+  () => import("@/providers/auth-provider").then(mod => ({ default: mod.AuthProvider })),
+  { loading: () => <>{}</> }
+);
 
 export default function RootLayout({
   children,

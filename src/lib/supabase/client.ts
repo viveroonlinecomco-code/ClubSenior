@@ -6,22 +6,35 @@
 
 import { createBrowserClient } from '@supabase/ssr';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-if (!supabaseUrl.startsWith('https://')) {
-  console.warn('⚠️ Invalid Supabase URL during build. Runtime will fail if not configured.');
+let supabase: any = null;
+
+// Only initialize if we have valid credentials
+if (supabaseUrl && supabaseUrl.startsWith('https://') && supabaseAnonKey) {
+  supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+} else {
+  // Return a dummy object that will fail gracefully if used
+  if (typeof window !== 'undefined') {
+    console.warn('⚠️ Supabase credentials not configured. Auth features will not work.');
+  }
+  
+  supabase = {
+    auth: {
+      signInWithOtp: () => Promise.reject(new Error('Supabase not configured')),
+      verifyOtp: () => Promise.reject(new Error('Supabase not configured')),
+      signOut: () => Promise.reject(new Error('Supabase not configured')),
+      getUser: () => Promise.reject(new Error('Supabase not configured')),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    },
+    from: () => {
+      throw new Error('Supabase not configured');
+    },
+  };
 }
 
-/**
- * Browser-safe Supabase client
- * Can only read/write data based on:
- * 1. Supabase Auth (JWT from session)
- * 2. Row Level Security (RLS) policies
- *
- * NEVER use for admin operations - use server.ts for that
- */
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+export { supabase };
 
 /**
  * Sign in with email (passwordless OTP)
