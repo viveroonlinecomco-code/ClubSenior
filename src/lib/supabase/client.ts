@@ -12,6 +12,33 @@ let cachedSupabase: any = null;
 let initialized = false;
 
 /**
+ * Get application URL with intelligent fallback
+ * Falls back to Vercel URL if NEXT_PUBLIC_APP_URL is not configured
+ */
+function getAppUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_APP_URL;
+  
+  if (configured) {
+    return configured;
+  }
+
+  // Fallback: detect if running in browser or server
+  if (typeof window !== 'undefined') {
+    // Browser: use window.location.origin
+    return window.location.origin;
+  }
+
+  // Server: use Vercel deployment URL or default
+  const vercelUrl = process.env.VERCEL_URL;
+  if (vercelUrl) {
+    return `https://${vercelUrl}`;
+  }
+
+  // Last resort: hardcoded default for production
+  return 'https://club-senior.vercel.app';
+}
+
+/**
  * Get or initialize Supabase client
  * Only evaluates env vars when first called (runtime, not build time)
  */
@@ -79,7 +106,7 @@ export async function signInWithEmail(email: string) {
     return await client.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        emailRedirectTo: `${getAppUrl()}/auth/callback`,
       },
     });
   } catch (error: any) {
