@@ -79,6 +79,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const data = await response.json();
+      
+      // In testing mode, store the code for display (development only)
+      if (data.code) {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('otp_test_code', JSON.stringify({
+            code: data.code,
+            email: data.email,
+            expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+          }));
+        }
+      }
+      
       return { data };
     } catch (err: any) {
       setError(err.message);

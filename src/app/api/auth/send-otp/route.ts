@@ -65,10 +65,16 @@ async function saveOTPCode(email: string, code: string) {
 async function sendOTPEmail(email: string, code: string) {
   try {
     const resendApiKey = process.env.RESEND_API_KEY;
+    const verifiedEmail = 'viveroonline.com.co@gmail.com'; // Email verificado en Resend
     
     if (!resendApiKey) {
       throw new Error('RESEND_API_KEY not configured');
     }
+
+    // In testing/development: send to verified email, but mention the recipient
+    // In production: would send to the actual recipient after domain verification
+    const sendToEmail = email; // Ideally would send to this
+    const fallbackEmail = verifiedEmail; // But Resend requires verified email in testing
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -78,11 +84,19 @@ async function sendOTPEmail(email: string, code: string) {
       },
       body: JSON.stringify({
         from: 'ClubSenior <noreply@resend.dev>',
-        to: email,
-        subject: 'Tu Código de Verificación - ClubSenior',
+        to: fallbackEmail, // Use verified email for testing
+        subject: `Tu Código de Verificación - ClubSenior (para ${email})`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1e40af; margin-bottom: 20px;">Código de Verificación</h2>
+            
+            ${email !== fallbackEmail ? `
+              <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                <p style="margin: 0; color: #92400e; font-size: 14px;">
+                  <strong>Modo Testing:</strong> Este código es para: <strong>${email}</strong>
+                </p>
+              </div>
+            ` : ''}
             
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
               Hemos recibido una solicitud para verificar tu correo electrónico.
@@ -117,7 +131,7 @@ async function sendOTPEmail(email: string, code: string) {
     }
 
     const result = await response.json();
-    return result;
+    return { result, code, email }; // Return code for testing display
   } catch (error) {
     console.error('Error sending OTP email:', error);
     throw error;
@@ -149,13 +163,16 @@ export async function POST(request: NextRequest) {
     console.log(`Saved OTP to database for ${email}`);
 
     // Send email
-    await sendOTPEmail(email, code);
+    const emailResult = await sendOTPEmail(email, code);
     console.log(`Sent OTP email to ${email}`);
 
     return NextResponse.json({
       success: true,
       message: 'Código enviado exitosamente',
       email,
+      // Return code for testing display (show in UI for development)
+      code: process.env.NODE_ENV === 'development' ? code : undefined,
+      testingMode: email !== 'viveroonline.com.co@gmail.com',
     });
   } catch (error: any) {
     console.error('Error in send-otp:', error);
