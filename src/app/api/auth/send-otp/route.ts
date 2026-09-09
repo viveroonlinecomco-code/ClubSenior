@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Generate a random 6-digit OTP code
@@ -63,48 +60,63 @@ async function saveOTPCode(email: string, code: string) {
 }
 
 /**
- * Send OTP email using Resend
+ * Send OTP email using Resend API directly
  */
 async function sendOTPEmail(email: string, code: string) {
   try {
-    const result = await resend.emails.send({
-      from: 'ClubSenior <noreply@club-senior-tardes-cafe.resend.dev>',
-      to: email,
-      subject: 'Tu Código de Verificación - ClubSenior',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1e40af; margin-bottom: 20px;">Código de Verificación</h2>
-          
-          <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-            Hemos recibido una solicitud para verificar tu correo electrónico.
-          </p>
-          
-          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-            <p style="font-size: 14px; color: #666; margin: 0 0 10px 0;">Tu código de verificación es:</p>
-            <p style="font-size: 36px; font-weight: bold; color: #1e40af; letter-spacing: 5px; margin: 0;">
-              ${code}
-            </p>
-            <p style="font-size: 12px; color: #999; margin: 10px 0 0 0;">Este código expira en 10 minutos</p>
-          </div>
-          
-          <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
-            Si no solicitaste este código, puedes ignorar este mensaje.
-          </p>
-          
-          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-          
-          <p style="font-size: 12px; color: #999; margin: 0;">
-            ClubSenior - Tardes de Café, Mente & Saberes<br>
-            Conectando generaciones, creando comunidad
-          </p>
-        </div>
-      `,
-    });
-
-    if (result.error) {
-      throw new Error(`Resend error: ${result.error.message}`);
+    const resendApiKey = process.env.RESEND_API_KEY;
+    
+    if (!resendApiKey) {
+      throw new Error('RESEND_API_KEY not configured');
     }
 
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'ClubSenior <noreply@club-senior-tardes-cafe.resend.dev>',
+        to: email,
+        subject: 'Tu Código de Verificación - ClubSenior',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #1e40af; margin-bottom: 20px;">Código de Verificación</h2>
+            
+            <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
+              Hemos recibido una solicitud para verificar tu correo electrónico.
+            </p>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+              <p style="font-size: 14px; color: #666; margin: 0 0 10px 0;">Tu código de verificación es:</p>
+              <p style="font-size: 36px; font-weight: bold; color: #1e40af; letter-spacing: 5px; margin: 0;">
+                ${code}
+              </p>
+              <p style="font-size: 12px; color: #999; margin: 10px 0 0 0;">Este código expira en 10 minutos</p>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+              Si no solicitaste este código, puedes ignorar este mensaje.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+            
+            <p style="font-size: 12px; color: #999; margin: 0;">
+              ClubSenior - Tardes de Café, Mente & Saberes<br>
+              Conectando generaciones, creando comunidad
+            </p>
+          </div>
+        `,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Resend error: ${error.message || response.statusText}`);
+    }
+
+    const result = await response.json();
     return result;
   } catch (error) {
     console.error('Error sending OTP email:', error);
