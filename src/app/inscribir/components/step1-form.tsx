@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import { useAuth } from '@/hooks/useAuth';
 
 const Step1Schema = z.object({
   nombreAbuelo: z.string().min(2, 'Nombre requerido'),
@@ -18,6 +20,9 @@ interface Step1FormProps {
 }
 
 export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
+  const router = useRouter();
+  const { signInWithEmail } = useAuth();
+  
   const [formData, setFormData] = useState({
     nombreAbuelo: initialData?.nombreAbuelo || '',
     apellidoAbuelo: initialData?.apellidoAbuelo || '',
@@ -48,8 +53,24 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
     setErrors({});
 
     try {
+      // Validar con Zod
       const validated = Step1Schema.parse(formData);
-      onSubmit(validated);
+
+      // Enviar OTP a Supabase
+      const result = await signInWithEmail(validated.email);
+      
+      if (result.error) {
+        setErrors({ email: result.error.message || 'Error al enviar OTP' });
+        setLoading(false);
+        return;
+      }
+
+      // Guardar datos en sessionStorage para posterior verificación
+      sessionStorage.setItem('pendingEmail', validated.email);
+      sessionStorage.setItem('inscribirData', JSON.stringify(validated));
+
+      // Redirigir a verificación OTP
+      router.push('/verificar-otp');
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
@@ -60,7 +81,6 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         });
         setErrors(newErrors);
       }
-    } finally {
       setLoading(false);
     }
   };
@@ -173,12 +193,16 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         {errors.ciudad && <p className="text-red-500 text-sm mt-1">{errors.ciudad}</p>}
       </div>
 
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 text-sm">
+        📧 Se enviará un código de verificación a tu email. Necesitarás este código para continuar.
+      </div>
+
       <button
         type="submit"
         disabled={loading}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
       >
-        {loading ? 'Validando...' : 'Continuar al Paso 2'}
+        {loading ? 'Enviando código de verificación...' : 'Continuar al Paso 2'}
       </button>
     </form>
   );

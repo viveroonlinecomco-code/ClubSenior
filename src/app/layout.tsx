@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Tardes de Café, Mente & Saberes",
-  description: "Tranquilidad para el familiar + Actividad para el adulto mayor",
-};
+import "./globals.css";
+import { AuthProvider } from "@/providers/auth-provider";
+
+// Note: metadata is only supported in Server Components
+// export const metadata: Metadata = { ... }
 
 export default function RootLayout({
   children,
@@ -13,7 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }
