@@ -40,47 +40,117 @@ export { supabase };
  * Sign in with email (passwordless OTP)
  */
 export async function signInWithEmail(email: string) {
-  return supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-    },
-  });
+  if (!supabase?.auth?.signInWithOtp) {
+    return {
+      error: {
+        message: 'Email verification not available. Please try again in a moment.',
+        status: 500,
+      },
+      data: null,
+    };
+  }
+  
+  try {
+    return await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      },
+    });
+  } catch (error: any) {
+    return {
+      error: {
+        message: error?.message || 'Error sending verification code. Please try again.',
+        status: 500,
+      },
+      data: null,
+    };
+  }
 }
 
 /**
  * Verify OTP and get session
  */
 export async function verifyOtp(email: string, token: string) {
-  return supabase.auth.verifyOtp({
-    email,
-    token,
-    type: 'email',
-  });
+  if (!supabase?.auth?.verifyOtp) {
+    return {
+      error: {
+        message: 'Verification not available. Please try again in a moment.',
+        status: 500,
+      },
+      data: null,
+    };
+  }
+
+  try {
+    return await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
+  } catch (error: any) {
+    return {
+      error: {
+        message: error?.message || 'Invalid verification code. Please try again.',
+        status: 500,
+      },
+      data: null,
+    };
+  }
 }
 
 /**
  * Sign out current user
  */
 export async function signOut() {
-  return supabase.auth.signOut();
+  if (!supabase?.auth?.signOut) {
+    return { error: null };
+  }
+
+  try {
+    return await supabase.auth.signOut();
+  } catch (error) {
+    return { error: null };
+  }
 }
 
 /**
  * Get current session
  */
 export async function getSession() {
-  return supabase.auth.getSession();
+  if (!supabase?.auth?.getSession) {
+    return {
+      data: { session: null },
+      error: null,
+    };
+  }
+
+  try {
+    return await supabase.auth.getSession();
+  } catch (error) {
+    return {
+      data: { session: null },
+      error: null,
+    };
+  }
 }
 
 /**
  * Get current user
  */
 export async function getCurrentUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  if (!supabase?.auth?.getUser) {
+    return null;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    return null;
+  }
 }
 
 /**
