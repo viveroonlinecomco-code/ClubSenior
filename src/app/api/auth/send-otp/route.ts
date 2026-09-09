@@ -83,23 +83,15 @@ async function sendOTPEmail(email: string, code: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <noreply@resend.dev>',
-        to: fallbackEmail, // Use verified email for testing
-        subject: `Tu Código de Verificación - ClubSenior (para ${email})`,
+        from: 'ClubSenior <noreply@clubsenior.com.co>',
+        to: email, // Send to the user's email
+        subject: 'Tu Código de Verificación - ClubSenior',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1e40af; margin-bottom: 20px;">Código de Verificación</h2>
             
-            ${email !== fallbackEmail ? `
-              <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
-                <p style="margin: 0; color: #92400e; font-size: 14px;">
-                  <strong>Modo Testing:</strong> Este código es para: <strong>${email}</strong>
-                </p>
-              </div>
-            ` : ''}
-            
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-              Hemos recibido una solicitud para verificar tu correo electrónico.
+              Hemos recibido una solicitud para verificar tu correo electrónico en ClubSenior.
             </p>
             
             <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
@@ -168,11 +160,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Código enviado exitosamente',
+      message: 'Código enviado exitosamente a ' + email,
       email,
-      // Return code for testing display (show in UI for development)
-      code: process.env.NODE_ENV === 'development' ? code : undefined,
-      testingMode: email !== 'viveroonline.com.co@gmail.com',
     });
   } catch (error: any) {
     console.error('Error in send-otp:', error);

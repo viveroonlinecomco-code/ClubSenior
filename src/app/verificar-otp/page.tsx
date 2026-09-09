@@ -12,7 +12,6 @@ export default function VerificarOtpPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [testingCode, setTestingCode] = useState<string | null>(null);
 
   // Obtener email de sessionStorage
   useEffect(() => {
@@ -22,19 +21,6 @@ export default function VerificarOtpPage() {
       return;
     }
     setEmail(storedEmail);
-
-    // Check for testing OTP code in localStorage
-    if (typeof window !== 'undefined') {
-      const otpTest = localStorage.getItem('otp_test_code');
-      if (otpTest) {
-        try {
-          const { code } = JSON.parse(otpTest);
-          setTestingCode(code);
-        } catch (e) {
-          console.log('No testing code found');
-        }
-      }
-    }
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,33 +93,6 @@ export default function VerificarOtpPage() {
           <p className="text-gray-600 text-center">
             Hemos enviado un código a <strong>{email}</strong>
           </p>
-
-          {testingCode && (
-            <div className="bg-amber-50 border border-amber-300 rounded-lg p-4">
-              <p className="text-sm text-amber-800 font-semibold text-center mb-2">
-                🔧 Modo Testing - Tu código es:
-              </p>
-              <div className="flex items-center justify-center gap-2">
-                <p className="text-center text-2xl font-bold text-amber-900 tracking-widest">
-                  {testingCode}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(testingCode);
-                    setToken(testingCode);
-                  }}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded text-sm font-semibold transition"
-                  title="Copiar código"
-                >
-                  📋
-                </button>
-              </div>
-              <p className="text-xs text-amber-700 text-center mt-2">
-                (Se envió a tu email verificado)
-              </p>
-            </div>
-          )}
 
           {successMessage && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800">
