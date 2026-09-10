@@ -123,7 +123,7 @@ async function sendOTPEmail(email: string, code: string) {
     }
 
     const result = await response.json();
-    return { result, code, email }; // Return code for testing display
+    return result;
   } catch (error) {
     console.error('Error sending OTP email:', error);
     throw error;
