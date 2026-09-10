@@ -58,6 +58,13 @@ export default function VerificarOtpPage() {
             setLoading(false);
             return;
           }
+
+          // Get token from response
+          const responseData = await profileResponse.json();
+          if (responseData.token) {
+            localStorage.setItem('auth_token', responseData.token);
+            localStorage.setItem('auth_email', responseData.email);
+          }
         }
 
         setSuccessMessage('✅ Correo verificado! Redirigiendo...');

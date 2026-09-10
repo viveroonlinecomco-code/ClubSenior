@@ -68,16 +68,17 @@ export async function POST(request: NextRequest) {
     const insertText = await insertResponse.text();
 
     console.log('[REGISTER] Insert status:', insertStatus);
-    console.log('[REGISTER] Insert response:', insertText);
 
     if (!insertResponse.ok) {
       const errorJson = JSON.parse(insertText);
       
       // Si email ya existe, ok - usuario ya autenticado por OTP
       if (errorJson.code === '23505') {
-        console.log('[REGISTER] User already exists - ok, OTP verified');
+        console.log('[REGISTER] User already exists - ok');
+        // Devolver token con el email (usado para identificar usuario)
         return NextResponse.json({
           success: true,
+          token: Buffer.from(email.toLowerCase()).toString('base64'), // simple token
           email,
           message: 'Welcome back!',
         });
@@ -85,17 +86,21 @@ export async function POST(request: NextRequest) {
 
       console.error('[REGISTER] Insert failed');
       return NextResponse.json(
-        { error: `Insert failed: ${insertText.substring(0, 200)}` },
+        { error: `Insert failed` },
         { status: insertStatus }
       );
     }
 
-    console.log('[REGISTER] ✅ User registered successfully');
+    console.log('[REGISTER] ✅ User registered');
 
+    // Parse response to get created user
+    const userData = JSON.parse(insertText);
+    
     return NextResponse.json({
       success: true,
+      token: Buffer.from(email.toLowerCase()).toString('base64'), // simple token
       email,
-      message: 'Account created successfully! Welcome to ClubSenior.',
+      message: 'Account created successfully!',
     });
 
   } catch (error: any) {

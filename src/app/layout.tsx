@@ -1,6 +1,7 @@
 import "./globals.css";
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
+import { AuthGuard } from '@/components/auth-guard';
 
 // Lazy load providers to avoid Supabase initialization at build time
 const AuthProvider = dynamic(
@@ -36,13 +37,15 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50 transition-colors duration-300">
-        <ThemeProvider>
-          <AuthProvider>
-            <div className="min-h-screen flex flex-col">
-              {children}
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthGuard>
+          <ThemeProvider>
+            <AuthProvider>
+              <div className="min-h-screen flex flex-col">
+                {children}
+              </div>
+            </AuthProvider>
+          </ThemeProvider>
+        </AuthGuard>
       </body>
     </html>
   );
