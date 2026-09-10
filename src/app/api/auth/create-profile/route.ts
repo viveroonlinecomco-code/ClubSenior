@@ -246,9 +246,9 @@ export async function POST(request: NextRequest) {
     );
 
     if (profileResult.error) {
-      console.error('[CREATE-PROFILE] Profile creation error');
+      console.error('[CREATE-PROFILE] Profile creation error:', profileResult.error);
       return NextResponse.json(
-        { error: 'Failed to create profile' },
+        { error: `Failed to create profile: ${profileResult.error}` },
         { status: 500 }
       );
     }
@@ -256,9 +256,9 @@ export async function POST(request: NextRequest) {
     // ✅ Get or create condominio
     const condominioResult = await getOrCreateDefaultCondominio(ciudad.trim());
     if (condominioResult.error) {
-      console.error('[CREATE-PROFILE] Condominio error');
+      console.error('[CREATE-PROFILE] Condominio error:', condominioResult.error);
       return NextResponse.json(
-        { error: 'Failed to set condominio' },
+        { error: `Failed to set condominio: ${condominioResult.error}` },
         { status: 500 }
       );
     }
@@ -284,9 +284,9 @@ export async function POST(request: NextRequest) {
     );
 
     if (participanteResult.error) {
-      console.error('[CREATE-PROFILE] Participante error');
+      console.error('[CREATE-PROFILE] Participante error:', participanteResult.error);
       return NextResponse.json(
-        { error: 'Failed to create participante' },
+        { error: `Failed to create participante: ${participanteResult.error}` },
         { status: 500 }
       );
     }
