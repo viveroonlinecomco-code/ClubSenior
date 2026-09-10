@@ -39,9 +39,9 @@ export async function POST(request: NextRequest) {
     // Generate ID
     const userId = crypto.randomUUID();
 
-    // Insert profile - ONLY columns that exist
+    // Insert to participantes table (already exists in Supabase)
     const insertResponse = await fetch(
-      `${supabaseUrl}/rest/v1/profiles`,
+      `${supabaseUrl}/rest/v1/participantes`,
       {
         method: 'POST',
         headers: {
@@ -54,6 +54,9 @@ export async function POST(request: NextRequest) {
           email: email.toLowerCase(),
           phone: telefono || '',
           full_name: `${nombreAbuelo} ${apellidoAbuelo}`,
+          fecha_nacimiento: fechaNacimiento,
+          ciudad: ciudad,
+          rol: 'participante',
         }),
       }
     );
