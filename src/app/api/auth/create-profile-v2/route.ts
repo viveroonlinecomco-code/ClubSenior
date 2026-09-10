@@ -9,7 +9,9 @@ function isValidEmail(email: string): boolean {
 }
 
 function isValidName(name: string): boolean {
-  return name && name.trim().length >= 2 && name.trim().length <= 100;
+  if (!name || typeof name !== 'string') return false;
+  const trimmed = name.trim();
+  return trimmed.length >= 2 && trimmed.length <= 100;
 }
 
 function isValidBirthDate(dateStr: string): boolean {
