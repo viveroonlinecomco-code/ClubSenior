@@ -1,5 +1,3 @@
-'use client';
-
 import "./globals.css";
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';

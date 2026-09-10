@@ -119,7 +119,7 @@
 
   /* Text utilities */
   .text-truncate {
-    @apply overflow-hidden text-overflow-ellipsis whitespace-nowrap;
+    @apply truncate;
   }
 
   .line-clamp-2 {
