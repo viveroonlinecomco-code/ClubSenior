@@ -1,9 +1,13 @@
 'use client';
 
-'use client';
-
 import Link from 'next/link';
-import { ThemeToggle } from '@/components/theme-toggle';
+import dynamic from 'next/dynamic';
+
+// Import ThemeToggle dynamically without server-side rendering
+const ThemeToggle = dynamic(() => import('@/components/theme-toggle').then(mod => ({ default: mod.ThemeToggle })), {
+  ssr: false,
+  loading: () => <div className="w-10 h-10" /> // Placeholder while loading
+});
 
 export default function Home() {
   return (
