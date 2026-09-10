@@ -52,18 +52,26 @@ export default function VerificarOtpPage() {
             body: JSON.stringify(data),
           });
 
+          console.log('[VERIFY-OTP] Register response status:', profileResponse.status);
+
           if (!profileResponse.ok) {
             const errorData = await profileResponse.json();
-            setErrors({ token: errorData.error || 'Error al crear perfil' });
+            console.error('[VERIFY-OTP] Register failed:', errorData);
+            setErrors({ token: `Error: ${errorData.error || 'Unknown error'}` });
             setLoading(false);
             return;
           }
 
           // Get token from response
           const responseData = await profileResponse.json();
+          console.log('[VERIFY-OTP] Register success response:', responseData);
+          
           if (responseData.token) {
             localStorage.setItem('auth_token', responseData.token);
             localStorage.setItem('auth_email', responseData.email);
+            console.log('[VERIFY-OTP] Token saved to localStorage');
+          } else {
+            console.warn('[VERIFY-OTP] No token in response!');
           }
         }
 
