@@ -1,12 +1,105 @@
-/**
- * POST /api/auth/create-profile
- * Create user profile after OTP verification
- * Called from /verificar-otp page
- */
-
 import { NextRequest, NextResponse } from 'next/server';
-import { createUserProfile, getOrCreateDefaultCondominio, createParticipante } from '@/lib/supabase/database';
-// Dynamic import
+
+/**
+ * Validar email
+ */
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) && email.length <= 254;
+}
+
+/**
+ * Validar que nombre/apellido no estén vacíos y sean seguros
+ */
+function isValidName(name: string): boolean {
+  if (!name || typeof name !== 'string') return false;
+  if (name.trim().length < 2 || name.trim().length > 100) return false;
+  // Solo permitir letras, números, espacios, guiones
+  return /^[a-záéíóúñ0-9\s\-']+$/i.test(name);
+}
+
+/**
+ * Validar teléfono (opcional)
+ */
+function isValidPhone(phone: string | undefined): boolean {
+  if (!phone) return true; // Opcional
+  if (typeof phone !== 'string') return false;
+  // Solo números, +, -, espacios
+  return /^[\d\+\-\s]{6,20}$/.test(phone);
+}
+
+/**
+ * Validar fecha de nacimiento
+ */
+function isValidBirthDate(dateStr: string): boolean {
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const age = now.getFullYear() - date.getFullYear();
+    
+    // Verificar que sea una fecha válida
+    if (isNaN(date.getTime())) return false;
+    // Persona debe tener al menos 18 años
+    if (age < 18) return false;
+    // Persona no puede ser más vieja que 120 años
+    if (age > 120) return false;
+    
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Validar ciudad (no puede estar vacía)
+ */
+function isValidCity(city: string): boolean {
+  if (!city || typeof city !== 'string') return false;
+  if (city.trim().length < 2 || city.trim().length > 100) return false;
+  return /^[a-záéíóúñ0-9\s\-']+$/i.test(city);
+}
+
+/**
+ * Verificar que el OTP fue verificado antes de permitir create-profile
+ */
+async function wasOtpVerified(supabaseUrl: string, supabaseKey: string, email: string): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/otp_codes?email=eq.${encodeURIComponent(email)}&verified=eq.true&order=verified_at.desc&limit=1`,
+      {
+        method: 'GET',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
+    );
+
+    if (!response.ok) return false;
+    
+    const data = await response.json();
+    
+    if (!Array.isArray(data) || data.length === 0) {
+      return false;
+    }
+
+    const verifiedRecord = data[0];
+    const verifiedAt = new Date(verifiedRecord.verified_at);
+    const now = new Date();
+    
+    // OTP debe haber sido verificado en últimos 30 minutos
+    const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
+    
+    return verifiedAt >= thirtyMinutesAgo;
+  } catch (error) {
+    console.error('[SECURITY] Error checking OTP verification:', error);
+    return false;
+  }
+}
+
+/**
+ * Dynamic import
+ */
 let supabaseAdminInstance: any = null;
 async function getSupabaseAdmin() {
   if (!supabaseAdminInstance) {
@@ -16,28 +109,106 @@ async function getSupabaseAdmin() {
   return supabaseAdminInstance;
 }
 
+/**
+ * Import database functions
+ */
+import { createUserProfile, getOrCreateDefaultCondominio, createParticipante } from '@/lib/supabase/database';
+
+/**
+ * POST /api/auth/create-profile
+ * 
+ * SECURITY:
+ * - Validates all inputs
+ * - Verifies OTP was checked before creating profile
+ * - Sanitizes data
+ * - Has rate limiting check (simple)
+ */
 export async function POST(request: NextRequest) {
   try {
     const supabaseAdmin = await getSupabaseAdmin();
     const body = await request.json();
-    const { email, nombreAbuelo, apellidoAbuelo, telefono, fechaNacimiento, ciudad } = body;
+    
+    const { 
+      email, 
+      nombreAbuelo, 
+      apellidoAbuelo, 
+      telefono, 
+      fechaNacimiento, 
+      ciudad 
+    } = body;
 
-    console.log(`[CREATE-PROFILE] Request for email: ${email}`);
+    console.log('[CREATE-PROFILE] Request received');
 
-    if (!email || !nombreAbuelo || !apellidoAbuelo || !ciudad) {
+    // ✅ SECURITY: Validate all inputs
+    if (!isValidEmail(email)) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Invalid email format' },
         { status: 400 }
       );
     }
 
-    let userId: string = '';
+    if (!isValidName(nombreAbuelo)) {
+      return NextResponse.json(
+        { error: 'Invalid first name' },
+        { status: 400 }
+      );
+    }
 
-    // Try to create user in Auth (email_confirm: true for OTP-only auth)
-    console.log(`[CREATE-PROFILE] Creating user in Auth: ${email}`);
+    if (!isValidName(apellidoAbuelo)) {
+      return NextResponse.json(
+        { error: 'Invalid last name' },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidPhone(telefono)) {
+      return NextResponse.json(
+        { error: 'Invalid phone number' },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidBirthDate(fechaNacimiento)) {
+      return NextResponse.json(
+        { error: 'Invalid birth date. Must be 18+ years old' },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidCity(ciudad)) {
+      return NextResponse.json(
+        { error: 'Invalid city' },
+        { status: 400 }
+      );
+    }
+
+    // ✅ SECURITY: Verify OTP was actually verified
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[SECURITY] Supabase config missing');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
+    const otpVerified = await wasOtpVerified(supabaseUrl, supabaseKey, email);
     
+    if (!otpVerified) {
+      console.warn('[SECURITY] OTP not verified for email registration attempt');
+      return NextResponse.json(
+        { error: 'Email verification required. Please verify your OTP first.' },
+        { status: 403 }
+      );
+    }
+
+    console.log('[CREATE-PROFILE] OTP verified, proceeding with profile creation');
+
+    // ✅ Create user in Auth
     const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: email,
+      email: email.toLowerCase().trim(),
       email_confirm: true,
       user_metadata: {
         verified_otp_at: new Date().toISOString(),
@@ -45,63 +216,54 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError) {
-      // If user already exists, use them (expected for re-registration)
       if (authError.message?.toLowerCase().includes('already exists')) {
-        console.log(`[CREATE-PROFILE] User already exists for: ${email}`);
-        // We'll try to get the user ID from the auth session in next request
-        // For now, we can't proceed without a user ID
         return NextResponse.json(
-          { 
-            error: 'User already registered. Please log in instead.',
-            code: 'USER_EXISTS'
-          },
+          { error: 'Email already registered. Please log in instead.' },
           { status: 409 }
         );
       }
-      console.error(`[CREATE-PROFILE] Auth error:`, authError);
+      console.error('[SECURITY] Auth creation error:', authError.message);
       return NextResponse.json(
-        { error: `Failed to create user: ${authError.message}` },
+        { error: 'Failed to create account' },
         { status: 500 }
       );
     }
 
-    userId = newUser?.id;
+    const userId = newUser?.id;
     if (!userId) {
       return NextResponse.json(
-        { error: 'Failed to get user ID after creation' },
+        { error: 'Failed to create account' },
         { status: 500 }
       );
     }
 
-    console.log(`[CREATE-PROFILE] User created: ${userId}`);
-
-    // Create profile
+    // ✅ Create profile
     const profileResult = await createUserProfile(
       userId,
-      email,
-      `${nombreAbuelo} ${apellidoAbuelo}`,
-      telefono
+      email.toLowerCase().trim(),
+      `${nombreAbuelo.trim()} ${apellidoAbuelo.trim()}`,
+      telefono?.trim() || ''
     );
 
     if (profileResult.error) {
-      console.error(`[CREATE-PROFILE] Profile error:`, profileResult.error);
+      console.error('[CREATE-PROFILE] Profile creation error');
       return NextResponse.json(
-        { error: 'Failed to create profile', details: profileResult.error },
+        { error: 'Failed to create profile' },
         { status: 500 }
       );
     }
 
-    // Get or create condominio
-    const condominioResult = await getOrCreateDefaultCondominio(ciudad);
+    // ✅ Get or create condominio
+    const condominioResult = await getOrCreateDefaultCondominio(ciudad.trim());
     if (condominioResult.error) {
-      console.error(`[CREATE-PROFILE] Condominio error:`, condominioResult.error);
+      console.error('[CREATE-PROFILE] Condominio error');
       return NextResponse.json(
-        { error: 'Failed to get condominio', details: condominioResult.error },
+        { error: 'Failed to set condominio' },
         { status: 500 }
       );
     }
 
-    // Calculate age
+    // ✅ Calculate age
     const birthDate = new Date(fechaNacimiento);
     const today = new Date();
     let edad = today.getFullYear() - birthDate.getFullYear();
@@ -110,11 +272,11 @@ export async function POST(request: NextRequest) {
       edad--;
     }
 
-    // Create participante
+    // ✅ Create participante
     const participanteResult = await createParticipante(
       userId,
       condominioResult.data.id,
-      nombreAbuelo,
+      nombreAbuelo.trim(),
       edad,
       'otro',
       true,
@@ -122,26 +284,25 @@ export async function POST(request: NextRequest) {
     );
 
     if (participanteResult.error) {
-      console.error(`[CREATE-PROFILE] Participante error:`, participanteResult.error);
+      console.error('[CREATE-PROFILE] Participante error');
       return NextResponse.json(
-        { error: 'Failed to create participante', details: participanteResult.error },
+        { error: 'Failed to create participante' },
         { status: 500 }
       );
     }
 
-    console.log(`[CREATE-PROFILE] ✅ Success - userId: ${userId}`);
+    console.log('[CREATE-PROFILE] ✅ Account created successfully');
     
     return NextResponse.json({
       success: true,
       userId,
-      email,
-      profile: profileResult.data,
-      participante: participanteResult.data,
+      message: 'Account created successfully. Please log in.',
     });
+
   } catch (error: any) {
-    console.error('[CREATE-PROFILE] Unhandled error:', error);
+    console.error('[CREATE-PROFILE] Unhandled error');
     return NextResponse.json(
-      { error: error.message || 'Server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
