@@ -64,7 +64,7 @@ export default function VerificarOtpPage() {
         sessionStorage.removeItem('pendingEmail');
         sessionStorage.removeItem('inscribirData');
         setTimeout(() => {
-          router.push('/inscribir');
+          router.push('/familia');
         }, 2000);
       }
     } catch (error: any) {
