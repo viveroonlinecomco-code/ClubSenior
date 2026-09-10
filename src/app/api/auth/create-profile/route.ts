@@ -98,18 +98,6 @@ async function wasOtpVerified(supabaseUrl: string, supabaseKey: string, email: s
 }
 
 /**
- * Dynamic import
- */
-let supabaseAdminInstance: any = null;
-async function getSupabaseAdmin() {
-  if (!supabaseAdminInstance) {
-    const { supabaseAdmin } = await import('@/lib/supabase/server');
-    supabaseAdminInstance = supabaseAdmin;
-  }
-  return supabaseAdminInstance;
-}
-
-/**
  * Import database functions
  */
 import { createUserProfile, getOrCreateDefaultCondominio, createParticipante } from '@/lib/supabase/database';
@@ -117,15 +105,15 @@ import { createUserProfile, getOrCreateDefaultCondominio, createParticipante } f
 /**
  * POST /api/auth/create-profile
  * 
- * SECURITY:
- * - Validates all inputs
- * - Verifies OTP was checked before creating profile
- * - Sanitizes data
- * - Has rate limiting check (simple)
+ * ARCHITECTURE:
+ * - Validates all inputs (email, names, phone, date, city)
+ * - Verifies OTP was verified (30-minute window)
+ * - Creates profile in database with local UUID
+ * - Does NOT create Supabase Auth user (OTP verification IS the auth)
+ * - Saves participante and assigns condominio
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabaseAdmin = await getSupabaseAdmin();
     const body = await request.json();
     
     const { 
@@ -206,41 +194,15 @@ export async function POST(request: NextRequest) {
 
     console.log('[CREATE-PROFILE] OTP verified, proceeding with profile creation');
 
-    // ✅ Create user in Auth
-    const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: email.toLowerCase().trim(),
-      email_confirm: true,
-      user_metadata: {
-        verified_otp_at: new Date().toISOString(),
-      },
-    });
+    // ✅ Generate a UUID for the user (local ID, not from Auth)
+    // OTP verification IS the authentication mechanism
+    const userId = crypto.randomUUID();
+    const cleanEmail = email.toLowerCase().trim();
 
-    if (authError) {
-      if (authError.message?.toLowerCase().includes('already exists')) {
-        return NextResponse.json(
-          { error: 'Email already registered. Please log in instead.' },
-          { status: 409 }
-        );
-      }
-      console.error('[SECURITY] Auth creation error:', authError.message);
-      return NextResponse.json(
-        { error: 'Failed to create account' },
-        { status: 500 }
-      );
-    }
-
-    const userId = newUser?.id;
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Failed to create account' },
-        { status: 500 }
-      );
-    }
-
-    // ✅ Create profile
+    // ✅ Create profile in database
     const profileResult = await createUserProfile(
       userId,
-      email.toLowerCase().trim(),
+      cleanEmail,
       `${nombreAbuelo.trim()} ${apellidoAbuelo.trim()}`,
       telefono?.trim() || ''
     );
