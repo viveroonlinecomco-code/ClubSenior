@@ -71,6 +71,18 @@ export async function POST(request: NextRequest) {
     console.log('[REGISTER] Insert response:', insertText);
 
     if (!insertResponse.ok) {
+      const errorJson = JSON.parse(insertText);
+      
+      // Si email ya existe, ok - usuario ya autenticado por OTP
+      if (errorJson.code === '23505') {
+        console.log('[REGISTER] User already exists - ok, OTP verified');
+        return NextResponse.json({
+          success: true,
+          email,
+          message: 'Welcome back!',
+        });
+      }
+
       console.error('[REGISTER] Insert failed');
       return NextResponse.json(
         { error: `Insert failed: ${insertText.substring(0, 200)}` },
