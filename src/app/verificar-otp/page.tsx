@@ -46,7 +46,7 @@ export default function VerificarOtpPage() {
           const data = JSON.parse(inscribirData);
           
           // Call API to create profile and participante
-          const profileResponse = await fetch('/api/auth/create-profile-v2', {
+          const profileResponse = await fetch('/api/auth/profile-simple', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
