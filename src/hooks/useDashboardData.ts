@@ -18,16 +18,34 @@ export function useDashboardData() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch('/api/dashboard/data');
+        // Get token from localStorage
+        const token = localStorage.getItem('auth_token');
+        
+        if (!token) {
+          setError('No authentication token found');
+          setData(null);
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('/api/dashboard/data', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         
         if (!response.ok) {
-          throw new Error('Failed to fetch dashboard data');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch dashboard data');
         }
 
         const dashboardData = await response.json();
         setData(dashboardData);
         setError(null);
       } catch (err: any) {
+        console.error('[useDashboardData] Error:', err.message);
         setError(err.message);
         setData(null);
       } finally {

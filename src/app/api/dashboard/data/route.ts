@@ -1,81 +1,65 @@
 /**
  * GET /api/dashboard/data
- * Get all dashboard data for authenticated user
- * Includes subscription, reports, attendance
+ * Get dashboard data for authenticated user
+ * Uses token from Authorization header (passed from frontend localStorage)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  getSuscripcionForSponsor,
-  getPaymentHistoryForSponsor,
-  getWeeklyReportsForParticipante,
-  getAttendanceStatsForParticipante,
-} from '@/lib/supabase/database';
-// Dynamic import
-let supabaseAdminInstance: any = null;
-async function getSupabaseAdmin() {
-  if (!supabaseAdminInstance) {
-    const { supabaseAdmin } = await import('@/lib/supabase/server');
-    supabaseAdminInstance = supabaseAdmin;
-  }
-  return supabaseAdminInstance;
-}
 
 export async function GET(request: NextRequest) {
   try {
-    // Get current user
-    const {
-      data: { user },
-    } = await (await getSupabaseAdmin()).auth.getUser();
-
-    if (!user) {
+    // Get token from Authorization header
+    const authHeader = request.headers.get('Authorization');
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('[DASHBOARD] No auth header');
       return NextResponse.json(
-        { error: 'No user found. Please authenticate first.' },
+        { error: 'No authentication token' },
         { status: 401 }
       );
     }
 
-    // Get subscription
-    const suscripcionResult = await getSuscripcionForSponsor(user.id);
-    const suscripcion = suscripcionResult.data;
-
-    if (!suscripcion) {
-      return NextResponse.json({
-        user: { id: user.id, email: user.email },
-        suscripcion: null,
-        reportes: [],
-        asistencias: null,
-        pagos: [],
-      });
-    }
-
-    // Get payment history
-    const pagosResult = await getPaymentHistoryForSponsor(user.id);
-
-    // Get weekly reports (if participante exists)
-    let reportes = [];
-    let asistencias = null;
-    if (suscripcion.participante_id) {
-      const reportesResult = await getWeeklyReportsForParticipante(suscripcion.participante_id);
-      reportes = reportesResult.data || [];
-
-      const asistenciasResult = await getAttendanceStatsForParticipante(
-        suscripcion.participante_id
+    // Extract email from token (base64 encoded)
+    const token = authHeader.substring(7);
+    let email: string;
+    
+    try {
+      email = Buffer.from(token, 'base64').toString('utf-8');
+    } catch (err) {
+      console.error('[DASHBOARD] Invalid token format');
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
       );
-      asistencias = asistenciasResult.stats;
     }
 
+    if (!email) {
+      console.log('[DASHBOARD] Token decoded to empty email');
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
+
+    console.log('[DASHBOARD] Authenticated:', email);
+
+    // MVP: Return minimal dashboard data
+    // TODO: Fetch real data from participantes/suscripciones when needed
     return NextResponse.json({
-      user: { id: user.id, email: user.email },
-      suscripcion,
-      reportes,
-      asistencias,
-      pagos: pagosResult.data || [],
+      success: true,
+      email,
+      user: { email },
+      suscripcion: null,
+      reportes: [],
+      asistencias: null,
+      pagos: [],
+      message: 'Welcome to your dashboard!',
     });
+
   } catch (error: any) {
-    console.error('Error in dashboard data:', error);
+    console.error('[DASHBOARD] Error:', error.message);
     return NextResponse.json(
-      { error: 'Server error', details: error.message },
+      { error: 'Server error' },
       { status: 500 }
     );
   }
