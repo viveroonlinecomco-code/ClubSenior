@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Verify OTP code
+ * Verify OTP code and create user in Supabase Auth
  */
 async function verifyOTPInDatabase(email: string, code: string) {
   try {
@@ -60,7 +60,32 @@ async function verifyOTPInDatabase(email: string, code: string) {
       throw new Error('Failed to mark OTP as verified');
     }
 
-    return { valid: true, message: 'Código verificado correctamente' };
+    // Create user in Supabase Auth (without password - OTP only)
+    const authResponse = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        email_confirm: true, // Auto-confirm email
+        user_metadata: {
+          verified_at: new Date().toISOString(),
+        },
+      }),
+    });
+
+    if (!authResponse.ok) {
+      const errorData = await authResponse.json();
+      // If user already exists, that's fine - continue
+      if (errorData.code !== 'user_already_exists') {
+        throw new Error(`Failed to create auth user: ${errorData.message}`);
+      }
+    }
+
+    return { valid: true, message: 'Código verificado correctamente', email };
   } catch (error) {
     console.error('Error verifying OTP:', error);
     throw error;
@@ -69,7 +94,7 @@ async function verifyOTPInDatabase(email: string, code: string) {
 
 /**
  * POST /api/auth/verify-otp
- * Verify OTP code
+ * Verify OTP code and create user in Auth
  */
 export async function POST(request: NextRequest) {
   try {
@@ -83,7 +108,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify OTP
+    // Verify OTP and create user
     const result = await verifyOTPInDatabase(email, code);
 
     if (!result.valid) {
@@ -96,7 +121,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: result.message,
-      email,
+      email: result.email,
     });
   } catch (error: any) {
     console.error('Error in verify-otp:', error);
