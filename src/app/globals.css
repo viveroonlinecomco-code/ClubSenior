@@ -154,8 +154,7 @@
 
   /* Accessibility */
   .sr-only {
-    @apply absolute w-1 h-1 p-0 -m-1 overflow-hidden clip-path-inset;
-    clip-path: inset(100%);
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
   }
 
   /* Loading skeleton */
