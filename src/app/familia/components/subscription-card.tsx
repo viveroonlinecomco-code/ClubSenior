@@ -50,7 +50,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
       <div className="bg-white rounded-lg shadow p-8 text-center">
         <p className="text-gray-600 mb-4">No hay suscripción activa</p>
         <a
-          href="/inscribir"
+          href="/planes"
           className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg"
         >
           Crear Suscripción
@@ -123,9 +123,12 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
           </div>
 
           <div className="flex gap-4 pt-4">
-            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition">
+            <a
+              href="/planes"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition text-center block"
+            >
               Cambiar Plan
-            </button>
+            </a>
             <button
               onClick={() => setShowCancelModal(true)}
               className="flex-1 border-2 border-red-600 text-red-600 hover:bg-red-50 font-semibold py-2 rounded-lg transition"
@@ -163,9 +166,37 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
                 Mantener Suscripción
               </button>
               <button
-                onClick={() => {
-                  console.log('Cancelando:', { id: suscripcion.id, reason: cancelReason });
-                  alert('Suscripción cancelada');
+                onClick={async () => {
+                  if (!cancelReason) {
+                    alert('Por favor selecciona una razón');
+                    return;
+                  }
+
+                  try {
+                    const token = localStorage.getItem('auth_token');
+                    const response = await fetch('/api/suscripcion/cancel', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({
+                        suscripcion_id: suscripcion.id,
+                        razon: cancelReason,
+                      }),
+                    });
+
+                    if (response.ok) {
+                      alert('✅ Suscripción cancelada correctamente');
+                      window.location.reload();
+                    } else {
+                      const error = await response.json();
+                      alert(`Error: ${error.error}`);
+                    }
+                  } catch (error: any) {
+                    alert(`Error: ${error.message}`);
+                  }
+
                   setShowCancelModal(false);
                 }}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
