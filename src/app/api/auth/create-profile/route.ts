@@ -18,39 +18,73 @@ async function getSupabaseAdmin() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get current session
-    const {
-      data: { user },
-    } = await (await getSupabaseAdmin()).auth.getUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'No user found. Please verify email first.' },
-        { status: 401 }
-      );
-    }
-
-    // Parse request body
+    const supabaseAdmin = await getSupabaseAdmin();
     const body = await request.json();
-    const { nombreAbuelo, apellidoAbuelo, telefono, fechaNacimiento, ciudad } = body;
+    const { email, nombreAbuelo, apellidoAbuelo, telefono, fechaNacimiento, ciudad } = body;
 
-    // Validate required fields
-    if (!nombreAbuelo || !apellidoAbuelo || !ciudad) {
+    console.log(`[CREATE-PROFILE] Request for email: ${email}`);
+
+    if (!email || !nombreAbuelo || !apellidoAbuelo || !ciudad) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
+    let userId: string = '';
+
+    // Try to create user in Auth (email_confirm: true for OTP-only auth)
+    console.log(`[CREATE-PROFILE] Creating user in Auth: ${email}`);
+    
+    const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: email,
+      email_confirm: true,
+      user_metadata: {
+        verified_otp_at: new Date().toISOString(),
+      },
+    });
+
+    if (authError) {
+      // If user already exists, use them (expected for re-registration)
+      if (authError.message?.toLowerCase().includes('already exists')) {
+        console.log(`[CREATE-PROFILE] User already exists for: ${email}`);
+        // We'll try to get the user ID from the auth session in next request
+        // For now, we can't proceed without a user ID
+        return NextResponse.json(
+          { 
+            error: 'User already registered. Please log in instead.',
+            code: 'USER_EXISTS'
+          },
+          { status: 409 }
+        );
+      }
+      console.error(`[CREATE-PROFILE] Auth error:`, authError);
+      return NextResponse.json(
+        { error: `Failed to create user: ${authError.message}` },
+        { status: 500 }
+      );
+    }
+
+    userId = newUser?.id;
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Failed to get user ID after creation' },
+        { status: 500 }
+      );
+    }
+
+    console.log(`[CREATE-PROFILE] User created: ${userId}`);
+
     // Create profile
     const profileResult = await createUserProfile(
-      user.id,
-      user.email || '',
+      userId,
+      email,
       `${nombreAbuelo} ${apellidoAbuelo}`,
       telefono
     );
 
     if (profileResult.error) {
+      console.error(`[CREATE-PROFILE] Profile error:`, profileResult.error);
       return NextResponse.json(
         { error: 'Failed to create profile', details: profileResult.error },
         { status: 500 }
@@ -60,13 +94,14 @@ export async function POST(request: NextRequest) {
     // Get or create condominio
     const condominioResult = await getOrCreateDefaultCondominio(ciudad);
     if (condominioResult.error) {
+      console.error(`[CREATE-PROFILE] Condominio error:`, condominioResult.error);
       return NextResponse.json(
         { error: 'Failed to get condominio', details: condominioResult.error },
         { status: 500 }
       );
     }
 
-    // Calculate age from birth date
+    // Calculate age
     const birthDate = new Date(fechaNacimiento);
     const today = new Date();
     let edad = today.getFullYear() - birthDate.getFullYear();
@@ -77,32 +112,36 @@ export async function POST(request: NextRequest) {
 
     // Create participante
     const participanteResult = await createParticipante(
-      user.id,
+      userId,
       condominioResult.data.id,
       nombreAbuelo,
       edad,
       'otro',
       true,
-      `Abuelo registrado en ${new Date().toLocaleDateString()}`
+      `Registrado: ${new Date().toLocaleDateString('es-CO')}`
     );
 
     if (participanteResult.error) {
+      console.error(`[CREATE-PROFILE] Participante error:`, participanteResult.error);
       return NextResponse.json(
         { error: 'Failed to create participante', details: participanteResult.error },
         { status: 500 }
       );
     }
 
+    console.log(`[CREATE-PROFILE] ✅ Success - userId: ${userId}`);
+    
     return NextResponse.json({
       success: true,
+      userId,
+      email,
       profile: profileResult.data,
       participante: participanteResult.data,
-      condominio: condominioResult.data,
     });
   } catch (error: any) {
-    console.error('Error in create-profile:', error);
+    console.error('[CREATE-PROFILE] Unhandled error:', error);
     return NextResponse.json(
-      { error: 'Server error', details: error.message },
+      { error: error.message || 'Server error' },
       { status: 500 }
     );
   }

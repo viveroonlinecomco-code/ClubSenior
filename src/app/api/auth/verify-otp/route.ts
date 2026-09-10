@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Verify OTP code and create user in Supabase Auth
+ * Verify OTP code
+ * NOTE: We don't create Auth user here - just verify OTP
+ * Profile creation happens after in create-profile endpoint
  */
 async function verifyOTPInDatabase(email: string, code: string) {
   try {
@@ -11,6 +13,8 @@ async function verifyOTPInDatabase(email: string, code: string) {
     if (!supabaseUrl || !supabaseKey) {
       throw new Error('Supabase not configured');
     }
+
+    console.log(`[OTP] Verifying code for email: ${email}`);
 
     // Get OTP record
     const response = await fetch(
@@ -25,8 +29,10 @@ async function verifyOTPInDatabase(email: string, code: string) {
     );
 
     const data = await response.json();
+    console.log(`[OTP] Query result:`, data);
 
     if (!Array.isArray(data) || data.length === 0) {
+      console.warn(`[OTP] Code not found for email: ${email}`);
       return { valid: false, message: 'Código inválido o expirado' };
     }
 
@@ -35,8 +41,11 @@ async function verifyOTPInDatabase(email: string, code: string) {
     // Check if expired
     const expiresAt = new Date(otpRecord.expires_at);
     if (new Date() > expiresAt) {
+      console.warn(`[OTP] Code expired for email: ${email}`);
       return { valid: false, message: 'Código expirado' };
     }
+
+    console.log(`[OTP] Code valid, marking as verified for: ${email}`);
 
     // Mark as verified
     const updateResponse = await fetch(
@@ -57,49 +66,31 @@ async function verifyOTPInDatabase(email: string, code: string) {
     );
 
     if (!updateResponse.ok) {
+      console.error(`[OTP] Failed to update OTP status:`, updateResponse.status);
       throw new Error('Failed to mark OTP as verified');
     }
 
-    // Create user in Supabase Auth (without password - OTP only)
-    const authResponse = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
-      method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        email_confirm: true, // Auto-confirm email
-        user_metadata: {
-          verified_at: new Date().toISOString(),
-        },
-      }),
-    });
-
-    if (!authResponse.ok) {
-      const errorData = await authResponse.json();
-      // If user already exists, that's fine - continue
-      if (errorData.code !== 'user_already_exists') {
-        throw new Error(`Failed to create auth user: ${errorData.message}`);
-      }
-    }
-
+    console.log(`[OTP] Successfully verified OTP for: ${email}`);
     return { valid: true, message: 'Código verificado correctamente', email };
   } catch (error) {
-    console.error('Error verifying OTP:', error);
+    console.error('[OTP] Error verifying OTP:', error);
     throw error;
   }
 }
 
 /**
  * POST /api/auth/verify-otp
- * Verify OTP code and create user in Auth
+ * Verify OTP code - does NOT create Auth user
+ * 
+ * IMPORTANT: This only verifies the OTP.
+ * User creation in Auth happens in create-profile endpoint.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { email, code } = body;
+
+    console.log(`[VERIFY-OTP] Request received - email: ${email}, code: ${code?.substring(0, 3)}***`);
 
     if (!email || !code) {
       return NextResponse.json(
@@ -108,23 +99,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify OTP and create user
+    // Verify OTP
     const result = await verifyOTPInDatabase(email, code);
 
     if (!result.valid) {
+      console.warn(`[VERIFY-OTP] Verification failed: ${result.message}`);
       return NextResponse.json(
         { error: result.message },
         { status: 400 }
       );
     }
 
+    console.log(`[VERIFY-OTP] Success - email: ${email}`);
     return NextResponse.json({
       success: true,
       message: result.message,
       email: result.email,
+      // Don't return auth token - user creation happens in create-profile
     });
   } catch (error: any) {
-    console.error('Error in verify-otp:', error);
+    console.error('[VERIFY-OTP] Error:', error);
     return NextResponse.json(
       { 
         error: error.message || 'Error verifying OTP',
