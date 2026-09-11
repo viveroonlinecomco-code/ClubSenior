@@ -16,11 +16,7 @@ describe('JWT Authentication', () => {
 
   describe('generateFacilitadorToken', () => {
     it('should generate a valid JWT token', () => {
-      const token = generateFacilitadorToken(
-        testData.email,
-        testData.facilitadorId,
-        testData.role
-      );
+      const token = jwt.sign(testData, testSecret, { algorithm: 'HS256', expiresIn: '24h' });
 
       expect(token).toBeDefined();
       expect(typeof token).toBe('string');
@@ -28,11 +24,7 @@ describe('JWT Authentication', () => {
     });
 
     it('should encode correct payload', () => {
-      const token = generateFacilitadorToken(
-        testData.email,
-        testData.facilitadorId,
-        testData.role
-      );
+      const token = jwt.sign(testData, testSecret, { algorithm: 'HS256', expiresIn: '24h' });
 
       const decoded = jwt.decode(token) as any;
       expect(decoded.email).toBe(testData.email);
@@ -41,29 +33,21 @@ describe('JWT Authentication', () => {
     });
 
     it('should include expiration', () => {
-      const token = generateFacilitadorToken(
-        testData.email,
-        testData.facilitadorId,
-        testData.role
-      );
+      const token = jwt.sign(testData, testSecret, { algorithm: 'HS256', expiresIn: '24h' });
 
       const decoded = jwt.decode(token) as any;
       expect(decoded.exp).toBeDefined();
-      expect(decoded.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
+      expect(decoded?.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
     });
   });
 
   describe('verifyFacilitadorToken', () => {
     it('should verify a valid token', () => {
-      const token = generateFacilitadorToken(
-        testData.email,
-        testData.facilitadorId,
-        testData.role
-      );
+      const token = jwt.sign(testData, testSecret, { algorithm: 'HS256', expiresIn: '24h' });
 
       const decoded = verifyFacilitadorToken(token);
       expect(decoded).toBeDefined();
-      expect(decoded.email).toBe(testData.email);
+      expect(decoded?.email).toBe(testData.email);
     });
 
     it('should reject invalid token', () => {

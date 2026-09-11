@@ -26,12 +26,13 @@ const authLogger = createLogger('AUTH-SEND-OTP');
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   const clientIp = request.headers.get('x-forwarded-for') || 'unknown';
+  let body: any = {};
 
   try {
     authLogger.info({ ip: clientIp }, 'OTP send request received');
 
     // Parse request body
-    const body = await request.json();
+    body = await request.json();
     const { email } = body;
 
     // Check rate limiting

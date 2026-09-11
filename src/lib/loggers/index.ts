@@ -1,4 +1,4 @@
-import { createLogger } from './logger';
+import { createLogger } from '../logger';
 
 // Create specialized loggers for different modules
 export const authLogger = createLogger('AUTH');
