@@ -76,7 +76,7 @@ export default function PaymentHistory({ pagos }: PaymentHistoryProps) {
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-gray-600 text-sm font-semibold mb-2">NÚMERO DE PAGOS</div>
-          <p className="text-3xl font-bold text-blue-600">{pagos.length}</p>
+          <p className="text-3xl font-bold text-green-600">{pagos.length}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
