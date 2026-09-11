@@ -40,9 +40,11 @@ export default function VerificarOtpPage() {
       if (result.error) {
         setErrors({ token: result.error.message || 'Código inválido' });
       } else {
-        // Verify successful - create profile in database
+        // Verify successful - check if this is inscribir flow or signin flow
         const inscribirData = sessionStorage.getItem('inscribirData');
+        
         if (inscribirData) {
+          // FLOW 1: Full registration from /inscribir
           const data = JSON.parse(inscribirData);
           
           // Call API to create profile and participante
@@ -72,6 +74,32 @@ export default function VerificarOtpPage() {
             console.log('[VERIFY-OTP] Token saved to localStorage');
           } else {
             console.warn('[VERIFY-OTP] No token in response!');
+          }
+        } else {
+          // FLOW 2: Simple signin without inscribir data
+          console.log('[VERIFY-OTP] Simple signin flow - creating basic user');
+          
+          const signinResponse = await fetch('/api/auth/signin-register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+
+          if (!signinResponse.ok) {
+            const errorData = await signinResponse.json();
+            console.error('[VERIFY-OTP] Signin register failed:', errorData);
+            setErrors({ token: `Error: ${errorData.error || 'Unknown error'}` });
+            setLoading(false);
+            return;
+          }
+
+          const signinData = await signinResponse.json();
+          console.log('[VERIFY-OTP] Signin register success:', signinData);
+
+          if (signinData.token) {
+            localStorage.setItem('auth_token', signinData.token);
+            localStorage.setItem('auth_email', signinData.email);
+            console.log('[VERIFY-OTP] Signin token saved to localStorage');
           }
         }
 
