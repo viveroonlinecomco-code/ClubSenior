@@ -16,13 +16,13 @@ async function validateEnvironment(): Promise<{ valid: boolean; error?: string }
 
 export async function POST(request: NextRequest) {
   try {
-    // Lazy import to avoid static generation issues
+    // Import required functions
     const { validateWompiSignature, parseWompiEvent } = await import('@/lib/wompi');
-    const { processPaymentWebhook } = await import('@/services/payments');
+    const { processPaymentWebhook } = await import('@/services/payments-simple');
 
     const envCheck = await validateEnvironment();
     if (!envCheck.valid) {
-      console.error('Environment check failed:', envCheck.error);
+      console.error('[WEBHOOK] Environment check failed:', envCheck.error);
       return NextResponse.json(
         { error: 'Webhook not configured' },
         { status: 500 }
@@ -33,13 +33,14 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('x-wompi-signature');
     
     if (!signature) {
-      console.warn('Missing X-Wompi-Signature header');
+      console.warn('[WEBHOOK] Missing X-Wompi-Signature header');
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 401 }
       );
     }
 
+    // Validate signature
     const isValidSignature = validateWompiSignature(
       rawBody,
       signature,
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (!isValidSignature) {
-      console.warn('Invalid Wompi signature');
+      console.warn('[WEBHOOK] Invalid Wompi signature');
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 401 }
@@ -56,29 +57,33 @@ export async function POST(request: NextRequest) {
 
     const event = parseWompiEvent(rawBody);
     if (!event) {
-      console.error('Failed to parse Wompi event');
+      console.error('[WEBHOOK] Failed to parse event');
       return NextResponse.json(
         { error: 'Invalid event format' },
         { status: 400 }
       );
     }
 
+    // Only process payment events
     if (!event.event.includes('PAYMENT')) {
-      console.log(`Ignoring non-payment event: ${event.event}`);
+      console.log(`[WEBHOOK] Ignoring event: ${event.event}`);
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
+    console.log('[WEBHOOK] Processing payment event:', event.id);
+
+    // Process the payment webhook
     const result = await processPaymentWebhook(event.id, event.data);
 
     if (!result.success) {
-      console.error('Failed to process payment:', result.error);
+      console.error('[WEBHOOK] Failed to process:', result.error);
       return NextResponse.json(
         { error: result.error || 'Processing failed' },
         { status: 500 }
       );
     }
 
-    console.log(`Payment webhook processed successfully: ${event.id}`);
+    console.log('[WEBHOOK] ✅ Payment processed:', event.id);
     return NextResponse.json(
       {
         received: true,
