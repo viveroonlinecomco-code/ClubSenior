@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FacilitadorAuthGuard } from '@/components/facilitador-auth-guard';
 import { CreateActivityForm } from './components/create-activity-form';
 import { ActivitiesAndAttendance } from './components/activities-attendance';
 
-export default function FacilitadorPage() {
+function FacilitadorContent() {
   const [activeTab, setActiveTab] = useState<'crear' | 'asistencia' | 'reportes'>(
     'asistencia'
   );
@@ -109,5 +110,13 @@ export default function FacilitadorPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function FacilitadorPage() {
+  return (
+    <FacilitadorAuthGuard>
+      <FacilitadorContent />
+    </FacilitadorAuthGuard>
   );
 }
