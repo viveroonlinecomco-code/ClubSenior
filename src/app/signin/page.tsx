@@ -2,21 +2,21 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
 
 export default function SignInPage() {
   const router = useRouter();
-  const { signInWithEmail } = useAuth();
   
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [debugInfo, setDebugInfo] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     setSuccessMessage('');
+    setDebugInfo('');
     setLoading(true);
 
     // Validar email
@@ -28,22 +28,37 @@ export default function SignInPage() {
     }
 
     try {
-      // Enviar OTP con Supabase
-      const result = await signInWithEmail(email);
+      setDebugInfo('📤 Enviando OTP...');
+      
+      // Enviar OTP directamente al endpoint
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      if (result.error) {
-        setErrors({ email: result.error.message || 'Error al enviar código' });
-      } else {
-        // Guardar email en sessionStorage para verificación
-        sessionStorage.setItem('pendingEmail', email);
-        setSuccessMessage('✅ Código enviado a tu email!');
-        
-        // Redirigir a verificación después de 2 segundos
-        setTimeout(() => {
-          router.push('/verificar-otp');
-        }, 2000);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setDebugInfo(`❌ Error: ${data.error || response.statusText}`);
+        setErrors({ email: data.error || 'Error al enviar código' });
+        setLoading(false);
+        return;
       }
+
+      // Guardar email en sessionStorage para verificación
+      sessionStorage.setItem('pendingEmail', email);
+      setSuccessMessage('✅ Código enviado a tu email!');
+      setDebugInfo('✅ Redirigiendo en 2 segundos...');
+      
+      // Redirigir a verificación después de 2 segundos
+      setTimeout(() => {
+        router.push('/verificar-otp');
+      }, 2000);
     } catch (error: any) {
+      setDebugInfo(`❌ Exception: ${error.message}`);
       setErrors({ email: error.message || 'Error al enviar código' });
     } finally {
       setLoading(false);
@@ -61,6 +76,12 @@ export default function SignInPage() {
         {successMessage && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800">
             {successMessage}
+          </div>
+        )}
+
+        {debugInfo && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 text-sm font-mono">
+            {debugInfo}
           </div>
         )}
 
