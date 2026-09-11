@@ -35,11 +35,11 @@ export default function AttendanceTable({ limit = 100 }: AttendanceTableProps) {
         </div>
         <div className="text-center">
           <p className="text-gray-600 text-sm">ASISTENCIAS</p>
-          <p className="text-3xl font-bold text-green-600">{totalAsistencias}</p>
+          <p className="text-3xl font-bold text-blue-600">{totalAsistencias}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-600 text-sm">TASA DE ASISTENCIA</p>
-          <p className="text-3xl font-bold text-green-600">{tasa}%</p>
+          <p className="text-3xl font-bold text-blue-600">{tasa}%</p>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ export default function AttendanceTable({ limit = 100 }: AttendanceTableProps) {
               <td className="px-6 py-4 text-sm text-gray-600">{row.duracion}</td>
               <td className="px-6 py-4 text-center">
                 {row.asistencia ? (
-                  <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">
+                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">
                     ✓ Presente
                   </span>
                 ) : (

@@ -99,8 +99,8 @@ export default function ReportsSection({ reportes }: ReportsSectionProps) {
                   </div>
                 )}
 
-                <div className="bg-green-50 border border-green-200 rounded p-3 mt-4">
-                  <p className="text-green-800 text-sm">
+                <div className="bg-blue-50 border border-blue-200 rounded p-3 mt-4">
+                  <p className="text-blue-800 text-sm">
                     Para más detalles, contacta con el facilitador de ClubSenior
                   </p>
                 </div>

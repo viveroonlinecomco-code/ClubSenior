@@ -51,7 +51,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
         <p className="text-gray-600 mb-4">No hay suscripción activa</p>
         <a
           href="/planes"
-          className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg"
+          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg"
         >
           Crear Suscripción
         </a>
@@ -63,7 +63,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
   const participante = suscripcion.participantes;
   const estadoBadgeColor =
     suscripcion.estado === 'ACTIVE'
-      ? 'bg-green-100 text-green-800'
+      ? 'bg-blue-100 text-blue-800'
       : suscripcion.estado === 'PAYMENT_PENDING'
         ? 'bg-yellow-100 text-yellow-800'
         : 'bg-gray-100 text-gray-800';
@@ -71,13 +71,13 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
   return (
     <>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-green-100 text-sm font-semibold mb-1">SUSCRIPCIÓN</p>
+              <p className="text-blue-100 text-sm font-semibold mb-1">SUSCRIPCIÓN</p>
               <h2 className="text-3xl font-bold">{plan?.nombre || 'Plan'}</h2>
               {participante && (
-                <p className="text-green-100 text-sm mt-2">{participante.nombre}, {participante.edad} años</p>
+                <p className="text-blue-100 text-sm mt-2">{participante.nombre}, {participante.edad} años</p>
               )}
             </div>
             <div className={`px-3 py-1 rounded-full text-sm font-semibold ${estadoBadgeColor}`}>
@@ -116,8 +116,8 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
             <p className="text-gray-700">{plan?.descripcion || 'Sin descripción'}</p>
           </div>
 
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-green-800 text-sm">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-blue-800 text-sm">
               ✓ Renovación automática cada {plan?.duracion_dias || 30} días
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
           <div className="flex gap-4 pt-4">
             <a
               href="/planes"
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition text-center block"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition text-center block"
             >
               Cambiar Plan
             </a>
@@ -148,7 +148,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
             <select
               value={cancelReason}
               onChange={e => setCancelReason(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 mb-6"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 mb-6"
             >
               <option value="">Selecciona una razón</option>
               <option value="precio">Es muy caro</option>

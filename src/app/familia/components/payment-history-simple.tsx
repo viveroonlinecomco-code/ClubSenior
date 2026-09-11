@@ -51,7 +51,7 @@ export function PaymentHistory({ pagos = [] }: PaymentHistoryProps) {
   const getStatusColor = (estado: string) => {
     switch (estado) {
       case 'APPROVED':
-        return 'bg-green-50 border-green-200 text-green-700';
+        return 'bg-blue-50 border-blue-200 text-blue-700';
       case 'FAILED':
         return 'bg-red-50 border-red-200 text-red-700';
       case 'PENDING':
