@@ -6,10 +6,11 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const actividad_id = params.id;
+    const { id } = await params;
+    const actividad_id = id;
 
     if (!actividad_id) {
       return NextResponse.json(
@@ -29,14 +30,16 @@ export async function GET(
     }
 
     // 1. Obtener datos de la actividad
+    const getHeaders1 = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const actividadResponse = await fetch(
       `${supabaseUrl}/rest/v1/actividades?id=eq.${encodeURIComponent(actividad_id)}&select=*`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: getHeaders1,
       }
     );
 
@@ -58,14 +61,16 @@ export async function GET(
     const actividad = actividades[0];
 
     // 2. Obtener participantes de ese condominio
+    const getHeaders2 = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const participantesResponse = await fetch(
       `${supabaseUrl}/rest/v1/participantes?condominio_id=eq.${encodeURIComponent(actividad.condominio_id)}&select=id,nombre,edad,genero`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: getHeaders2,
       }
     );
 
@@ -80,14 +85,16 @@ export async function GET(
     const participantes = await participantesResponse.json();
 
     // 3. Obtener asistencias registradas para esta actividad
+    const getHeaders3 = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const asistenciasResponse = await fetch(
       `${supabaseUrl}/rest/v1/asistencias?actividad_id=eq.${encodeURIComponent(actividad_id)}&select=participante_id,presente,hora_llegada`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: getHeaders3,
       }
     );
 

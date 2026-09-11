@@ -70,12 +70,14 @@ export async function GET(request: NextRequest) {
 
     console.log('[AUDIT-GET] Query:', query);
 
+    const getHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const response = await fetch(query, {
       method: 'GET',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-      },
+      headers: getHeaders,
     });
 
     if (!response.ok) {
@@ -90,15 +92,17 @@ export async function GET(request: NextRequest) {
     const logs = await response.json();
 
     // Obtener count total
+    const countHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Prefer': 'count=exact',
+    });
+
     const countResponse = await fetch(
       `${supabaseUrl}/rest/v1/audit_log?select=count`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Prefer': 'count=exact',
-        },
+        headers: countHeaders,
       }
     );
 

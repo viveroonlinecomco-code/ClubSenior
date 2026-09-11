@@ -49,13 +49,15 @@ export async function POST(request: NextRequest) {
       estado: 'PROGRAMADA',
     };
 
+    const actividadHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+    });
+
     const response = await fetch(`${supabaseUrl}/rest/v1/actividades`, {
       method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: actividadHeaders,
       body: JSON.stringify(actividadData),
     });
 

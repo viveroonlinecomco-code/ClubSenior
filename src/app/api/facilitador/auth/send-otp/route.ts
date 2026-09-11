@@ -39,14 +39,16 @@ export async function POST(request: NextRequest) {
     console.log('[FAC-OTP] Processing login for:', email);
 
     // 1. Verificar que el facilitador existe
+    const checkHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const checkResponse = await fetch(
       `${supabaseUrl}/rest/v1/facilitadores?email=eq.${encodeURIComponent(email)}&select=id,nombre,condominio_id,estado`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: checkHeaders,
       }
     );
 
@@ -85,13 +87,15 @@ export async function POST(request: NextRequest) {
       tipo: 'FACILITADOR',
     };
 
+    const otpHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+    });
+
     const createOtpResponse = await fetch(`${supabaseUrl}/rest/v1/otp_codes`, {
       method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: otpHeaders,
       body: JSON.stringify(otpData),
     });
 

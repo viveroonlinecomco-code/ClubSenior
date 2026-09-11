@@ -58,13 +58,15 @@ export async function POST(request: NextRequest) {
       user_agent: request.headers.get('user-agent') || null,
     };
 
+    const auditHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+    });
+
     const response = await fetch(`${supabaseUrl}/rest/v1/audit_log`, {
       method: 'POST',
-      headers: {
-        'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: auditHeaders,
       body: JSON.stringify(auditData),
     });
 

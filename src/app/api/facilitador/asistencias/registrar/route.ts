@@ -37,14 +37,16 @@ export async function POST(request: NextRequest) {
     });
 
     // 1. Verificar si ya existe registro de asistencia
+    const checkHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const checkResponse = await fetch(
       `${supabaseUrl}/rest/v1/asistencias?actividad_id=eq.${encodeURIComponent(actividad_id)}&participante_id=eq.${encodeURIComponent(participante_id)}&select=id`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: checkHeaders,
       }
     );
 
@@ -55,15 +57,17 @@ export async function POST(request: NextRequest) {
 
     if (Array.isArray(existingRegistros) && existingRegistros.length > 0) {
       // UPDATE existing record
+      const updateHeaders = new Headers({
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      });
+
       response = await fetch(
         `${supabaseUrl}/rest/v1/asistencias?id=eq.${encodeURIComponent(existingRegistros[0].id)}`,
         {
           method: 'PATCH',
-          headers: {
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-          },
+          headers: updateHeaders,
           body: JSON.stringify({
             presente,
             observaciones: observaciones || null,
@@ -75,6 +79,12 @@ export async function POST(request: NextRequest) {
       console.log('[ASISTENCIA] Updated existing record');
     } else {
       // CREATE new record
+      const createHeaders = new Headers({
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      });
+
       const asistenciaData = {
         actividad_id,
         participante_id,
@@ -85,11 +95,7 @@ export async function POST(request: NextRequest) {
 
       response = await fetch(`${supabaseUrl}/rest/v1/asistencias`, {
         method: 'POST',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: createHeaders,
         body: JSON.stringify(asistenciaData),
       });
 

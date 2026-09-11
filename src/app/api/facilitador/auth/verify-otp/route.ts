@@ -28,14 +28,16 @@ export async function POST(request: NextRequest) {
     console.log('[FAC-VERIFY] Verifying OTP for:', email);
 
     // 1. Obtener OTP record más reciente
+    const getHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const otpResponse = await fetch(
       `${supabaseUrl}/rest/v1/otp_codes?email=eq.${encodeURIComponent(email)}&tipo=eq.FACILITADOR&order=created_at.desc&limit=1`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: getHeaders,
       }
     );
 
@@ -82,15 +84,17 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. Marcar como verificado
+    const updateHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+    });
+
     const updateResponse = await fetch(
       `${supabaseUrl}/rest/v1/otp_codes?id=eq.${encodeURIComponent(otpRecord.id)}`,
       {
         method: 'PATCH',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: updateHeaders,
         body: JSON.stringify({
           verified: true,
           verified_at: now.toISOString(),

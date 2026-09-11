@@ -28,14 +28,16 @@ export async function POST(request: NextRequest) {
     console.log('[FAC-REGISTER] Processing login for:', email);
 
     // 1. Verificar que OTP fue verificado en los últimos 30 minutos
+    const otpHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const otpResponse = await fetch(
       `${supabaseUrl}/rest/v1/otp_codes?email=eq.${encodeURIComponent(email)}&verified=eq.true&tipo=eq.FACILITADOR&order=verified_at.desc&limit=1`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: otpHeaders,
       }
     );
 
@@ -63,14 +65,16 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Obtener facilitador
+    const facHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const facResponse = await fetch(
       `${supabaseUrl}/rest/v1/facilitadores?email=eq.${encodeURIComponent(email)}&select=id,nombre,condominio_id,rol,estado`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: facHeaders,
       }
     );
 
@@ -100,13 +104,15 @@ export async function POST(request: NextRequest) {
 
     // 4. Registrar en audit log
     try {
+      const auditHeaders = new Headers({
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      });
+
       await fetch(`${supabaseUrl}/rest/v1/audit_log`, {
         method: 'POST',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: auditHeaders,
         body: JSON.stringify({
           usuario_id: facilitador.id,
           usuario_email: email,
@@ -145,15 +151,17 @@ export async function POST(request: NextRequest) {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+      const auditHeaders = new Headers({
+        'apikey': supabaseKey || '',
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+      });
+
       await fetch(`${supabaseUrl}/rest/v1/audit_log`, {
         method: 'POST',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: auditHeaders,
         body: JSON.stringify({
-          usuario_email: request.body?.email || 'unknown',
+          usuario_email: 'unknown',
           usuario_tipo: 'FACILITADOR',
           accion: 'LOGIN',
           resultado: 'ERROR',

@@ -32,14 +32,16 @@ export async function GET(request: NextRequest) {
       .toISOString()
       .split('T')[0];
 
+    const getHeaders = new Headers({
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+    });
+
     const response = await fetch(
       `${supabaseUrl}/rest/v1/actividades?condominio_id=eq.${encodeURIComponent(condominio_id)}&fecha=gte.${today}&fecha=lte.${futureDate}&estado=in.(PROGRAMADA,EN_PROGRESO)&order=fecha.asc,hora_inicio.asc`,
       {
         method: 'GET',
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
+        headers: getHeaders,
       }
     );
 
