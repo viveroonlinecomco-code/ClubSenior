@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getRateLimitStatus } from '@/lib/middleware/rate-limit';
+import { SendOTPSchema } from '@/lib/validation/schemas';
+import { validateJSON } from '@/lib/validation/handler';
 
 /**
  * POST /api/facilitador/auth/send-otp
@@ -8,17 +10,15 @@ import { checkRateLimit, getRateLimitStatus } from '@/lib/middleware/rate-limit'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
+    // ✅ VALIDATE INPUT WITH ZOD
+    const validation = await validateJSON(request, SendOTPSchema);
+    if (!validation.success) {
+      return validation.response;
     }
+    const { email } = validation.data;
     
     // 🔐 RATE LIMIT CHECK (3 intentos / 15 minutos)
-    const rateLimitKey = `otp:send:${email.toLowerCase()}`;
+    const rateLimitKey = `otp:send:${email}`;
     if (!checkRateLimit(rateLimitKey, 3, 900)) {
       const status = getRateLimitStatus(rateLimitKey, 3, 900);
       const retrySeconds = Math.ceil((status.resetTime.getTime() - Date.now()) / 1000);
@@ -37,15 +37,6 @@ export async function POST(request: NextRequest) {
             'X-RateLimit-Reset': status.resetTime.toISOString(),
           },
         }
-      );
-    }
-
-    // Validar formato email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
       );
     }
 

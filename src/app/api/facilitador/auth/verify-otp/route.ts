@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getRateLimitStatus } from '@/lib/middleware/rate-limit';
+import { VerifyOTPSchema } from '@/lib/validation/schemas';
+import { validateJSON } from '@/lib/validation/handler';
 
 /**
  * POST /api/facilitador/auth/verify-otp
@@ -8,17 +10,15 @@ import { checkRateLimit, getRateLimitStatus } from '@/lib/middleware/rate-limit'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { email, code } = await request.json();
-
-    if (!email || !code) {
-      return NextResponse.json(
-        { error: 'Email and code are required' },
-        { status: 400 }
-      );
+    // ✅ VALIDATE INPUT WITH ZOD
+    const validation = await validateJSON(request, VerifyOTPSchema);
+    if (!validation.success) {
+      return validation.response;
     }
+    const { email, code } = validation.data;
     
     // 🔐 RATE LIMIT CHECK (5 intentos / 5 minutos - más estricto)
-    const rateLimitKey = `otp:verify:${email.toLowerCase()}`;
+    const rateLimitKey = `otp:verify:${email}`;
     if (!checkRateLimit(rateLimitKey, 5, 300)) {
       const status = getRateLimitStatus(rateLimitKey, 5, 300);
       const retrySeconds = Math.ceil((status.resetTime.getTime() - Date.now()) / 1000);
