@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * GET /api/facilitador/actividades/:id/participantes
  * Obtiene lista de participantes inscritos en una actividad
+ * OPTIMIZED: Usa RPC en lugar de N+1 queries (3 queries → 1 query)
  */
 export async function GET(
   request: NextRequest,
@@ -29,96 +30,79 @@ export async function GET(
       );
     }
 
-    // 1. Obtener datos de la actividad
-    const getHeaders1 = new Headers({
+    console.log('[PERF] Fetching activity details with RPC for:', actividad_id);
+
+    // ✅ OPTIMIZED: Single RPC call instead of 3 separate queries
+    const headers = new Headers({
       'apikey': supabaseKey,
       'Authorization': `Bearer ${supabaseKey}`,
     });
 
-    const actividadResponse = await fetch(
-      `${supabaseUrl}/rest/v1/actividades?id=eq.${encodeURIComponent(actividad_id)}&select=*`,
+    const response = await fetch(
+      `${supabaseUrl}/rest/v1/rpc/get_activity_details`,
       {
-        method: 'GET',
-        headers: getHeaders1,
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ activity_id: actividad_id }),
       }
     );
 
-    if (!actividadResponse.ok) {
+    if (!response.ok) {
+      console.error('[PERF] RPC failed:', response.status);
+      return NextResponse.json(
+        { error: 'Failed to fetch activity' },
+        { status: response.status }
+      );
+    }
+
+    const rows = await response.json();
+
+    if (!Array.isArray(rows) || rows.length === 0) {
       return NextResponse.json(
         { error: 'Activity not found' },
         { status: 404 }
       );
     }
 
-    const actividades = await actividadResponse.json();
-    if (!Array.isArray(actividades) || actividades.length === 0) {
-      return NextResponse.json(
-        { error: 'Activity not found' },
-        { status: 404 }
-      );
-    }
+    // Group data by activity and participantes
+    const firstRow = rows[0];
+    const actividad = {
+      id: firstRow.actividad_id,
+      nombre: firstRow.nombre,
+      descripcion: firstRow.descripcion,
+      fecha: firstRow.fecha,
+      hora_inicio: firstRow.hora_inicio,
+      duracion_minutos: firstRow.duracion_minutos,
+      condominio_id: firstRow.condominio_id,
+      ubicacion: firstRow.ubicacion,
+      capacidad_max: firstRow.capacidad_max,
+      estado: firstRow.estado,
+    };
 
-    const actividad = actividades[0];
-
-    // 2. Obtener participantes de ese condominio
-    const getHeaders2 = new Headers({
-      'apikey': supabaseKey,
-      'Authorization': `Bearer ${supabaseKey}`,
-    });
-
-    const participantesResponse = await fetch(
-      `${supabaseUrl}/rest/v1/participantes?condominio_id=eq.${encodeURIComponent(actividad.condominio_id)}&select=id,nombre,edad,genero`,
-      {
-        method: 'GET',
-        headers: getHeaders2,
+    // Build participantes map to avoid duplicates
+    const participantesMap = new Map();
+    for (const row of rows) {
+      if (row.participante_id && !participantesMap.has(row.participante_id)) {
+        participantesMap.set(row.participante_id, {
+          id: row.participante_id,
+          nombre: row.participante_nombre,
+          edad: row.participante_edad,
+          genero: row.participante_genero,
+          asistencia: {
+            presente: row.asistencia_presente,
+            hora_llegada: row.asistencia_hora_llegada,
+            observaciones: row.asistencia_observaciones,
+          },
+        });
       }
-    );
-
-    if (!participantesResponse.ok) {
-      return NextResponse.json({
-        success: true,
-        actividad,
-        participantes: [],
-      });
     }
 
-    const participantes = await participantesResponse.json();
-
-    // 3. Obtener asistencias registradas para esta actividad
-    const getHeaders3 = new Headers({
-      'apikey': supabaseKey,
-      'Authorization': `Bearer ${supabaseKey}`,
-    });
-
-    const asistenciasResponse = await fetch(
-      `${supabaseUrl}/rest/v1/asistencias?actividad_id=eq.${encodeURIComponent(actividad_id)}&select=participante_id,presente,hora_llegada`,
-      {
-        method: 'GET',
-        headers: getHeaders3,
-      }
-    );
-
-    const asistencias = await asistenciasResponse.json();
-    const asistenciasMap = new Map();
-
-    if (Array.isArray(asistencias)) {
-      asistencias.forEach((a: any) => {
-        asistenciasMap.set(a.participante_id, a);
-      });
-    }
-
-    // 4. Enriquecer participantes con info de asistencia
-    const participantesConAsistencia = (participantes || []).map(
-      (p: any) => ({
-        ...p,
-        asistencia: asistenciasMap.get(p.id) || null,
-      })
-    );
+    const participantes = Array.from(participantesMap.values());
 
     return NextResponse.json({
       success: true,
       actividad,
-      participantes: participantesConAsistencia,
+      participantes,
     });
 
   } catch (error: any) {
