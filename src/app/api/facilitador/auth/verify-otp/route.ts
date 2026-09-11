@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, getRateLimitStatus } from '@/lib/middleware/rate-limit';
 
 /**
  * POST /api/facilitador/auth/verify-otp
  * Verifica código OTP de facilitador
+ * Rate limit: 5 intentos por 5 minutos (más agresivo que send-otp)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +14,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Email and code are required' },
         { status: 400 }
+      );
+    }
+    
+    // 🔐 RATE LIMIT CHECK (5 intentos / 5 minutos - más estricto)
+    const rateLimitKey = `otp:verify:${email.toLowerCase()}`;
+    if (!checkRateLimit(rateLimitKey, 5, 300)) {
+      const status = getRateLimitStatus(rateLimitKey, 5, 300);
+      const retrySeconds = Math.ceil((status.resetTime.getTime() - Date.now()) / 1000);
+      
+      console.warn(`[FAC-VERIFY] Rate limit exceeded for ${email}`);
+      return NextResponse.json(
+        {
+          error: 'Demasiados intentos de verificación. Intenta en unos minutos.',
+          retryAfter: retrySeconds,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': retrySeconds.toString(),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': status.resetTime.toISOString(),
+          },
+        }
       );
     }
 
