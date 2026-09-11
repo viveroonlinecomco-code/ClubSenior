@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -23,15 +24,26 @@ export function FacilitadorAuthGuard({ children, requiredRole }: AuthGuardProps)
         return;
       }
 
-      // Verificar token format
+      // Verificar token JWT (decodificar sin verificar - backend verifica la firma)
       try {
-        const decoded = Buffer.from(token, 'base64').toString('utf-8');
-        const parts = decoded.split('|');
-        if (parts.length !== 4 || parts[1] !== 'FACILITADOR') {
-          throw new Error('Invalid token');
+        const decoded = jwtDecode<any>(token);
+        
+        // Verificar que tiene los campos esperados
+        if (!decoded.email || !decoded.facilitadorId || !decoded.role || !decoded.condominioId) {
+          throw new Error('Invalid token structure');
         }
-      } catch {
+        
+        // Verificar que no ha expirado
+        if (decoded.exp && Date.now() > decoded.exp * 1000) {
+          throw new Error('Token expired');
+        }
+        
+        // Guardar role en localStorage para uso posterior
+        localStorage.setItem('facilitador_role', decoded.role);
+      } catch (error) {
+        console.error('Token verification failed:', error);
         localStorage.removeItem('facilitador_token');
+        localStorage.removeItem('facilitador_role');
         router.push('/facilitador-login');
         return;
       }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generateFacilitadorToken } from '@/lib/auth/jwt';
 
 /**
  * POST /api/facilitador/auth/register
@@ -98,9 +99,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Generar token (base64 encoding de email + role)
-    const tokenData = `${email}|FACILITADOR|${facilitador.rol}|${facilitador.condominio_id}`;
-    const token = Buffer.from(tokenData).toString('base64');
+    // 3. Generar token JWT firmado (imposible de falsificar)
+    const token = generateFacilitadorToken(
+      email,
+      facilitador.id,
+      facilitador.rol,
+      facilitador.condominio_id
+    );
 
     // 4. Registrar en audit log
     try {
