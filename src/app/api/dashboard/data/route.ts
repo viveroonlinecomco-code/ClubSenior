@@ -138,6 +138,26 @@ export async function GET(request: NextRequest) {
           console.error('[DASHBOARD] Error fetching suscripcion:', err);
         }
 
+        // 3. Fetch asistencias for this user (NUEVO)
+        let asistencias = null;
+        try {
+          const asistResponse = await fetch(
+            new URL('/api/asistencias/historia', request.url),
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (asistResponse.ok) {
+            asistencias = await asistResponse.json();
+          }
+        } catch (err) {
+          console.error('[DASHBOARD] Error fetching asistencias:', err);
+        }
+
         // Return complete dashboard data
         return {
           success: true,
@@ -145,7 +165,7 @@ export async function GET(request: NextRequest) {
           user: { email },
           suscripcion,
           reportes,
-          asistencias: null,
+          asistencias,
           pagos: [],
           message: 'Welcome to your dashboard!',
         };

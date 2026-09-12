@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useProximasActividades } from '@/hooks/useProximasActividades';
 import { PersonalReportCard } from '@/components/personal-report-card';
 import SubscriptionCard from './components/subscription-card';
 import ReportsSection from './components/reports-section';
@@ -11,6 +12,16 @@ import PaymentHistory from './components/payment-history';
 export default function FamiliaPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'reports' | 'payments'>('overview');
   const { data, loading, error } = useDashboardData();
+  const { actividades, loading: actividadesLoading, error: actividadesError } = useProximasActividades();
+
+  const handleInscribirse = async (actividadId: number) => {
+    try {
+      console.log('Inscribirse en actividad:', actividadId);
+      // TODO: Implementar POST /api/actividades/inscribirse
+    } catch (err) {
+      console.error('Error inscribirse:', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -143,54 +154,82 @@ export default function FamiliaPage() {
             {!noSuscripcion && (
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-900">📅 Próximas Actividades (Esta Semana)</h2>
+                  <h2 className="text-xl font-bold text-gray-900">📅 Próximas Actividades</h2>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-4">
-                    {/* Activity Card 1 */}
-                    <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border border-red-200">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">💪 Movimiento Vital</h3>
-                          <p className="text-sm text-gray-600">Lunes • 2:30 PM - 3:00 PM</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Actividad física: Calentamiento, movilidad articular, flexibilidad, y vuelta a la calma.
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs text-gray-600">
-                          <p className="font-semibold">Objetivo:</p>
-                          <p>Movilidad, coordinación, equilibrio</p>
-                        </div>
-                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium text-sm">
-                          Inscribirse
-                        </button>
-                      </div>
+                  {actividadesLoading ? (
+                    <p className="text-gray-600">Cargando actividades...</p>
+                  ) : actividadesError ? (
+                    <p className="text-red-600">Error: {actividadesError}</p>
+                  ) : actividades.length === 0 ? (
+                    <p className="text-gray-600">Sin actividades disponibles</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {actividades.map((act) => {
+                        const colorMap: Record<string, { from: string; to: string; border: string; button: string }> = {
+                          fisica: { 
+                            from: 'from-red-50', 
+                            to: 'to-orange-50', 
+                            border: 'border-red-200',
+                            button: 'bg-red-600 hover:bg-red-700'
+                          },
+                          cognitiva: { 
+                            from: 'from-blue-50', 
+                            to: 'to-indigo-50', 
+                            border: 'border-blue-200',
+                            button: 'bg-blue-600 hover:bg-blue-700'
+                          },
+                          social: { 
+                            from: 'from-purple-50', 
+                            to: 'to-pink-50', 
+                            border: 'border-purple-200',
+                            button: 'bg-purple-600 hover:bg-purple-700'
+                          },
+                          tertulia: { 
+                            from: 'from-amber-50', 
+                            to: 'to-yellow-50', 
+                            border: 'border-amber-200',
+                            button: 'bg-amber-600 hover:bg-amber-700'
+                          },
+                        };
+                        
+                        const colors = colorMap[act.tipo] || colorMap.social;
+                        
+                        return (
+                          <div 
+                            key={act.id}
+                            className={`bg-gradient-to-br ${colors.from} ${colors.to} rounded-xl p-6 border ${colors.border}`}
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h3 className="text-lg font-bold text-gray-900">
+                                  {act.emoji} {act.nombre}
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                  {act.dia.charAt(0).toUpperCase() + act.dia.slice(1)} • {act.hora_inicio}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-4">
+                              {act.descripcion}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs text-gray-600">
+                                <p className="font-semibold">Objetivo:</p>
+                                <p>{act.objetivo}</p>
+                              </div>
+                              <button 
+                                onClick={() => handleInscribirse(act.id)}
+                                className={`px-4 py-2 ${colors.button} text-white rounded-lg transition font-medium text-sm`}
+                              >
+                                Inscribirse
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-
-                    {/* Activity Card 2 */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">🧠 Mente Activa</h3>
-                          <p className="text-sm text-gray-600">Miércoles • 3:00 PM - 4:30 PM</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-gray-700 mb-4">
-                        Actividad cognitiva: Juegos de memoria, trivia, refranes, canciones, fotografías y tertulia.
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs text-gray-600">
-                          <p className="font-semibold">Objetivo:</p>
-                          <p>Atención, memoria, lenguaje, evocación</p>
-                        </div>
-                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm">
-                          Inscribirse
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}

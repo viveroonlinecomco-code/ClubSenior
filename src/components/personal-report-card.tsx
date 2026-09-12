@@ -23,26 +23,21 @@ interface PersonalReportProps {
 }
 
 export function PersonalReportCard({ userData, reportData }: PersonalReportProps) {
-  // Default data for demo purposes
-  const defaultReport = {
-    activitiesEnrolled: 12,
-    activitiesAttended: 10,
-    attendanceRate: 83,
-    lastParticipation: 'Hace 3 días',
-    byPilar: [
-      { name: 'Físicas', attended: 8 },
-      { name: 'Cognitivas', attended: 5 },
-      { name: 'Sociales', attended: 7 },
-      { name: 'Tertulias', attended: 3 },
-    ],
-    contribution: {
-      storiesShared: 2,
-      newConnections: 5,
-      legacyProjects: 1,
-    },
-  };
+  // Si no hay datos, mostrar mensaje
+  if (!reportData) {
+    return (
+      <div className="text-center py-8 bg-gray-50 rounded-lg">
+        <p className="text-gray-600 text-sm mb-4">
+          Aún no tienes participaciones registradas.
+        </p>
+        <p className="text-gray-500 text-xs">
+          ¡Inscríbete en una actividad para comenzar!
+        </p>
+      </div>
+    );
+  }
 
-  const data = reportData || defaultReport;
+  const data = reportData;
 
   const pillarColors = ['#EF4444', '#3B82F6', '#A855F7', '#FBBF24'];
 
