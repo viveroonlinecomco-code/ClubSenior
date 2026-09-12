@@ -103,7 +103,8 @@ export default function FamiliaPage() {
 
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="text-gray-600 text-sm font-semibold mb-2">USUARIO</div>
-                  <p className="text-sm font-mono text-gray-600 break-all">{data?.user.email}</p>
+                  {/* Security: Only display email, never expose user.id or UUID */}
+                  <p className="text-sm text-gray-600 break-all">{data?.user.email}</p>
                 </div>
               </div>
             </div>

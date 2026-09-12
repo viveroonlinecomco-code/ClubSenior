@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateCSRFToken } from '@/lib/middleware/csrf';
 
 /**
  * Verify OTP code
@@ -87,6 +88,12 @@ async function verifyOTPInDatabase(email: string, code: string) {
  */
 export async function POST(request: NextRequest) {
   try {
+    // CSRF Protection: Validate request origin
+    const csrfError = await validateCSRFToken(request);
+    if (csrfError) {
+      return csrfError;
+    }
+
     const body = await request.json();
     const { email, code } = body;
 
