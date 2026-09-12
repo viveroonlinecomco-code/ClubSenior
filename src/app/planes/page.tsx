@@ -130,7 +130,7 @@ export default function PlanesPage() {
                 <div className="space-y-3 mb-8">
                   {plan.caracteristicas.map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <span className="text-green-600 font-bold">✓</span>
+                      <span className="text-blue-600 font-bold">✓</span>
                       <span className="text-gray-700">{feature.substring(2)}</span>
                     </div>
                   ))}

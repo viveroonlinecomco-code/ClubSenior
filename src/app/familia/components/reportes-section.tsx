@@ -29,7 +29,7 @@ export default function ReportesSection({ reportes = [] }: ReportesSectionProps)
   const [expandedReporte, setExpandedReporte] = useState<string | null>(null);
 
   const getCalificacionColor = (calificacion: number) => {
-    if (calificacion >= 4) return 'text-green-600';
+    if (calificacion >= 4) return 'text-blue-600';
     if (calificacion >= 3) return 'text-yellow-600';
     return 'text-orange-600';
   };

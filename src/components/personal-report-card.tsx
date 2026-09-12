@@ -57,7 +57,7 @@ export function PersonalReportCard({ userData, reportData }: PersonalReportProps
 
       {/* Attendance Rate */}
       <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-        <p className="text-sm font-semibold text-green-600 mb-4">Tasa de Asistencia</p>
+        <p className="text-sm font-semibold text-blue-600 mb-4">Tasa de Asistencia</p>
         <div className="flex items-end gap-4">
           <div className="flex-1">
             <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
@@ -68,7 +68,7 @@ export function PersonalReportCard({ userData, reportData }: PersonalReportProps
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-green-600">{data.attendanceRate}%</p>
+            <p className="text-2xl font-bold text-blue-600">{data.attendanceRate}%</p>
             <p className="text-xs text-gray-600">Excelente</p>
           </div>
         </div>

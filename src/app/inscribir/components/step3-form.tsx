@@ -123,7 +123,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
             <ul className="space-y-2">
               {PLANES[plan].beneficios.map((beneficio, i) => (
                 <li key={i} className="text-gray-600 text-sm flex items-start gap-2">
-                  <span className="text-green-600 font-bold">✓</span>
+                  <span className="text-blue-600 font-bold">✓</span>
                   {beneficio}
                 </li>
               ))}
@@ -239,7 +239,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-blue-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
           >
             {loading ? 'Procesando pago...' : `Pagar ${formatearMoneda(planInfo.precio)}`}
           </button>

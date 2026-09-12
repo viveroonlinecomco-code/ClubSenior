@@ -211,7 +211,7 @@ export function ActivitiesAndAttendance({ condominio_id }: { condominio_id: stri
                         disabled={attendanceChanging === participante.id}
                         className={`px-4 py-2 rounded-lg font-semibold transition ${
                           presente
-                            ? 'bg-green-600 text-white'
+                            ? 'bg-blue-600 text-white'
                             : 'bg-gray-200 text-gray-700 hover:bg-green-100'
                         } ${attendanceChanging === participante.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >

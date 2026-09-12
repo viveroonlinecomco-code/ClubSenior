@@ -157,10 +157,10 @@ export default function PagarPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-8 px-4">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">💳 Procesar Pago</h1>
-          <p className="text-green-100">Completa el pago de tu suscripción a través de Wompi</p>
+          <p className="text-blue-100">Completa el pago de tu suscripción a través de Wompi</p>
         </div>
       </div>
 
@@ -211,7 +211,7 @@ export default function PagarPage() {
               <div className="border-t-2 border-gray-300 pt-4">
                 <div className="flex justify-between items-center">
                   <p className="text-gray-600 font-semibold">Monto a Pagar</p>
-                  <p className="text-3xl font-bold text-green-600">
+                  <p className="text-3xl font-bold text-blue-600">
                     ${(plan?.precio_cop || 150000).toLocaleString('es-CO')}
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export default function PagarPage() {
                 className={`flex-1 font-semibold py-3 rounded-lg text-white transition ${
                   processingPayment
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
+                    : 'bg-blue-600 hover:bg-green-700'
                 }`}
               >
                 {processingPayment ? 'Procesando...' : '💳 Ir a Pagar con Wompi'}
