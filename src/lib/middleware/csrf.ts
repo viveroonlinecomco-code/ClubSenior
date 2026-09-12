@@ -14,8 +14,9 @@ export async function validateCSRFToken(req: NextRequest) {
   }
 
   try {
-    const origin = headers().get('origin')
-    const referer = headers().get('referer')
+    const headersList = await headers()
+    const origin = headersList.get('origin')
+    const referer = headersList.get('referer')
 
     // List of allowed origins
     const allowedOrigins = [
@@ -62,12 +63,13 @@ export async function validateCSRFToken(req: NextRequest) {
 /**
  * Extract user context for logging
  */
-export function getRequestContext(req: NextRequest) {
+export async function getRequestContext(req: NextRequest) {
+  const headersList = await headers()
   return {
     method: req.method,
     path: new URL(req.url).pathname,
-    origin: headers().get('origin'),
-    userAgent: headers().get('user-agent'),
+    origin: headersList.get('origin'),
+    userAgent: headersList.get('user-agent'),
     timestamp: new Date().toISOString(),
   }
 }
