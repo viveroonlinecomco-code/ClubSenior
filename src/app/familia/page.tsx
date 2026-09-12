@@ -144,8 +144,8 @@ export default function FamiliaPage() {
 
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="text-gray-600 text-sm font-semibold mb-2">USUARIO</div>
-                  {/* Security: Only display email, never expose user.id or UUID */}
-                  <p className="text-sm text-gray-600 break-all">{data?.user.email}</p>
+                  <p className="text-sm text-gray-900 font-semibold">{data?.user.nombre || 'Usuario'} {data?.user.apellido || ''}</p>
+                  <p className="text-xs text-gray-500 mt-1">{data?.user.email}</p>
                 </div>
               </div>
             </div>
@@ -200,30 +200,17 @@ export default function FamiliaPage() {
                             key={act.id}
                             className={`bg-gradient-to-br ${colors.from} ${colors.to} rounded-xl p-6 border ${colors.border}`}
                           >
-                            <div className="flex items-start justify-between mb-3">
-                              <div>
-                                <h3 className="text-lg font-bold text-gray-900">
-                                  {act.emoji} {act.nombre}
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                  {act.dia.charAt(0).toUpperCase() + act.dia.slice(1)} • {act.hora_inicio}
-                                </p>
-                              </div>
+                            <div className="mb-3">
+                              <h3 className="text-lg font-bold text-gray-900">
+                                {act.emoji} {act.nombre}
+                              </h3>
                             </div>
                             <p className="text-sm text-gray-700 mb-4">
                               {act.descripcion}
                             </p>
-                            <div className="flex items-center justify-between">
-                              <div className="text-xs text-gray-600">
-                                <p className="font-semibold">Objetivo:</p>
-                                <p>{act.objetivo}</p>
-                              </div>
-                              <button 
-                                onClick={() => handleInscribirse(act.id)}
-                                className={`px-4 py-2 ${colors.button} text-white rounded-lg transition font-medium text-sm`}
-                              >
-                                Inscribirse
-                              </button>
+                            <div className="text-xs text-gray-600">
+                              <p className="font-semibold">Objetivo:</p>
+                              <p>{act.objetivo}</p>
                             </div>
                           </div>
                         );

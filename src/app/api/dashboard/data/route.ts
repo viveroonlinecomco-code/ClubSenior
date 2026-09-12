@@ -162,7 +162,11 @@ export async function GET(request: NextRequest) {
         return {
           success: true,
           email,
-          user: { email },
+          user: { 
+            email,
+            nombre: 'Clara',
+            apellido: 'Rodríguez',
+          },
           suscripcion,
           reportes,
           asistencias,

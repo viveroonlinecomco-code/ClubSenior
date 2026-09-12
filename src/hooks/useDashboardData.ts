@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 export interface DashboardData {
-  user: { id: string; email: string };
+  user: { id: string; email: string; nombre?: string; apellido?: string };
   suscripcion: any;
   reportes: any[];
   asistencias: { total: number; asistencias: number; tasa: number } | null;
