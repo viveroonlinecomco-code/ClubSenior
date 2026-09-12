@@ -27,7 +27,7 @@ export default function FamiliaPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando datos del dashboard...</p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export default function FamiliaPage() {
           <p className="text-red-600 mb-4">❌ Error cargando datos: {error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
           >
             Reintentar
           </button>
@@ -54,10 +54,10 @@ export default function FamiliaPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-8 px-4">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold mb-2">Mi Familia</h1>
-          <p className="text-green-100">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+          <p className="text-blue-100">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
 
           {/* Purpose Section - Always Visible */}
           <div className="mt-8 bg-white/15 backdrop-blur border border-white/30 rounded-2xl p-6 sm:p-8">
@@ -65,24 +65,24 @@ export default function FamiliaPage() {
             <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4">
               Conectando generaciones a través de actividades significativas.
             </p>
-            <p className="text-base sm:text-lg text-green-50 leading-relaxed">
+            <p className="text-base sm:text-lg text-blue-50 leading-relaxed">
               Creemos que nunca es tarde para aprender, compartir y crear impacto.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
               <div>
-                <p className="text-sm text-green-100 mb-1">✓ Actividades diseñadas</p>
+                <p className="text-sm text-blue-100 mb-1">✓ Actividades diseñadas</p>
                 <p className="font-semibold text-sm">Para tu bienestar</p>
               </div>
               <div>
-                <p className="text-sm text-green-100 mb-1">✓ Comunidad conectada</p>
+                <p className="text-sm text-blue-100 mb-1">✓ Comunidad conectada</p>
                 <p className="font-semibold text-sm">De personas como tú</p>
               </div>
               <div>
-                <p className="text-sm text-green-100 mb-1">✓ Espacio de sabiduría</p>
+                <p className="text-sm text-blue-100 mb-1">✓ Espacio de sabiduría</p>
                 <p className="font-semibold text-sm">Para compartir experiencias</p>
               </div>
               <div>
-                <p className="text-sm text-green-100 mb-1">✓ Legado duradero</p>
+                <p className="text-sm text-blue-100 mb-1">✓ Legado duradero</p>
                 <p className="font-semibold text-sm">Impacto intergeneracional</p>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function FamiliaPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-3 font-semibold border-b-4 transition ${
                 activeTab === tab
-                  ? 'border-green-600 text-green-600'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -129,12 +129,12 @@ export default function FamiliaPage() {
                 {data?.asistencias && (
                   <div className="bg-white rounded-lg shadow p-6">
                     <div className="text-gray-600 text-sm font-semibold mb-2">ASISTENCIA</div>
-                    <p className="text-2xl font-bold text-green-600 mb-1">
+                    <p className="text-2xl font-bold text-blue-600 mb-1">
                       {data.asistencias.asistencias} / {data.asistencias.total}
                     </p>
                     <div className="w-full bg-gray-300 rounded-full h-2">
                       <div
-                        className="bg-green-600 h-2 rounded-full"
+                        className="bg-blue-600 h-2 rounded-full"
                         style={{ width: `${data.asistencias.tasa}%` }}
                       ></div>
                     </div>
@@ -292,17 +292,17 @@ export default function FamiliaPage() {
               <h3 className="font-bold text-gray-900 mb-3">Legal</h3>
               <ul className="text-gray-600 text-sm space-y-2">
                 <li>
-                  <a href="#" className="hover:text-green-600">
+                  <a href="#" className="hover:text-blue-600">
                     Términos de Servicio
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-green-600">
+                  <a href="#" className="hover:text-blue-600">
                     Política de Privacidad
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-green-600">
+                  <a href="#" className="hover:text-blue-600">
                     Contacta con nosotros
                   </a>
                 </li>
