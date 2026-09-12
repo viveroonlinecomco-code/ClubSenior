@@ -92,10 +92,10 @@ export default function FamiliaPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {noSuscripcion && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
-            <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Suscripción pendiente</h3>
-            <p className="text-yellow-700 text-sm">
-              Por favor completa el registro para ver tus datos y actividades.
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h3 className="font-semibold text-blue-800 mb-2">ℹ️ Explora nuestras actividades</h3>
+            <p className="text-blue-700 text-sm">
+              Descubre todas nuestras actividades. Completa el registro para inscribirte e acceder a tu reporte personalizado.
             </p>
           </div>
         )}
@@ -151,7 +151,7 @@ export default function FamiliaPage() {
             </div>
 
             {/* Próximas Actividades Section */}
-            {!noSuscripcion && (
+            {(
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">📅 Próximas Actividades</h2>
