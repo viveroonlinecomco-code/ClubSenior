@@ -72,7 +72,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/signin"
-              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm"
+              className="px-6 py-2 bg-blue-300 hover:bg-blue-400 transition text-gray-800 rounded-lg font-medium text-sm"
             >
               Ingresar
             </Link>
@@ -81,7 +81,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section with Purpose */}
-      <section id="proposito" className="relative bg-gradient-to-br from-green-600 via-blue-700 to-teal-700 text-white py-20 sm:py-28">
+      <section id="proposito" className="relative bg-gradient-to-br from-blue-200 via-cyan-200 to-sky-300 text-gray-800 py-20 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
@@ -95,27 +95,27 @@ export default function HomePage() {
               <p className="text-2xl sm:text-3xl font-bold leading-relaxed">
                 Conectar generaciones a través de actividades significativas.
               </p>
-              <p className="text-lg mt-6 text-blue-50 leading-relaxed">
+              <p className="text-lg mt-6 text-gray-700 leading-relaxed">
                 Creemos que nunca es tarde para aprender, compartir y crear impacto en la comunidad.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 max-w-2xl mx-auto">
-              <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-200 mb-1">✓ Actividades diseñadas</p>
-                <p className="font-semibold">Para tu bienestar</p>
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-800 mb-1">✓ Actividades diseñadas</p>
+                <p className="font-semibold text-gray-800">Para tu bienestar</p>
               </div>
-              <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-200 mb-1">✓ Comunidad conectada</p>
-                <p className="font-semibold">De personas como tú</p>
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-800 mb-1">✓ Comunidad conectada</p>
+                <p className="font-semibold text-gray-800">De personas como tú</p>
               </div>
-              <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-200 mb-1">✓ Espacio de sabiduría</p>
-                <p className="font-semibold">Para compartir experiencias</p>
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-800 mb-1">✓ Espacio de sabiduría</p>
+                <p className="font-semibold text-gray-800">Para compartir experiencias</p>
               </div>
-              <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-200 mb-1">✓ Legado duradero</p>
-                <p className="font-semibold">Impacto intergeneracional</p>
+              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-800 mb-1">✓ Legado duradero</p>
+                <p className="font-semibold text-gray-800">Impacto intergeneracional</p>
               </div>
             </div>
 
@@ -229,7 +229,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/signin"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-300 hover:bg-blue-400 transition text-gray-800 rounded-lg font-semibold text-lg"
           >
             Crear Cuenta
             <ArrowRight size={20} />

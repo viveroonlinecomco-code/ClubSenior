@@ -41,7 +41,7 @@ export default function FamiliaPage() {
           <p className="text-red-600 mb-4">❌ Error cargando datos: {error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white px-4 py-2 rounded-lg"
+            className="bg-blue-300 hover:bg-blue-400 transition text-gray-800 px-4 py-2 rounded-lg"
           >
             Reintentar
           </button>
@@ -54,36 +54,36 @@ export default function FamiliaPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-blue-400 to-blue-500 text-white py-8 px-4">
+      <div className="bg-gradient-to-r from-blue-200 to-sky-300 text-gray-800 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold mb-2">Mi Familia</h1>
-          <p className="text-blue-200">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+          <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
 
           {/* Purpose Section - Always Visible */}
-          <div className="mt-8 bg-white/15 backdrop-blur border border-white/30 rounded-2xl p-6 sm:p-8">
-            <p className="text-lg sm:text-xl font-semibold mb-4">🎯 Nuestro Propósito:</p>
-            <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4">
+          <div className="mt-8 bg-white/20 backdrop-blur border border-blue-300/30 rounded-2xl p-6 sm:p-8">
+            <p className="text-lg sm:text-xl font-semibold mb-4 text-gray-800">🎯 Nuestro Propósito:</p>
+            <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4 text-gray-800">
               Conectando generaciones a través de actividades significativas.
             </p>
-            <p className="text-base sm:text-lg text-blue-50 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
               Creemos que nunca es tarde para aprender, compartir y crear impacto.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
               <div>
-                <p className="text-sm text-blue-200 mb-1">✓ Actividades diseñadas</p>
-                <p className="font-semibold text-sm">Para tu bienestar</p>
+                <p className="text-sm text-blue-800 mb-1">✓ Actividades diseñadas</p>
+                <p className="font-semibold text-sm text-gray-800">Para tu bienestar</p>
               </div>
               <div>
-                <p className="text-sm text-blue-200 mb-1">✓ Comunidad conectada</p>
-                <p className="font-semibold text-sm">De personas como tú</p>
+                <p className="text-sm text-blue-800 mb-1">✓ Comunidad conectada</p>
+                <p className="font-semibold text-sm text-gray-800">De personas como tú</p>
               </div>
               <div>
-                <p className="text-sm text-blue-200 mb-1">✓ Espacio de sabiduría</p>
-                <p className="font-semibold text-sm">Para compartir experiencias</p>
+                <p className="text-sm text-blue-800 mb-1">✓ Espacio de sabiduría</p>
+                <p className="font-semibold text-sm text-gray-800">Para compartir experiencias</p>
               </div>
               <div>
-                <p className="text-sm text-blue-200 mb-1">✓ Legado duradero</p>
-                <p className="font-semibold text-sm">Impacto intergeneracional</p>
+                <p className="text-sm text-blue-800 mb-1">✓ Legado duradero</p>
+                <p className="font-semibold text-sm text-gray-800">Impacto intergeneracional</p>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function FamiliaPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {noSuscripcion && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <div className="bg-sky-50 border border-sky-300 rounded-lg p-6 mb-8">
             <h3 className="font-semibold text-blue-800 mb-2">ℹ️ Explora nuestras actividades</h3>
             <p className="text-blue-700 text-sm">
               Descubre todas nuestras actividades. Completa el registro para inscribirte e acceder a tu reporte personalizado.
