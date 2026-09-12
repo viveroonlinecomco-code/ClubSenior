@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { PersonalReportCard } from '@/components/personal-report-card';
 import SubscriptionCard from './components/subscription-card';
 import ReportsSection from './components/reports-section';
 import AttendanceTable from './components/attendance-table';
@@ -46,6 +47,35 @@ export default function FamiliaPage() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold mb-2">Mi Familia</h1>
           <p className="text-green-100">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+
+          {/* Purpose Section - Always Visible */}
+          <div className="mt-8 bg-white/15 backdrop-blur border border-white/30 rounded-2xl p-6 sm:p-8">
+            <p className="text-lg sm:text-xl font-semibold mb-4">🎯 Nuestro Propósito:</p>
+            <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4">
+              Conectando generaciones a través de actividades significativas.
+            </p>
+            <p className="text-base sm:text-lg text-green-50 leading-relaxed">
+              Creemos que nunca es tarde para aprender, compartir y crear impacto.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+              <div>
+                <p className="text-sm text-green-100 mb-1">✓ Actividades diseñadas</p>
+                <p className="font-semibold text-sm">Para tu bienestar</p>
+              </div>
+              <div>
+                <p className="text-sm text-green-100 mb-1">✓ Comunidad conectada</p>
+                <p className="font-semibold text-sm">De personas como tú</p>
+              </div>
+              <div>
+                <p className="text-sm text-green-100 mb-1">✓ Espacio de sabiduría</p>
+                <p className="font-semibold text-sm">Para compartir experiencias</p>
+              </div>
+              <div>
+                <p className="text-sm text-green-100 mb-1">✓ Legado duradero</p>
+                <p className="font-semibold text-sm">Impacto intergeneracional</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -108,6 +138,74 @@ export default function FamiliaPage() {
                 </div>
               </div>
             </div>
+
+            {/* Próximas Actividades Section */}
+            {!noSuscripcion && (
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-bold text-gray-900">📅 Próximas Actividades (Esta Semana)</h2>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {/* Activity Card 1 */}
+                    <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border border-red-200">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">💪 Movimiento Vital</h3>
+                          <p className="text-sm text-gray-600">Lunes • 2:30 PM - 3:00 PM</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        Actividad física: Calentamiento, movilidad articular, flexibilidad, y vuelta a la calma.
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-600">
+                          <p className="font-semibold">Objetivo:</p>
+                          <p>Movilidad, coordinación, equilibrio</p>
+                        </div>
+                        <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium text-sm">
+                          Inscribirse
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Activity Card 2 */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">🧠 Mente Activa</h3>
+                          <p className="text-sm text-gray-600">Miércoles • 3:00 PM - 4:30 PM</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">
+                        Actividad cognitiva: Juegos de memoria, trivia, refranes, canciones, fotografías y tertulia.
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-600">
+                          <p className="font-semibold">Objetivo:</p>
+                          <p>Atención, memoria, lenguaje, evocación</p>
+                        </div>
+                        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm">
+                          Inscribirse
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mi Reporte Personalizado */}
+            {!noSuscripcion && (
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="p-6 border-b border-gray-200">
+                  <h2 className="text-xl font-bold text-gray-900">📊 Mi Reporte de Participación</h2>
+                </div>
+                <div className="p-6">
+                  <PersonalReportCard userData={data?.user} />
+                </div>
+              </div>
+            )}
 
             {!noSuscripcion && (
               <div className="bg-white rounded-lg shadow overflow-hidden">
