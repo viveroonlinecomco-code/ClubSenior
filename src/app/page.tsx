@@ -72,7 +72,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/signin"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm"
+              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm"
             >
               Ingresar
             </Link>
@@ -102,26 +102,26 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 max-w-2xl mx-auto">
               <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-100 mb-1">✓ Actividades diseñadas</p>
+                <p className="text-sm text-blue-200 mb-1">✓ Actividades diseñadas</p>
                 <p className="font-semibold">Para tu bienestar</p>
               </div>
               <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-100 mb-1">✓ Comunidad conectada</p>
+                <p className="text-sm text-blue-200 mb-1">✓ Comunidad conectada</p>
                 <p className="font-semibold">De personas como tú</p>
               </div>
               <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-100 mb-1">✓ Espacio de sabiduría</p>
+                <p className="text-sm text-blue-200 mb-1">✓ Espacio de sabiduría</p>
                 <p className="font-semibold">Para compartir experiencias</p>
               </div>
               <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-100 mb-1">✓ Legado duradero</p>
+                <p className="text-sm text-blue-200 mb-1">✓ Legado duradero</p>
                 <p className="font-semibold">Impacto intergeneracional</p>
               </div>
             </div>
 
             <Link
               href="/signin"
-              className="inline-flex items-center gap-2 mt-12 px-8 py-4 bg-white text-blue-600 rounded-lg hover:bg-green-50 transition font-semibold text-lg"
+              className="inline-flex items-center gap-2 mt-12 px-8 py-4 bg-white text-blue-500 rounded-lg hover:bg-green-50 transition font-semibold text-lg"
             >
               Comienza Ahora
               <ArrowRight size={20} />
@@ -199,7 +199,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {impactStats.map((stat, index) => (
               <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center">
-                <p className="text-5xl font-bold text-blue-600 mb-2">{stat.number}</p>
+                <p className="text-5xl font-bold text-blue-500 mb-2">{stat.number}</p>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{stat.label}</h3>
                 <p className="text-sm text-gray-600">{stat.description}</p>
               </div>
@@ -229,7 +229,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/signin"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg"
           >
             Crear Cuenta
             <ArrowRight size={20} />

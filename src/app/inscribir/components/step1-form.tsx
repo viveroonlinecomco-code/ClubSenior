@@ -200,7 +200,7 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
+        className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
       >
         {loading ? 'Enviando código de verificación...' : 'Continuar al Paso 2'}
       </button>

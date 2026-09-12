@@ -51,7 +51,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
         <p className="text-gray-600 mb-4">No hay suscripción activa</p>
         <a
           href="/planes"
-          className="inline-block bg-blue-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg"
+          className="inline-block bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg"
         >
           Crear Suscripción
         </a>
@@ -71,13 +71,13 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
   return (
     <>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+        <div className="bg-gradient-to-r from-blue-400 to-blue-500 text-white p-6">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-blue-100 text-sm font-semibold mb-1">SUSCRIPCIÓN</p>
+              <p className="text-blue-200 text-sm font-semibold mb-1">SUSCRIPCIÓN</p>
               <h2 className="text-3xl font-bold">{plan?.nombre || 'Plan'}</h2>
               {participante && (
-                <p className="text-blue-100 text-sm mt-2">{participante.nombre}, {participante.edad} años</p>
+                <p className="text-blue-200 text-sm mt-2">{participante.nombre}, {participante.edad} años</p>
               )}
             </div>
             <div className={`px-3 py-1 rounded-full text-sm font-semibold ${estadoBadgeColor}`}>
@@ -125,7 +125,7 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
           <div className="flex gap-4 pt-4">
             <a
               href="/planes"
-              className="flex-1 bg-blue-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition text-center block"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition text-center block"
             >
               Cambiar Plan
             </a>

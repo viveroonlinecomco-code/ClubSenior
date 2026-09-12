@@ -205,7 +205,7 @@ export function CreateActivityForm({ condominio_id, onActivityCreated }: CreateA
           className={`w-full font-semibold py-2 rounded-lg text-white transition ${
             loading
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
+              : 'bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700'
           }`}
         >
           {loading ? 'Creando...' : '✅ Crear Actividad'}

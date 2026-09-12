@@ -100,7 +100,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
             onClick={() => setPlanSeleccionado(plan)}
             className={`p-6 rounded-lg border-2 cursor-pointer transition ${
               planSeleccionado === plan
-                ? 'border-blue-600 bg-blue-50'
+                ? 'border-blue-400 bg-blue-50'
                 : 'border-gray-300 hover:border-gray-400'
             }`}
           >
@@ -111,19 +111,19 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
               </div>
               <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
                 {planSeleccionado === plan && (
-                  <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
+                  <div className="w-4 h-4 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 rounded-full"></div>
                 )}
               </div>
             </div>
 
-            <div className="text-3xl font-bold text-blue-600 mb-4">
+            <div className="text-3xl font-bold text-blue-500 mb-4">
               {formatearMoneda(PLANES[plan].precio)}
             </div>
 
             <ul className="space-y-2">
               {PLANES[plan].beneficios.map((beneficio, i) => (
                 <li key={i} className="text-gray-600 text-sm flex items-start gap-2">
-                  <span className="text-blue-600 font-bold">✓</span>
+                  <span className="text-blue-500 font-bold">✓</span>
                   {beneficio}
                 </li>
               ))}
@@ -148,7 +148,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
         <div className="border-t border-gray-300 pt-4 mt-4">
           <div className="flex justify-between">
             <span className="text-lg font-bold text-gray-900">Total a pagar:</span>
-            <span className="text-2xl font-bold text-blue-600">{formatearMoneda(planInfo.precio)}</span>
+            <span className="text-2xl font-bold text-blue-500">{formatearMoneda(planInfo.precio)}</span>
           </div>
         </div>
         <p className="text-xs text-gray-500 mt-4">*Primer pago del mes. Se renovará automáticamente cada mes.</p>
@@ -158,7 +158,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
         <button
           type="button"
           onClick={() => setMostrarPago(true)}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+          className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
         >
           Proceder al Pago
         </button>
@@ -239,7 +239,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
           >
             {loading ? 'Procesando pago...' : `Pagar ${formatearMoneda(planInfo.precio)}`}
           </button>

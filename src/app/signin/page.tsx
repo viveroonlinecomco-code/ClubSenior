@@ -111,7 +111,7 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
           >
             {loading ? 'Enviando código...' : 'Enviar Código'}
           </button>
@@ -121,7 +121,7 @@ export default function SignInPage() {
           <p className="text-gray-600 text-center mb-3">¿Nuevo usuario?</p>
           <button
             onClick={() => router.push('/inscribir')}
-            className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-2 rounded-lg transition"
+            className="w-full border-2 border-blue-400 text-blue-500 hover:bg-blue-50 font-semibold py-2 rounded-lg transition"
           >
             Crear Cuenta
           </button>

@@ -46,18 +46,18 @@ export function PersonalReportCard({ userData, reportData }: PersonalReportProps
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-          <p className="text-sm font-semibold text-blue-600 mb-1">Actividades Inscritas</p>
+          <p className="text-sm font-semibold text-blue-500 mb-1">Actividades Inscritas</p>
           <p className="text-3xl font-bold text-gray-900">{data.activitiesEnrolled}</p>
         </div>
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-          <p className="text-sm font-semibold text-blue-600 mb-1">Actividades Asistidas</p>
+          <p className="text-sm font-semibold text-blue-500 mb-1">Actividades Asistidas</p>
           <p className="text-3xl font-bold text-gray-900">{data.activitiesAttended}</p>
         </div>
       </div>
 
       {/* Attendance Rate */}
       <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-        <p className="text-sm font-semibold text-blue-600 mb-4">Tasa de Asistencia</p>
+        <p className="text-sm font-semibold text-blue-500 mb-4">Tasa de Asistencia</p>
         <div className="flex items-end gap-4">
           <div className="flex-1">
             <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
@@ -68,7 +68,7 @@ export function PersonalReportCard({ userData, reportData }: PersonalReportProps
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-blue-600">{data.attendanceRate}%</p>
+            <p className="text-2xl font-bold text-blue-500">{data.attendanceRate}%</p>
             <p className="text-xs text-gray-600">Excelente</p>
           </div>
         </div>

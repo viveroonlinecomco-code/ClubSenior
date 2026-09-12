@@ -88,7 +88,7 @@ export default function PlanesPage() {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold mb-2">Elige tu Plan</h1>
-          <p className="text-blue-100 text-lg">
+          <p className="text-blue-200 text-lg">
             Tardes de Café, Mente & Saberes - Conectando generaciones
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function PlanesPage() {
               }`}
             >
               {plan.recomendado && (
-                <div className="bg-blue-600 text-white text-center py-2 text-sm font-bold">
+                <div className="bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 text-white text-center py-2 text-sm font-bold">
                   ⭐ MÁS POPULAR
                 </div>
               )}
@@ -130,7 +130,7 @@ export default function PlanesPage() {
                 <div className="space-y-3 mb-8">
                   {plan.caracteristicas.map((feature, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
+                      <span className="text-blue-500 font-bold">✓</span>
                       <span className="text-gray-700">{feature.substring(2)}</span>
                     </div>
                   ))}
@@ -142,7 +142,7 @@ export default function PlanesPage() {
                   disabled={loading && selectedPlan === plan.id}
                   className={`w-full py-3 rounded-lg font-bold text-white transition ${
                     plan.recomendado
-                      ? 'bg-blue-600 hover:bg-blue-700'
+                      ? 'bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700'
                       : 'bg-gray-600 hover:bg-gray-700'
                   } ${loading && selectedPlan === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >

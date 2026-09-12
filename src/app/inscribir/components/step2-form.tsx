@@ -143,7 +143,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
       <button
         type="submit"
         disabled={loading || (!formData.terminosAceptados && !formData.politicaPrivacidadAceptada)}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
+        className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
       >
         {loading ? 'Procesando...' : 'Continuar al Paso 3'}
       </button>
