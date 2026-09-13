@@ -9,15 +9,32 @@ import Step3Form from './components/step3-form';
 export default function InscribirPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
+    // PASO 1
     nombreAbuelo: '',
     apellidoAbuelo: '',
     email: '',
     telefono: '',
     fechaNacimiento: '',
+    documentoId: '',
     ciudad: '',
+    // PASO 2
     terminosAceptados: false,
     politicaPrivacidadAceptada: false,
+    familiarRelacion: '',
+    familiarNombre: '',
+    familiarEmail: '',
+    familiarTelefono: '',
+    eps: '',
+    numeroAfiliadoEps: '',
+    contratoAceptado: false,
+    // PASO 3
     planSeleccionado: 'individual',
+    terminosAceptado: false,
+    contratoAceptado: false,
+    politicaPrivacidadAceptado: false,
+    firma: '',
+    password: '',
+    passwordConfirm: '',
   });
   const router = useRouter();
 
@@ -29,6 +46,7 @@ export default function InscribirPage() {
       email: data.email,
       telefono: data.telefono,
       fechaNacimiento: data.fechaNacimiento,
+      documentoId: data.documentoId,
       ciudad: data.ciudad,
     }));
     setCurrentStep(2);
@@ -39,17 +57,68 @@ export default function InscribirPage() {
       ...prev,
       terminosAceptados: data.terminosAceptados,
       politicaPrivacidadAceptada: data.politicaPrivacidadAceptada,
+      familiarRelacion: data.familiarRelacion,
+      familiarNombre: data.familiarNombre,
+      familiarEmail: data.familiarEmail,
+      familiarTelefono: data.familiarTelefono,
+      eps: data.eps,
+      numeroAfiliadoEps: data.numeroAfiliadoEps,
+      contratoAceptado: data.contratoAceptado,
     }));
     setCurrentStep(3);
   };
 
-  const handleStep3Submit = (data: any) => {
-    setFormData(prev => ({
-      ...prev,
+  const handleStep3Submit = async (data: any) => {
+    const datosCompletos = {
+      // PASO 1
+      nombre: formData.nombreAbuelo,
+      apellido: formData.apellidoAbuelo,
+      email: formData.email,
+      telefono: formData.telefono,
+      fechaNacimiento: formData.fechaNacimiento,
+      documentoId: formData.documentoId,
+      ciudad: formData.ciudad,
+
+      // PASO 2
+      terminosAceptados: formData.terminosAceptados,
+      politicaPrivacidadAceptada: formData.politicaPrivacidadAceptada,
+      familiarRelacion: formData.familiarRelacion,
+      familiarNombre: formData.familiarNombre,
+      familiarEmail: formData.familiarEmail,
+      familiarTelefono: formData.familiarTelefono,
+      eps: formData.eps,
+      numeroAfiliadoEps: formData.numeroAfiliadoEps,
+
+      // PASO 3
       planSeleccionado: data.planSeleccionado,
-    }));
-    console.log('Datos completos:', { ...formData, ...data });
-    router.push('/familia');
+      terminosAceptado: data.terminosAceptado,
+      contratoAceptado: data.contratoAceptado,
+      politicaPrivacidadAceptado: data.politicaPrivacidadAceptado,
+      firma: data.firma,
+      password: data.password,
+    };
+
+    try {
+      console.log('Datos completos:', datosCompletos);
+
+      // Llamar tu API endpoint para crear usuario
+      const response = await fetch('/api/auth/registrar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosCompletos),
+      });
+
+      if (response.ok) {
+        router.push('/pagar');
+      } else {
+        const error = await response.json();
+        console.error('Error:', error);
+        alert(`Error al crear la cuenta: ${error.message || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al procesar la solicitud');
+    }
   };
 
   const handleBack = () => {
@@ -144,8 +213,8 @@ export default function InscribirPage() {
         <div className="mt-8 text-center">
           <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
             {currentStep === 1 && '📋 Información básica del adulto mayor'}
-            {currentStep === 2 && '✓ Acepta los términos y condiciones'}
-            {currentStep === 3 && '💳 Selecciona tu plan'}
+            {currentStep === 2 && '👨‍👩‍👧 Información de familia y salud'}
+            {currentStep === 3 && '✍️ Contrato, firma digital y contraseña'}
           </p>
         </div>
 
