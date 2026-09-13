@@ -2,12 +2,37 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import crypto from 'crypto'
 
+const WOMPI_WEBHOOK_SECRET = process.env.WOMPI_WEBHOOK_SECRET
+
 function validateWompiSignature(
   payload: string,
   signature: string
 ): boolean {
-  console.log('[Wompi Webhook] Signature validation skipped (development)')
-  return true
+  if (!WOMPI_WEBHOOK_SECRET) {
+    console.error('[Wompi] WOMPI_WEBHOOK_SECRET not configured')
+    return false
+  }
+
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', WOMPI_WEBHOOK_SECRET)
+      .update(payload)
+      .digest('hex')
+
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    )
+
+    if (!isValid) {
+      console.warn('[Wompi] Invalid signature detected')
+    }
+
+    return isValid
+  } catch (error) {
+    console.error('[Wompi] Signature validation error:', error)
+    return false
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -20,7 +45,7 @@ export async function POST(request: NextRequest) {
     console.log(`[${context}] Webhook received`)
 
     if (!validateWompiSignature(rawBody, signature)) {
-      console.warn(`[${context}] Invalid signature`)
+      console.warn(`[${context}] Invalid signature - webhook rejected`)
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 401 }
@@ -127,6 +152,7 @@ export async function POST(request: NextRequest) {
         webhook_event_type: event.event,
         external_id: externalId,
         payload: event,
+        signature: signature,
         processed: true,
         processed_at: new Date().toISOString(),
         processor_function: 'POST /api/webhooks/wompi',
@@ -165,6 +191,7 @@ export async function POST(request: NextRequest) {
         webhook_event_type: event.event,
         external_id: externalId,
         payload: event,
+        signature: signature,
         processed: true,
         processed_at: new Date().toISOString(),
       })
