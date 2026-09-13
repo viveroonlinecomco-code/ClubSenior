@@ -120,15 +120,7 @@ export default function HomePage() {
                 <p className="text-sm text-blue-700 mb-1">✓ Legado duradero</p>
                 <p className="font-semibold text-gray-900">Impacto intergeneracional</p>
               </div>
-            </div>
-
-            <Link
-              href="/signin"
-              className="inline-flex items-center gap-2 mt-12 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold text-lg"
-            >
-              Comienza Ahora
-              <ArrowRight size={20} />
-            </Link>
+  
           </div>
         </div>
       </section>
