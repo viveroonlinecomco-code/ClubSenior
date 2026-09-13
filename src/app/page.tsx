@@ -341,12 +341,12 @@ export default function HomePage() {
             actividades
           </p>
           <Link
-            href="/signin"
+            href="/inscribir"
             className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 hover:bg-blue-600 transition text-white rounded-lg font-semibold text-lg"
           >
             Crear Cuenta
             <ArrowRight size={20} />
-          </Link>
+       </Link>
         </div>
       </section>
 
