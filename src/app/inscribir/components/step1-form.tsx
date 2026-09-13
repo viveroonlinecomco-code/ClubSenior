@@ -11,6 +11,7 @@ const Step1Schema = z.object({
   email: z.string().email('Email inválido'),
   telefono: z.string().min(10, 'Teléfono inválido'),
   fechaNacimiento: z.string().min(1, 'Fecha requerida'),
+  documentoId: z.string().min(6, 'Documento requerido'),
   ciudad: z.string().min(2, 'Ciudad requerida'),
 });
 
@@ -29,6 +30,7 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
     email: initialData?.email || '',
     telefono: initialData?.telefono || '',
     fechaNacimiento: initialData?.fechaNacimiento || '',
+    documentoId: initialData?.documentoId || '',
     ciudad: initialData?.ciudad || '',
   });
 
@@ -68,6 +70,9 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
       // Guardar datos en sessionStorage para posterior verificación
       sessionStorage.setItem('pendingEmail', validated.email);
       sessionStorage.setItem('inscribirData', JSON.stringify(validated));
+
+      // Llamar onSubmit (para que el contenedor guarde datos)
+      onSubmit(validated);
 
       // Redirigir a verificación OTP
       router.push('/verificar-otp');
@@ -171,6 +176,24 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         )}
       </div>
 
+      {/* NUEVO: Documento ID */}
+      <div>
+        <label className="block text-gray-700 font-semibold mb-2">Documento ID (Cédula) *</label>
+        <input
+          type="text"
+          name="documentoId"
+          value={formData.documentoId}
+          onChange={handleChange}
+          placeholder="Ej: 79654321"
+          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+            errors.documentoId ? 'border-red-500' : 'border-gray-300'
+          }`}
+        />
+        {errors.documentoId && (
+          <p className="text-red-500 text-sm mt-1">{errors.documentoId}</p>
+        )}
+      </div>
+
       <div>
         <label className="block text-gray-700 font-semibold mb-2">Ciudad</label>
         <select
@@ -200,7 +223,7 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
       >
         {loading ? 'Enviando código de verificación...' : 'Continuar al Paso 2'}
       </button>
