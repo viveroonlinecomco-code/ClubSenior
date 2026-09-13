@@ -63,11 +63,11 @@ export default function HomePage() {
               <a href="#proposito" className="text-sm text-gray-600 hover:text-gray-900">
                 Propósito
               </a>
-              <a href="#pilares" className="text-sm text-gray-600 hover:text-gray-900">
-                Pilares
-              </a>
               <a href="#impacto" className="text-sm text-gray-600 hover:text-gray-900">
                 Impacto
+              </a>
+              <a href="#pilares" className="text-sm text-gray-600 hover:text-gray-900">
+                Pilares
               </a>
               <a href="#planes" className="text-sm text-gray-600 hover:text-gray-900">
                 Planes
@@ -120,12 +120,47 @@ export default function HomePage() {
                 <p className="text-sm text-blue-700 mb-1">✓ Legado duradero</p>
                 <p className="font-semibold text-gray-900">Impacto intergeneracional</p>
               </div>
-  
+            </div>
           </div>
         </div>
       </section>
 
-      {/* The Four Pillars */}
+      {/* Impact Section - REORDENADO: PRIMERO (antes de Pilares) */}
+      <section id="impacto" className="py-20 sm:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Lo que Nuestros Participantes Experimentan
+            </h2>
+            <p className="text-lg text-gray-600">
+              Resultados tangibles en bienestar físico, mental y comunitario
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {impactStats.map((stat, index) => (
+              <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center">
+                <p className="text-5xl font-bold text-blue-500 mb-2">{stat.number}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{stat.label}</h3>
+                <p className="text-sm text-gray-600">{stat.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Testimonial */}
+          <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-12 border border-green-200">
+            <p className="text-lg text-gray-700 italic mb-6">
+              "Desde que comencé con ClubSenior, tengo más energía y me siento conectada con mi
+              comunidad. Las tardes de café se convirtieron en mi momento favorito de la semana.
+              Nunca pensé que pudiera hacer amigos nuevos a mi edad."
+            </p>
+            <p className="font-semibold text-gray-900">María García, 72 años</p>
+            <p className="text-sm text-gray-600">Bogotá, Colombia</p>
+          </div>
+        </div>
+      </section>
+
+      {/* The Four Pillars - REORDENADO: SEGUNDO (después de Impacto) */}
       <section id="pilares" className="py-20 sm:py-28 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -179,42 +214,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Impact Section */}
-      <section id="impacto" className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Lo que Nuestros Participantes Experimentan
-            </h2>
-            <p className="text-lg text-gray-600">
-              Resultados tangibles en bienestar físico, mental y comunitario
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {impactStats.map((stat, index) => (
-              <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center">
-                <p className="text-5xl font-bold text-blue-500 mb-2">{stat.number}</p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{stat.label}</h3>
-                <p className="text-sm text-gray-600">{stat.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Testimonial */}
-          <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-12 border border-green-200">
-            <p className="text-lg text-gray-700 italic mb-6">
-              "Desde que comencé con ClubSenior, tengo más energía y me siento conectada con mi
-              comunidad. Las tardes de café se convirtieron en mi momento favorito de la semana.
-              Nunca pensé que pudiera hacer amigos nuevos a mi edad."
-            </p>
-            <p className="font-semibold text-gray-900">María García, 72 años</p>
-            <p className="text-sm text-gray-600">Bogotá, Colombia</p>
-          </div>
-        </div>
-      </section>
-
-      {/* PLANES SECTION - NEW */}
+      {/* PLANES SECTION */}
       <section id="planes" className="py-20 sm:py-28 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -267,7 +267,7 @@ export default function HomePage() {
                 </ul>
 
                 <Link
-                  href="/planes"
+                  href="/planes?plan=mensual"
                   className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition text-center block"
                 >
                   Seleccionar Plan
@@ -313,7 +313,7 @@ export default function HomePage() {
                 </ul>
 
                 <Link
-                  href="/planes"
+                  href="/planes?plan=sesion"
                   className="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition text-center block"
                 >
                   Seleccionar Plan
@@ -346,7 +346,7 @@ export default function HomePage() {
           >
             Crear Cuenta
             <ArrowRight size={20} />
-       </Link>
+          </Link>
         </div>
       </section>
 
