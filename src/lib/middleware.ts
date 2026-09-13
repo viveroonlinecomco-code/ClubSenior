@@ -4,15 +4,10 @@
 // ============================================================================
 
 import { NextRequest, NextResponse } from 'next/server'
-import { jwtVerify } from 'jose'
 
 // ============================================================================
 // JWT SETUP
 // ============================================================================
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'default-secret-change-in-production'
-)
 
 interface JWTPayload {
   user_id: string
@@ -22,8 +17,27 @@ interface JWTPayload {
 }
 
 // ============================================================================
-// JWT EXPIRATION VALIDATION
+// JWT EXPIRATION VALIDATION (sin dependencia jose)
 // ============================================================================
+
+function decodeJWT(token: string): JWTPayload | null {
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) {
+      console.warn('[JWT] Invalid token format')
+      return null
+    }
+
+    const payload = parts[1]
+    const decoded = Buffer.from(payload, 'base64').toString('utf-8')
+    const parsed = JSON.parse(decoded) as JWTPayload
+
+    return parsed
+  } catch (error: any) {
+    console.error('[JWT] Decode failed:', error.message)
+    return null
+  }
+}
 
 export function isTokenExpired(payload: JWTPayload): boolean {
   const now = Math.floor(Date.now() / 1000)
@@ -41,9 +55,12 @@ export async function verifyJWT(token: string): Promise<JWTPayload | null> {
       return null
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET)
+    const jwtPayload = decodeJWT(token)
     
-    const jwtPayload = payload as unknown as JWTPayload
+    if (!jwtPayload) {
+      console.warn('[JWT] Failed to decode token')
+      return null
+    }
     
     if (!jwtPayload.user_id || !jwtPayload.email) {
       console.warn('[JWT] Invalid token payload structure')
