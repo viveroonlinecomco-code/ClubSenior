@@ -69,10 +69,13 @@ export default function HomePage() {
               <a href="#impacto" className="text-sm text-gray-600 hover:text-gray-900">
                 Impacto
               </a>
+              <a href="#planes" className="text-sm text-gray-600 hover:text-gray-900">
+                Planes
+              </a>
             </div>
             <Link
               href="/signin"
-              className="px-6 py-2 bg-blue-300 hover:bg-blue-400 transition text-gray-800 rounded-lg font-medium text-sm"
+              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 transition text-white rounded-lg font-medium text-sm"
             >
               Ingresar
             </Link>
@@ -81,18 +84,18 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section with Purpose */}
-      <section id="proposito" className="relative bg-gradient-to-br from-blue-200 via-cyan-200 to-sky-300 text-gray-800 py-20 sm:py-28">
+      <section id="proposito" className="relative bg-white py-20 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-gray-900">
               Tardes de Café,<br />
               Mente y Saberes
             </h1>
 
             {/* Purpose Box - Central Element */}
-            <div className="bg-white/15 backdrop-blur border border-white/30 rounded-2xl p-8 sm:p-12 mb-8 max-w-3xl mx-auto">
-              <p className="text-lg sm:text-xl font-semibold mb-4">🎯 Nuestro Propósito</p>
-              <p className="text-2xl sm:text-3xl font-bold leading-relaxed">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 sm:p-12 mb-8 max-w-3xl mx-auto">
+              <p className="text-lg sm:text-xl font-semibold mb-4 text-blue-900">🎯 Nuestro Propósito</p>
+              <p className="text-2xl sm:text-3xl font-bold leading-relaxed text-gray-900">
                 Conectar generaciones a través de actividades significativas.
               </p>
               <p className="text-lg mt-6 text-gray-700 leading-relaxed">
@@ -101,27 +104,27 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 max-w-2xl mx-auto">
-              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-800 mb-1">✓ Actividades diseñadas</p>
-                <p className="font-semibold text-gray-800">Para tu bienestar</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-700 mb-1">✓ Actividades diseñadas</p>
+                <p className="font-semibold text-gray-900">Para tu bienestar</p>
               </div>
-              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-800 mb-1">✓ Comunidad conectada</p>
-                <p className="font-semibold text-gray-800">De personas como tú</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-700 mb-1">✓ Comunidad conectada</p>
+                <p className="font-semibold text-gray-900">De personas como tú</p>
               </div>
-              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-800 mb-1">✓ Espacio de sabiduría</p>
-                <p className="font-semibold text-gray-800">Para compartir experiencias</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-700 mb-1">✓ Espacio de sabiduría</p>
+                <p className="font-semibold text-gray-900">Para compartir experiencias</p>
               </div>
-              <div className="bg-white/20 backdrop-blur rounded-lg p-4 text-left">
-                <p className="text-sm text-blue-800 mb-1">✓ Legado duradero</p>
-                <p className="font-semibold text-gray-800">Impacto intergeneracional</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                <p className="text-sm text-blue-700 mb-1">✓ Legado duradero</p>
+                <p className="font-semibold text-gray-900">Impacto intergeneracional</p>
               </div>
             </div>
 
             <Link
               href="/signin"
-              className="inline-flex items-center gap-2 mt-12 px-8 py-4 bg-white text-blue-500 rounded-lg hover:bg-green-50 transition font-semibold text-lg"
+              className="inline-flex items-center gap-2 mt-12 px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold text-lg"
             >
               Comienza Ahora
               <ArrowRight size={20} />
@@ -219,8 +222,126 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* PLANES SECTION - NEW */}
+      <section id="planes" className="py-20 sm:py-28 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Nuestros Planes</h2>
+            <p className="text-lg text-gray-600">
+              Elige el plan que mejor se ajusta a tu ritmo y disponibilidad
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Plan Mensual - POPULAR */}
+            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-500 transform md:scale-105">
+              <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white py-3 px-6 text-center font-bold text-sm">
+                ⭐ MÁS POPULAR
+              </div>
+
+              <div className="pt-16 px-8 pb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Plan Mensual</h3>
+                <p className="text-gray-600 mb-6">4 sesiones de 2 horas cada una</p>
+
+                <div className="bg-blue-50 rounded-lg p-6 mb-8">
+                  <p className="text-gray-600 text-sm mb-1">Precio mensual</p>
+                  <p className="text-4xl font-bold text-gray-900">
+                    $150.000
+                    <span className="text-lg text-gray-600 font-normal">/mes</span>
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">4 sesiones de 2 horas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Válido por 6 semanas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Sin penalizaciones por faltas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Acceso a facilitador especializado</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Café incluido en cada sesión</span>
+                  </li>
+                </ul>
+
+                <Link
+                  href="/planes"
+                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition text-center block"
+                >
+                  Seleccionar Plan
+                </Link>
+              </div>
+            </div>
+
+            {/* Plan Por Sesión */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-gray-300">
+              <div className="px-8 pt-8 pb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Pago por Sesión</h3>
+                <p className="text-gray-600 mb-6">Sin compromisos, paga lo que uses</p>
+
+                <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                  <p className="text-gray-600 text-sm mb-1">Precio por sesión</p>
+                  <p className="text-4xl font-bold text-gray-900">
+                    $40.000
+                    <span className="text-lg text-gray-600 font-normal">/sesión</span>
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">$40.000 por sesión de 2 horas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Sin contratos ni compromisos</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Flexibilidad total</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Acceso a facilitador especializado</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Café incluido en cada sesión</span>
+                  </li>
+                </ul>
+
+                <Link
+                  href="/planes"
+                  className="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition text-center block"
+                >
+                  Seleccionar Plan
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
+            <p className="text-gray-700">
+              📧 <a href="mailto:soporte@clubsenior.co" className="text-blue-500 hover:underline">soporte@clubsenior.co</a> | 
+              📞 <a href="tel:+5718000000" className="text-blue-500 hover:underline">+57 1 8000 0000</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 bg-gray-50">
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">¿Listo para empezar?</h2>
           <p className="text-lg text-gray-600 mb-8">
@@ -229,7 +350,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/signin"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-300 hover:bg-blue-400 transition text-gray-800 rounded-lg font-semibold text-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-500 hover:bg-blue-600 transition text-white rounded-lg font-semibold text-lg"
           >
             Crear Cuenta
             <ArrowRight size={20} />
