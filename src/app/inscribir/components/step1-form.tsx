@@ -71,7 +71,7 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
       sessionStorage.setItem('pendingEmail', validated.email);
       sessionStorage.setItem('inscribirData', JSON.stringify(validated));
 
-      // Llamar onSubmit (para que el contenedor guarde datos)
+      // Llamar onSubmit para que page.tsx guarde datos
       onSubmit(validated);
 
       // Redirigir a verificación OTP
@@ -176,7 +176,6 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         )}
       </div>
 
-      {/* NUEVO: Documento ID */}
       <div>
         <label className="block text-gray-700 font-semibold mb-2">Documento ID (Cédula) *</label>
         <input
