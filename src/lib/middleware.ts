@@ -1,9 +1,111 @@
 // src/lib/middleware.ts
 // ============================================================================
-// MIDDLEWARE - Logging + Rate Limiting + Request/Response tracking
+// MIDDLEWARE - Logging + Rate Limiting + JWT Expiration Validation
 // ============================================================================
 
 import { NextRequest, NextResponse } from 'next/server'
+import { jwtVerify } from 'jose'
+
+// ============================================================================
+// JWT SETUP
+// ============================================================================
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'default-secret-change-in-production'
+)
+
+interface JWTPayload {
+  user_id: string
+  email: string
+  exp: number
+  iat: number
+}
+
+// ============================================================================
+// JWT EXPIRATION VALIDATION
+// ============================================================================
+
+export function isTokenExpired(payload: JWTPayload): boolean {
+  const now = Math.floor(Date.now() / 1000)
+  if (!payload.exp) {
+    console.warn('[JWT] No expiration claim found in token')
+    return true
+  }
+  return now > payload.exp
+}
+
+export async function verifyJWT(token: string): Promise<JWTPayload | null> {
+  try {
+    if (!token) {
+      console.warn('[JWT] No token provided')
+      return null
+    }
+
+    const { payload } = await jwtVerify(token, JWT_SECRET)
+    
+    const jwtPayload = payload as unknown as JWTPayload
+    
+    if (!jwtPayload.user_id || !jwtPayload.email) {
+      console.warn('[JWT] Invalid token payload structure')
+      return null
+    }
+
+    if (isTokenExpired(jwtPayload)) {
+      console.warn('[JWT] Token expired:', {
+        exp: jwtPayload.exp,
+        now: Math.floor(Date.now() / 1000),
+      })
+      return null
+    }
+
+    return jwtPayload
+  } catch (error: any) {
+    console.error('[JWT] Verification failed:', error.message)
+    return null
+  }
+}
+
+export async function withJWTAuth(
+  request: NextRequest,
+  handler: (req: NextRequest, userId: string) => Promise<NextResponse>
+): Promise<NextResponse> {
+  const context = `[JWT Auth] ${request.method} ${request.nextUrl.pathname}`
+
+  console.log(`${context} Starting`)
+
+  const authHeader = request.headers.get('authorization')
+  if (!authHeader) {
+    console.warn(`${context} No Authorization header`)
+    return NextResponse.json(
+      { error: 'Missing authorization header' },
+      { status: 401 }
+    )
+  }
+
+  const parts = authHeader.split(' ')
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    console.warn(`${context} Invalid authorization format`)
+    return NextResponse.json(
+      { error: 'Invalid authorization format' },
+      { status: 401 }
+    )
+  }
+
+  const token = parts[1]
+
+  const payload = await verifyJWT(token)
+  if (!payload) {
+    console.warn(`${context} Token verification failed`)
+    return NextResponse.json(
+      { error: 'Token verification failed or expired' },
+      { status: 401 }
+    )
+  }
+
+  console.log(`${context} Token valid for user: ${payload.user_id}`)
+
+  return handler(request, payload.user_id)
+}
 
 // ============================================================================
 // RATE LIMITING - Simple in-memory (producción usar Redis)
@@ -15,15 +117,14 @@ interface RateLimitEntry {
 }
 
 const rateLimitMap = new Map<string, RateLimitEntry>()
-const RATE_LIMIT_WINDOW = 60 * 1000 // 60 segundos
-const RATE_LIMIT_MAX_REQUESTS = 100 // 100 requests por minuto
+const RATE_LIMIT_WINDOW = 60 * 1000
+const RATE_LIMIT_MAX_REQUESTS = 100
 
 export function checkRateLimit(key: string): { allowed: boolean; remaining: number } {
   const now = Date.now()
   const entry = rateLimitMap.get(key)
 
   if (!entry || now > entry.resetTime) {
-    // Nuevo window
     rateLimitMap.set(key, {
       count: 1,
       resetTime: now + RATE_LIMIT_WINDOW,
@@ -59,19 +160,16 @@ const requestLogs: RequestLog[] = []
 const MAX_LOGS_IN_MEMORY = 1000
 
 export function logRequest(log: RequestLog) {
-  // Agregar timestamp si no existe
   if (!log.timestamp) {
     log.timestamp = new Date().toISOString()
   }
 
   requestLogs.push(log)
 
-  // Limitar tamaño en memoria
   if (requestLogs.length > MAX_LOGS_IN_MEMORY) {
     requestLogs.shift()
   }
 
-  // Log a consola en desarrollo
   if (process.env.NODE_ENV === 'development') {
     console.log(
       `[${log.timestamp}] ${log.method} ${log.pathname}`,
@@ -82,8 +180,6 @@ export function logRequest(log: RequestLog) {
       }
     )
   }
-
-  // TODO: En producción, enviar a servicio de logging (Sentry, LogRocket, etc)
 }
 
 export function getRequestLogs(
@@ -129,9 +225,6 @@ export async function withLogging(
     const userId = request.headers.get('x-user-id')
     const ipAddress = request.headers.get('x-forwarded-for') || 'unknown'
 
-    // ====================================================================
-    // RATE LIMITING
-    // ====================================================================
     if (options?.enableRateLimit) {
       const rateLimitKey = options.rateLimitKey
         ? options.rateLimitKey(request)
@@ -168,9 +261,6 @@ export async function withLogging(
       }
     }
 
-    // ====================================================================
-    // EJECUTAR HANDLER
-    // ====================================================================
     let response: NextResponse
     let error: string | undefined
 
@@ -184,9 +274,6 @@ export async function withLogging(
       )
     }
 
-    // ====================================================================
-    // LOG RESULTADO
-    // ====================================================================
     const duration = Date.now() - startTime
 
     logRequest({
@@ -200,9 +287,6 @@ export async function withLogging(
       error,
     })
 
-    // ====================================================================
-    // AGREGAR HEADERS DE TRACKING
-    // ====================================================================
     const newResponse = new NextResponse(response.body, response)
     newResponse.headers.set('X-Response-Time', `${duration}ms`)
     newResponse.headers.set('X-Request-ID', request.headers.get('x-request-id') || generateRequestId())
@@ -214,6 +298,7 @@ export async function withLogging(
 // ============================================================================
 // HELPER: Generar request ID único
 // ============================================================================
+
 export function generateRequestId(): string {
   return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 }
@@ -221,10 +306,10 @@ export function generateRequestId(): string {
 // ============================================================================
 // EXPORT LOGGING ENDPOINT (para debugging)
 // ============================================================================
+
 export async function handleLogsEndpoint(
   request: NextRequest
 ): Promise<NextResponse> {
-  // Solo permitir en desarrollo o con auth
   if (process.env.NODE_ENV === 'production') {
     const authToken = request.headers.get('x-logging-token')
     if (authToken !== process.env.LOGGING_SECRET_TOKEN) {
@@ -309,4 +394,75 @@ export function getPerformanceMetrics(): PerformanceMetric[] {
   return Array.from(metricsMap.values()).sort(
     (a, b) => b.avgDuration_ms - a.avgDuration_ms
   )
+}
+
+// ============================================================================
+// NEXT.JS MIDDLEWARE CONFIG (JWT Validation en rutas protegidas)
+// ============================================================================
+
+export function middleware(request: NextRequest) {
+  const context = `[Middleware] ${request.method} ${request.nextUrl.pathname}`
+
+  console.log(`${context} Processing`)
+
+  const protectedPaths = [
+    '/api/dashboard',
+    '/api/perfil',
+    '/api/actividades',
+    '/api/suscripciones',
+    '/api/participantes',
+  ]
+
+  const isProtected = protectedPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path)
+  )
+
+  if (!isProtected) {
+    console.log(`${context} Not protected, allowing`)
+    return NextResponse.next()
+  }
+
+  const authHeader = request.headers.get('authorization')
+  if (!authHeader) {
+    console.warn(`${context} Protected route, no auth header`)
+    return NextResponse.json(
+      { error: 'Authentication required' },
+      { status: 401 }
+    )
+  }
+
+  const parts = authHeader.split(' ')
+  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+    console.warn(`${context} Invalid auth format`)
+    return NextResponse.json(
+      { error: 'Invalid authorization format' },
+      { status: 401 }
+    )
+  }
+
+  const token = parts[1]
+
+  return (async () => {
+    const payload = await verifyJWT(token)
+    if (!payload) {
+      console.warn(`${context} Token invalid or expired`)
+      return NextResponse.json(
+        { error: 'Token invalid or expired' },
+        { status: 401 }
+      )
+    }
+
+    console.log(`${context} Token valid, user: ${payload.user_id}`)
+    return NextResponse.next()
+  })()
+}
+
+export const config = {
+  matcher: [
+    '/api/dashboard/:path*',
+    '/api/perfil/:path*',
+    '/api/actividades/:path*',
+    '/api/suscripciones/:path*',
+    '/api/participantes/:path*',
+  ],
 }
