@@ -27,7 +27,7 @@ export default function FamiliaPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando datos del dashboard...</p>
         </div>
       </div>
@@ -41,7 +41,7 @@ export default function FamiliaPage() {
           <p className="text-red-600 mb-4">❌ Error cargando datos: {error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-300 hover:bg-blue-400 transition text-gray-800 px-4 py-2 rounded-lg"
+            className="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded-lg"
           >
             Reintentar
           </button>
@@ -53,16 +53,16 @@ export default function FamiliaPage() {
   const noSuscripcion = !data?.suscripcion;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-blue-200 to-sky-300 text-gray-800 py-8 px-4">
+    <div className="min-h-screen bg-white">
+      <div className="bg-white border-b border-gray-200 py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2">Mi Familia</h1>
+          <h1 className="text-4xl font-bold mb-2 text-gray-900">Mi Familia</h1>
           <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
 
           {/* Purpose Section - Always Visible */}
-          <div className="mt-8 bg-white/20 backdrop-blur border border-blue-300/30 rounded-2xl p-6 sm:p-8">
-            <p className="text-lg sm:text-xl font-semibold mb-4 text-gray-800">🎯 Nuestro Propósito:</p>
-            <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4 text-gray-800">
+          <div className="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 sm:p-8">
+            <p className="text-lg sm:text-xl font-semibold mb-4 text-blue-900">🎯 Nuestro Propósito:</p>
+            <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4 text-gray-900">
               Conectando generaciones a través de actividades significativas.
             </p>
             <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
@@ -70,19 +70,19 @@ export default function FamiliaPage() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
               <div>
-                <p className="text-sm text-blue-800 mb-1">✓ Actividades diseñadas</p>
+                <p className="text-sm text-blue-700 mb-1">✓ Actividades diseñadas</p>
                 <p className="font-semibold text-sm text-gray-800">Para tu bienestar</p>
               </div>
               <div>
-                <p className="text-sm text-blue-800 mb-1">✓ Comunidad conectada</p>
+                <p className="text-sm text-blue-700 mb-1">✓ Comunidad conectada</p>
                 <p className="font-semibold text-sm text-gray-800">De personas como tú</p>
               </div>
               <div>
-                <p className="text-sm text-blue-800 mb-1">✓ Espacio de sabiduría</p>
+                <p className="text-sm text-blue-700 mb-1">✓ Espacio de sabiduría</p>
                 <p className="font-semibold text-sm text-gray-800">Para compartir experiencias</p>
               </div>
               <div>
-                <p className="text-sm text-blue-800 mb-1">✓ Legado duradero</p>
+                <p className="text-sm text-blue-700 mb-1">✓ Legado duradero</p>
                 <p className="font-semibold text-sm text-gray-800">Impacto intergeneracional</p>
               </div>
             </div>
@@ -92,7 +92,7 @@ export default function FamiliaPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {noSuscripcion && (
-          <div className="bg-sky-50 border border-sky-300 rounded-lg p-6 mb-8">
+          <div className="bg-blue-50 border border-blue-300 rounded-lg p-6 mb-8">
             <h3 className="font-semibold text-blue-800 mb-2">ℹ️ Explora nuestras actividades</h3>
             <p className="text-blue-700 text-sm">
               Descubre todas nuestras actividades. Completa el registro para inscribirte e acceder a tu reporte personalizado.
@@ -107,7 +107,7 @@ export default function FamiliaPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-3 font-semibold border-b-4 transition ${
                 activeTab === tab
-                  ? 'border-blue-400 text-blue-500'
+                  ? 'border-blue-500 text-blue-500'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -127,7 +127,7 @@ export default function FamiliaPage() {
 
               <div className="space-y-4">
                 {data?.asistencias && (
-                  <div className="bg-white rounded-lg shadow p-6">
+                  <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
                     <div className="text-gray-600 text-sm font-semibold mb-2">ASISTENCIA</div>
                     <p className="text-2xl font-bold text-blue-500 mb-1">
                       {data.asistencias.asistencias} / {data.asistencias.total}
@@ -142,7 +142,7 @@ export default function FamiliaPage() {
                   </div>
                 )}
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
                   <div className="text-gray-600 text-sm font-semibold mb-2">USUARIO</div>
                   <p className="text-sm text-gray-900 font-semibold">{data?.user.nombre || 'Usuario'} {data?.user.apellido || ''}</p>
                   <p className="text-xs text-gray-500 mt-1">{data?.user.email}</p>
@@ -152,7 +152,7 @@ export default function FamiliaPage() {
 
             {/* Próximas Actividades Section */}
             {(
-              <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">📅 Próximas Actividades</h2>
                 </div>
@@ -223,7 +223,7 @@ export default function FamiliaPage() {
 
             {/* Mi Reporte Personalizado */}
             {!noSuscripcion && (
-              <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">📊 Mi Reporte de Participación</h2>
                 </div>
@@ -234,7 +234,7 @@ export default function FamiliaPage() {
             )}
 
             {!noSuscripcion && (
-              <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">Asistencia Reciente</h2>
                 </div>
@@ -251,7 +251,7 @@ export default function FamiliaPage() {
             {data?.reportes && data.reportes.length > 0 ? (
               <ReportsSection reportes={data.reportes} />
             ) : (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
+              <div className="bg-white rounded-lg shadow p-8 text-center border border-gray-200">
                 <p className="text-gray-600">No hay reportes disponibles aún</p>
               </div>
             )}
@@ -263,7 +263,7 @@ export default function FamiliaPage() {
             {data?.pagos && data.pagos.length > 0 ? (
               <PaymentHistory pagos={data.pagos} />
             ) : (
-              <div className="bg-white rounded-lg shadow p-8 text-center">
+              <div className="bg-white rounded-lg shadow p-8 text-center border border-gray-200">
                 <p className="text-gray-600">No hay pagos registrados</p>
               </div>
             )}
@@ -271,7 +271,7 @@ export default function FamiliaPage() {
         )}
       </div>
 
-      <div className="bg-gray-100 border-t border-gray-300 py-8 px-4 mt-12">
+      <div className="bg-gray-50 border-t border-gray-300 py-8 px-4 mt-12">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
@@ -284,7 +284,7 @@ export default function FamiliaPage() {
               <h3 className="font-bold text-gray-900 mb-3">Soporte</h3>
               <ul className="text-gray-600 text-sm space-y-2">
                 <li>📧 soporte@clubsenior.co</li>
-                <li>📞 +57 1 8000 000</li>
+                <li>📞 +57 1 8000 0000</li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
             </div>
@@ -292,17 +292,17 @@ export default function FamiliaPage() {
               <h3 className="font-bold text-gray-900 mb-3">Legal</h3>
               <ul className="text-gray-600 text-sm space-y-2">
                 <li>
-                  <a href="#" className="hover:text-blue-500">
+                  <a href="#" className="hover:text-blue-500 transition">
                     Términos de Servicio
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-500">
+                  <a href="#" className="hover:text-blue-500 transition">
                     Política de Privacidad
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-500">
+                  <a href="#" className="hover:text-blue-500 transition">
                     Contacta con nosotros
                   </a>
                 </li>
