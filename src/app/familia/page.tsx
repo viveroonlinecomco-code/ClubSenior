@@ -54,6 +54,18 @@ export default function FamiliaPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Back Button */}
+      <div className="bg-white border-b border-gray-200 py-4 px-4">
+        <div className="max-w-7xl mx-auto">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium mb-4"
+          >
+            ← Atrás
+          </button>
+        </div>
+      </div>
+
       <div className="bg-white border-b border-gray-200 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
