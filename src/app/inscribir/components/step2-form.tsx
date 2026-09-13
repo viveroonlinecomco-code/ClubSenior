@@ -4,19 +4,16 @@ import { useState } from 'react';
 import { z } from 'zod';
 
 const Step2Schema = z.object({
-  // Checkboxes (MANTENER)
   terminosAceptados: z.boolean().refine(val => val === true, {
     message: 'Debes aceptar los términos y condiciones',
   }),
   politicaPrivacidadAceptada: z.boolean().refine(val => val === true, {
     message: 'Debes aceptar la política de privacidad',
   }),
-  // NUEVOS: Familia
   familiarRelacion: z.string().min(1, 'Selecciona una relación'),
   familiarNombre: z.string().min(2, 'Nombre del familiar requerido'),
   familiarEmail: z.string().email('Email del familiar inválido'),
   familiarTelefono: z.string().min(10, 'Teléfono del familiar inválido'),
-  // NUEVOS: Salud
   eps: z.string().min(2, 'EPS requerida'),
   numeroAfiliadoEps: z.string().optional(),
 });
@@ -84,7 +81,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Tu Familia y Salud</h2>
 
-      {/* SECCIÓN 1: TÉRMINOS Y PRIVACIDAD (MANTENER) */}
+      {/* SECCIÓN 1: TÉRMINOS Y PRIVACIDAD */}
       <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
         <h3 className="font-semibold text-gray-900 mb-4">Términos y Condiciones</h3>
 
@@ -163,7 +160,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
         )}
       </div>
 
-      {/* SECCIÓN 2: INFORMACIÓN DEL FAMILIAR (NUEVA) */}
+      {/* SECCIÓN 2: INFORMACIÓN DEL FAMILIAR */}
       <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
         <h3 className="font-semibold text-gray-900 mb-4">Información del Familiar</h3>
         <p className="text-sm text-gray-600 mb-4">Quién financia tu suscripción y será contacto de emergencia</p>
@@ -243,7 +240,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
         </div>
       </div>
 
-      {/* SECCIÓN 3: INFORMACIÓN DE SALUD (NUEVA) */}
+      {/* SECCIÓN 3: INFORMACIÓN DE SALUD */}
       <div className="bg-green-50 p-6 rounded-lg border-2 border-green-200">
         <h3 className="font-semibold text-gray-900 mb-4">Información de Salud</h3>
 
