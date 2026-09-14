@@ -48,12 +48,15 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
   if (!suscripcion) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center">
-        <p className="text-gray-600 mb-4">No hay suscripción activa</p>
+        <p className="text-gray-600 mb-6">
+          <strong>No tienes una suscripción activa aún.</strong><br />
+          <span className="text-sm">Completa el registro para acceder a todas las actividades.</span>
+        </p>
         <a
-          href="/planes"
-          className="inline-block bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg"
+          href="/inscribir"
+          className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition"
         >
-          Crear Suscripción
+          Completar Registro
         </a>
       </div>
     );

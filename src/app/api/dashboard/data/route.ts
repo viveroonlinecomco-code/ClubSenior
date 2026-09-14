@@ -2,12 +2,9 @@
  * GET /api/dashboard/data
  * Get dashboard data for authenticated user
  * Uses token from Authorization header (passed from frontend localStorage)
- * OPTIMIZED: Caches dashboard data for 5 minutes
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyFacilitadorToken } from '@/lib/auth/jwt';
-import { getCached } from '@/lib/cache/kv';
 import { jwtDecode } from 'jwt-decode';
 
 export async function GET(request: NextRequest) {
@@ -64,45 +61,56 @@ export async function GET(request: NextRequest) {
 
     console.log('[DASHBOARD] Authenticated:', email);
 
-    // ✅ OPTIMIZED: Use cache with 5-minute TTL
-    const cacheKey = `dashboard:${email}`;
-    const data = await getCached(
-      cacheKey,
-      async () => {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // ✅ Fetch data directly (no cache - KV not configured)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-        if (!supabaseUrl || !supabaseKey) {
-          console.error('[DASHBOARD] Missing Supabase config');
-          throw new Error('Server configuration error');
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[DASHBOARD] Missing Supabase config');
+      throw new Error('Server configuration error');
+    }
+
+    // 1. Fetch reportes for this user
+    let reportes = [];
+    try {
+      const reportesResponse = await fetch(
+        new URL('/api/reportes/lista', request.url),
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
         }
+      );
 
-        // 1. Fetch reportes for this user
-        let reportes = [];
-        try {
-          const reportesResponse = await fetch(
-            new URL('/api/reportes/lista', request.url),
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            }
-          );
+      if (reportesResponse.ok) {
+        const reportesData = await reportesResponse.json();
+        reportes = reportesData.reportes || [];
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] Error fetching reportes:', err);
+    }
 
-          if (reportesResponse.ok) {
-            const reportesData = await reportesResponse.json();
-            reportes = reportesData.reportes || [];
-          }
-        } catch (err) {
-          console.error('[DASHBOARD] Error fetching reportes:', err);
+    // 2. Fetch suscripcion for this user
+    let suscripcion = null;
+    try {
+      const usuariosResponse = await fetch(
+        `${supabaseUrl}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}&select=id`,
+        {
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
         }
+      );
 
-        // 2. Fetch suscripcion for this user
-        let suscripcion = null;
-        try {
-          const susuariosResponse = await fetch(
-            `${supabaseUrl}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}&select=id`,
+      if (usuariosResponse.ok) {
+        const usuarios = await usuariosResponse.json();
+        if (Array.isArray(usuarios) && usuarios.length > 0) {
+          const usuario_id = usuarios[0].id;
+
+          const suscrResponse = await fetch(
+            `${supabaseUrl}/rest/v1/suscripciones?usuario_id=eq.${usuario_id}&order=created_at.desc&limit=1`,
             {
               headers: {
                 'apikey': supabaseKey,
@@ -111,71 +119,53 @@ export async function GET(request: NextRequest) {
             }
           );
 
-          if (susuariosResponse.ok) {
-            const usuarios = await susuariosResponse.json();
-            if (Array.isArray(usuarios) && usuarios.length > 0) {
-              const usuario_id = usuarios[0].id;
-
-              const suscrResponse = await fetch(
-                `${supabaseUrl}/rest/v1/suscripciones?usuario_id=eq.${usuario_id}&order=created_at.desc&limit=1`,
-                {
-                  headers: {
-                    'apikey': supabaseKey,
-                    'Authorization': `Bearer ${supabaseKey}`,
-                  },
-                }
-              );
-
-              if (suscrResponse.ok) {
-                const suscripciones = await suscrResponse.json();
-                if (Array.isArray(suscripciones) && suscripciones.length > 0) {
-                  suscripcion = suscripciones[0];
-                }
-              }
+          if (suscrResponse.ok) {
+            const suscripciones = await suscrResponse.json();
+            if (Array.isArray(suscripciones) && suscripciones.length > 0) {
+              suscripcion = suscripciones[0];
             }
           }
-        } catch (err) {
-          console.error('[DASHBOARD] Error fetching suscripcion:', err);
         }
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] Error fetching suscripcion:', err);
+    }
 
-        // 3. Fetch asistencias for this user (NUEVO)
-        let asistencias = null;
-        try {
-          const asistResponse = await fetch(
-            new URL('/api/asistencias/historia', request.url),
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (asistResponse.ok) {
-            asistencias = await asistResponse.json();
-          }
-        } catch (err) {
-          console.error('[DASHBOARD] Error fetching asistencias:', err);
-        }
-
-        // Return complete dashboard data
-        return {
-          success: true,
-          email,
-          user: { 
-            email,
-            nombre: 'Clara',
-            apellido: 'Rodríguez',
+    // 3. Fetch asistencias for this user
+    let asistencias = null;
+    try {
+      const asistResponse = await fetch(
+        new URL('/api/asistencias/historia', request.url),
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
           },
-          suscripcion,
-          reportes,
-          asistencias,
-          pagos: [],
-          message: 'Welcome to your dashboard!',
-        };
+        }
+      );
+
+      if (asistResponse.ok) {
+        asistencias = await asistResponse.json();
+      }
+    } catch (err) {
+      console.error('[DASHBOARD] Error fetching asistencias:', err);
+    }
+
+    // Return complete dashboard data
+    const data = {
+      success: true,
+      email,
+      user: { 
+        email,
+        nombre: 'Clara',
+        apellido: 'Rodríguez',
       },
-      300 // Cache for 5 minutes
-    );
+      suscripcion,
+      reportes,
+      asistencias,
+      pagos: [],
+      message: 'Welcome to your dashboard!',
+    };
 
     return NextResponse.json(data);
 

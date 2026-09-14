@@ -98,8 +98,9 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       success: true,
-      token: Buffer.from(email.toLowerCase()).toString('base64'), // simple token
+      token: Buffer.from(email.toLowerCase()).toString('base64'),
       email,
+      userId: userData.id,  // ✅ NUEVO: Retornar user_id
       message: 'Account created successfully!',
     });
 

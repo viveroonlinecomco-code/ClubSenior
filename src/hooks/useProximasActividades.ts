@@ -26,7 +26,7 @@ export function useProximasActividades() {
         const userId = localStorage.getItem('auth_user_id');
         
         if (!token || !userId) {
-          throw new Error('No autenticado');
+          throw new Error('Usuario no autenticado. Completa /inscribir primero.');
         }
 
         const response = await fetch('/api/actividades/proximas', {
@@ -40,7 +40,8 @@ export function useProximasActividades() {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch actividades');
+          const errorMsg = errorData.error || errorData.message || 'Error al cargar actividades';
+          throw new Error(errorMsg);
         }
 
         const data = await response.json();
