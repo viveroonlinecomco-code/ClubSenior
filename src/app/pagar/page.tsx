@@ -39,48 +39,102 @@ export default function PagarPage() {
     }
   }, [searchParams]);
 
-  // Load subscription data
+  // ✅ FIX: Auto-create suscripción cuando viene de landing con ?plan=X
   useEffect(() => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem('auth_token');
-        if (!token) {
+        const email = localStorage.getItem('auth_email');
+        
+        if (!token || !email) {
           router.push('/inscribir');
           return;
         }
 
-        // Get dashboard data
-        const response = await fetch('/api/dashboard/data', {
+        // ✅ NUEVO: Detectar plan desde URL (?plan=sesion o ?plan=mensual)
+        const planParam = searchParams.get('plan');
+        
+        // ✅ NUEVO: Primero intentar cargar suscripción existente
+        const dashboardResponse = await fetch('/api/dashboard/data', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
-          setError('No se pudo cargar los datos');
-          return;
-        }
+        if (!dashboardResponse.ok) {
+          // Si no hay dashboard data pero vino de landing con plan, crear suscripción
+          if (planParam && !planParam.includes('plan_id')) {
+            console.log(`[/pagar] Plan detectado: ${planParam}, creando suscripción...`);
+            
+            // Mapear slug a plan_id
+            const planIdMap: { [key: string]: number } = {
+              'mensual': 1,
+              'sesion': 2,
+            };
+            
+            const planId = planIdMap[planParam];
+            if (!planId) {
+              setError('Plan no válido');
+              setLoading(false);
+              return;
+            }
 
-        const data = await response.json();
-        setSuscripcion(data.suscripcion);
+            // ✅ Crear suscripción automáticamente
+            const createSubResponse = await fetch('/api/suscripcion/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                email,
+                plan_id: planId,
+              }),
+            });
 
-        // Get plan details if suscripcion exists
-        if (data.suscripcion?.plan_id) {
-          const planResponse = await fetch(
-            `/api/dashboard/data?plan_id=${data.suscripcion.plan_id}`,
-            {
+            if (!createSubResponse.ok) {
+              const errorData = await createSubResponse.json();
+              setError(`Error al crear suscripción: ${errorData.error}`);
+              setLoading(false);
+              return;
+            }
+
+            console.log('[/pagar] ✅ Suscripción creada automáticamente');
+            
+            // Ahora cargar los datos de nuevo
+            const reloadResponse = await fetch('/api/dashboard/data', {
               headers: {
                 'Authorization': `Bearer ${token}`,
               },
-            }
-          );
+            });
 
-          // For now, we'll show basic info from suscripcion
-          setPlan({
-            id: data.suscripcion.plan_id,
+            if (!reloadResponse.ok) {
+              setError('No se pudo cargar los datos de suscripción');
+              setLoading(false);
+              return;
+            }
+
+            const reloadData = await reloadResponse.json();
+            setSuscripcion(reloadData.suscripcion);
+            setPlan(reloadData.plan || {
+              id: String(planId),
+              nombre: planParam === 'mensual' ? 'Plan Mensual - 4 Sesiones' : 'Pago por Sesión',
+              descripcion: '',
+              precio_cop: planParam === 'mensual' ? 150000 : 40000,
+            });
+          } else {
+            setError('No se pudo cargar los datos');
+          }
+        } else {
+          // Suscripción existe, cargar datos normalmente
+          const data = await dashboardResponse.json();
+          setSuscripcion(data.suscripcion);
+          
+          setPlan(data.plan || {
+            id: data.suscripcion?.plan_id || '1',
             nombre: 'Plan Seleccionado',
             descripcion: '',
-            precio_cop: 150000, // Default
+            precio_cop: 150000,
           });
         }
       } catch (err: any) {
@@ -92,7 +146,7 @@ export default function PagarPage() {
     };
 
     loadData();
-  }, [router]);
+  }, [router, searchParams]);
 
   const handleInitiatePayment = async () => {
     if (!suscripcion) {
@@ -244,7 +298,7 @@ export default function PagarPage() {
               </button>
 
               <button
-                onClick={() => router.push('/planes')}
+                onClick={() => router.push('/')}
                 disabled={processingPayment}
                 className="flex-1 border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-50 transition"
               >
@@ -258,8 +312,8 @@ export default function PagarPage() {
               No tienes una suscripción pendiente de pago.
             </p>
             <button
-              onClick={() => router.push('/planes')}
-              className="bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg"
+              onClick={() => router.push('/')}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg"
             >
               Ver Planes
             </button>
