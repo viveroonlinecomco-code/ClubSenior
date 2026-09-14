@@ -61,6 +61,16 @@ export default function InscribirPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-950 dark:to-blue-950 py-12 px-4 sm:py-16">
       <div className="max-w-2xl mx-auto animate-fade-in">
+        {/* Back Button */}
+        <div className="mb-8">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium mb-4"
+          >
+            ← Atrás
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
