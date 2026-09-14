@@ -268,20 +268,20 @@ export default function HomePage() {
 
                 <Link
                   href="/planes?plan=mensual"
-                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition text-center block"
+                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition transform text-center block"
                 >
                   Seleccionar Plan
                 </Link>
               </div>
             </div>
 
-            {/* Plan Por Sesión */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-gray-300">
+            {/* Plan Por Sesión - ✅ MEJORADO */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-indigo-300 hover:border-indigo-500 transition">
               <div className="px-8 pt-8 pb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Pago por Sesión</h3>
                 <p className="text-gray-600 mb-6">Sin compromisos, paga lo que uses</p>
 
-                <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                <div className="bg-indigo-50 rounded-lg p-6 mb-8">
                   <p className="text-gray-600 text-sm mb-1">Precio por sesión</p>
                   <p className="text-4xl font-bold text-gray-900">
                     $40.000
@@ -291,30 +291,30 @@ export default function HomePage() {
 
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
                     <span className="text-gray-700">$40.000 por sesión de 2 horas</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
                     <span className="text-gray-700">Sin contratos ni compromisos</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
                     <span className="text-gray-700">Flexibilidad total</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
                     <span className="text-gray-700">Acceso a facilitador especializado</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
                     <span className="text-gray-700">Café incluido en cada sesión</span>
                   </li>
                 </ul>
 
                 <Link
                   href="/planes?plan=sesion"
-                  className="w-full bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-700 transition text-center block"
+                  className="w-full bg-indigo-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-600 active:scale-95 transition transform text-center block"
                 >
                   Seleccionar Plan
                 </Link>
