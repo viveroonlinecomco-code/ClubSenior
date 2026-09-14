@@ -67,28 +67,30 @@ export default function FamiliaPage() {
       </div>
 
       <div className="bg-white border-b border-gray-200 py-8 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
-            <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+        <div className="max-w-7xl mx-auto">
+          {/* Header con Logout */}
+          <div className="flex justify-between items-start mb-8">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
+              <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+            </div>
+            
+            {/* Logout Button */}
+            <button
+              onClick={() => {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_email');
+                localStorage.removeItem('auth_user_id');
+                window.location.href = '/';
+              }}
+              className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap"
+            >
+              🚪 Cerrar Sesión
+            </button>
           </div>
-          
-          {/* Logout Button */}
-          <button
-            onClick={() => {
-              localStorage.removeItem('auth_token');
-              localStorage.removeItem('auth_email');
-              localStorage.removeItem('auth_user_id');
-              window.location.href = '/';
-            }}
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap"
-          >
-            🚪 Cerrar Sesión
-          </button>
-        </div>
 
           {/* Purpose Section - Always Visible */}
-          <div className="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 sm:p-8">
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 sm:p-8">
             <p className="text-lg sm:text-xl font-semibold mb-4 text-blue-900">🎯 Nuestro Propósito:</p>
             <p className="text-xl sm:text-2xl font-bold leading-relaxed mb-4 text-gray-900">
               Conectando generaciones a través de actividades significativas.
