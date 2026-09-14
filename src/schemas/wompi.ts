@@ -26,14 +26,8 @@ export const WompiTransactionDataSchema = z.object({
 })
 
 export const WompiEventSchema = z.object({
-  event: z.enum(
-    ['transaction.approved', 'transaction.failed', 'transaction.pending'],
-    {
-      errorMap: () => ({
-        message: 'Invalid event type. Expected: transaction.approved, transaction.failed, or transaction.pending',
-      }),
-    }
-  ),
+  event: z.enum(['transaction.approved', 'transaction.failed', 'transaction.pending'])
+    .describe('Tipo de evento de transacción'),
   data: WompiTransactionDataSchema,
   timestamp: z.string().datetime().optional(),
   signature: z.string().optional(),
@@ -55,7 +49,7 @@ export function validateWompiEvent(payload: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        errors: error.errors,
+        errors: error.issues,
         message: 'Webhook payload validation failed',
       }
     }

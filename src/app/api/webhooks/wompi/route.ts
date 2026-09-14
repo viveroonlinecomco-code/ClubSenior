@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
   const context = 'POST /api/webhooks/wompi'
 
   try {
+    // Leer request
     const rawBody = await request.text()
     const signature = request.headers.get('x-wompi-signature') || ''
 
@@ -54,16 +55,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Crear Supabase client
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { cookies: { getAll: () => [] } }
+    )
+
     // ✅ FIX #2: Validar payload con Zod ANTES de procesar
     let event
     try {
       const parsed = JSON.parse(rawBody)
       event = WompiEventSchema.parse(parsed)
       console.log(`[${context}] Event validated:`, event.event)
-    } catch (validationError: any) {
+    } catch (validationError: unknown) {
       const errorMessage = validationError instanceof z.ZodError
-        ? `Zod validation failed: ${validationError.errors.map(e => e.message).join(', ')}`
-        : `JSON parse error: ${validationError.message}`
+        ? `Zod validation failed: ${validationError.issues.map((e: any) => e.message).join(', ')}`
+        : `JSON parse error: ${validationError instanceof Error ? validationError.message : String(validationError)}`
 
       console.warn(`[${context}] Invalid webhook payload:`, errorMessage)
 
@@ -84,24 +92,18 @@ export async function POST(request: NextRequest) {
           error_message: errorMessage,
         })
       } catch (logError) {
-        console.error('[${context}] Failed to log validation error:', logError)
+        console.error(`[${context}] Failed to log validation error:`, logError)
       }
 
       return NextResponse.json(
         {
           success: false,
           message: 'Invalid webhook payload',
-          errors: validationError instanceof z.ZodError ? validationError.errors : undefined,
+          errors: validationError instanceof z.ZodError ? validationError.issues : undefined,
         },
         { status: 400 }
       )
     }
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { cookies: { getAll: () => [] } }
-    )
 
     const externalId = event.data?.id
     if (!externalId) {

@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
           { 
             success: false,
             error: 'Email y código requeridos',
-            errors: error.errors 
+            errors: error.issues 
           },
           { status: 400 }
         )

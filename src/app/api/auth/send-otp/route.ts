@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
           { 
             success: false,
             error: 'Invalid email format',
-            errors: error.errors 
+            errors: error.issues 
           },
           { status: 400 }
         )
