@@ -10,7 +10,7 @@ import AttendanceTable from './components/attendance-table';
 import PaymentHistory from './components/payment-history';
 
 export default function FamiliaPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'reports' | 'payments'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'reports' | 'payments'>('overview');
   const { data, loading, error } = useDashboardData();
   const { actividades, loading: actividadesLoading, error: actividadesError } = useProximasActividades();
 
@@ -67,9 +67,25 @@ export default function FamiliaPage() {
       </div>
 
       <div className="bg-white border-b border-gray-200 py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
-          <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+        <div className="max-w-7xl mx-auto flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
+            <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+          </div>
+          
+          {/* Logout Button */}
+          <button
+            onClick={() => {
+              localStorage.removeItem('auth_token');
+              localStorage.removeItem('auth_email');
+              localStorage.removeItem('auth_user_id');
+              window.location.href = '/';
+            }}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap"
+          >
+            🚪 Cerrar Sesión
+          </button>
+        </div>
 
           {/* Purpose Section - Always Visible */}
           <div className="mt-8 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 sm:p-8">
@@ -112,18 +128,19 @@ export default function FamiliaPage() {
           </div>
         )}
 
-        <div className="flex gap-2 mb-8 border-b border-gray-300">
-          {(['overview', 'reports', 'payments'] as const).map(tab => (
+        <div className="flex gap-2 mb-8 border-b border-gray-300 overflow-x-auto">
+          {(['overview', 'profile', 'reports', 'payments'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 font-semibold border-b-4 transition ${
+              className={`px-6 py-3 font-semibold border-b-4 transition whitespace-nowrap ${
                 activeTab === tab
                   ? 'border-blue-500 text-blue-500'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
               {tab === 'overview' && 'Resumen'}
+              {tab === 'profile' && 'Perfil'}
               {tab === 'reports' && 'Reportes'}
               {tab === 'payments' && 'Pagos'}
             </button>
@@ -258,6 +275,122 @@ export default function FamiliaPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'profile' && (
+          <div>
+            <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">👤 Mi Perfil</h2>
+                <p className="text-gray-600 text-sm mt-1">Edita tu información personal</p>
+              </div>
+              
+              <div className="p-8 max-w-2xl">
+                <div className="space-y-6">
+                  {/* Información Personal */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Información Personal</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Nombre
+                        </label>
+                        <input
+                          type="text"
+                          defaultValue={data?.user.nombre || ''}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          disabled
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Completado en inscripción</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Apellido
+                        </label>
+                        <input
+                          type="text"
+                          defaultValue={data?.user.apellido || ''}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          disabled
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Completado en inscripción</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        defaultValue={data?.user.email || ''}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled
+                      />
+                      <p className="text-xs text-gray-500 mt-1">No puede modificarse</p>
+                    </div>
+                  </div>
+
+                  {/* Información de Suscripción */}
+                  {data?.suscripcion && (
+                    <div className="pt-6 border-t border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Plan de Suscripción</h3>
+                      
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <p className="text-sm text-gray-600 mb-2">
+                          <span className="font-semibold text-gray-900">Estado:</span>{' '}
+                          <span className={`font-semibold ${
+                            data.suscripcion.estado === 'activa' ? 'text-green-600' : 'text-yellow-600'
+                          }`}>
+                            {data.suscripcion.estado === 'activa' ? '✓ Activa' : data.suscripcion.estado}
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-600 mb-2">
+                          <span className="font-semibold text-gray-900">Condominio:</span>{' '}
+                          {data.suscripcion.condominio_id || 'No definido'}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-semibold text-gray-900">Desde:</span>{' '}
+                          {data.suscripcion.fecha_inicio 
+                            ? new Date(data.suscripcion.fecha_inicio).toLocaleDateString('es-CO')
+                            : 'No definida'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Botones de Acción */}
+                  <div className="pt-6 border-t border-gray-200 flex gap-4">
+                    <button
+                      onClick={() => window.location.href = '/inscribir'}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition"
+                    >
+                      📝 Completar/Editar Inscripción
+                    </button>
+                    
+                    <button
+                      onClick={() => window.location.href = '/pagar?plan=actualizar'}
+                      className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
+                    >
+                      💳 Actualizar Suscripción
+                    </button>
+                  </div>
+
+                  {/* Información adicional */}
+                  <div className="pt-6 border-t border-gray-200 bg-gray-50 rounded-lg p-4">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">💡 Nota:</span> Para modificar tu información personal (nombre, apellido, etc.), 
+                      por favor accede a "Completar/Editar Inscripción". 
+                      Ahí podrás actualizar todos tus datos.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
