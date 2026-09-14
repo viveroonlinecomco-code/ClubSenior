@@ -125,40 +125,122 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Impact Section - REORDENADO: PRIMERO (antes de Pilares) */}
-      <section id="impacto" className="py-20 sm:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* PLANES SECTION */}
+      <section id="planes" className="py-20 sm:py-28 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Lo que Nuestros Participantes Experimentan
-            </h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Nuestros Planes</h2>
             <p className="text-lg text-gray-600">
-              Resultados tangibles en bienestar físico, mental y comunitario
+              Elige el plan que mejor se ajusta a tu ritmo y disponibilidad
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {impactStats.map((stat, index) => (
-              <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center">
-                <p className="text-5xl font-bold text-blue-500 mb-2">{stat.number}</p>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{stat.label}</h3>
-                <p className="text-sm text-gray-600">{stat.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Plan Mensual - POPULAR */}
+            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-500 transform md:scale-105">
+              <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white py-3 px-6 text-center font-bold text-sm">
+                ⭐ MÁS POPULAR
               </div>
-            ))}
+
+              <div className="pt-16 px-8 pb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Plan Mensual</h3>
+                <p className="text-gray-600 mb-6">4 sesiones de 2 horas cada una</p>
+
+                <div className="bg-blue-50 rounded-lg p-6 mb-8">
+                  <p className="text-gray-600 text-sm mb-1">Precio mensual</p>
+                  <p className="text-4xl font-bold text-gray-900">
+                    $150.000
+                    <span className="text-lg text-gray-600 font-normal">/mes</span>
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">4 sesiones de 2 horas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Válido por 6 semanas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Sin penalizaciones por faltas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Acceso a facilitador especializado</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-blue-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Café incluido en cada sesión</span>
+                  </li>
+                </ul>
+
+                <Link
+                  href="/pagar?plan=mensual"
+                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition transform text-center block"
+                >
+                  Seleccionar Plan
+                </Link>
+              </div>
+            </div>
+
+            {/* Plan Por Sesión - ✅ MEJORADO */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-indigo-300 hover:border-indigo-500 transition">
+              <div className="px-8 pt-8 pb-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Pago por Sesión</h3>
+                <p className="text-gray-600 mb-6">Sin compromisos, paga lo que uses</p>
+
+                <div className="bg-indigo-50 rounded-lg p-6 mb-8">
+                  <p className="text-gray-600 text-sm mb-1">Precio por sesión</p>
+                  <p className="text-4xl font-bold text-gray-900">
+                    $40.000
+                    <span className="text-lg text-gray-600 font-normal">/sesión</span>
+                  </p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-start gap-3">
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">$40.000 por sesión de 2 horas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Sin contratos ni compromisos</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Flexibilidad total</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Acceso a facilitador especializado</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-indigo-500 font-bold mt-1">✓</span>
+                    <span className="text-gray-700">Café incluido en cada sesión</span>
+                  </li>
+                </ul>
+
+                <Link
+                  href="/pagar?plan=sesion"
+                  className="w-full bg-indigo-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-600 active:scale-95 transition transform text-center block"
+                >
+                  Seleccionar Plan
+                </Link>
+              </div>
+            </div>
           </div>
 
-          {/* Testimonial */}
-          <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-12 border border-green-200">
-            <p className="text-lg text-gray-700 italic mb-6">
-              "Desde que comencé con ClubSenior, tengo más energía y me siento conectada con mi
-              comunidad. Las tardes de café se convirtieron en mi momento favorito de la semana.
-              Nunca pensé que pudiera hacer amigos nuevos a mi edad."
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
+            <p className="text-gray-700">
+              📧 <a href="mailto:soporte@clubsenior.co" className="text-blue-500 hover:underline">soporte@clubsenior.co</a> | 
+              📞 <a href="tel:+5718000000" className="text-blue-500 hover:underline">+57 1 8000 0000</a>
             </p>
-            <p className="font-semibold text-gray-900">María García, 72 años</p>
-            <p className="text-sm text-gray-600">Bogotá, Colombia</p>
           </div>
         </div>
-      </section>
 
       {/* The Four Pillars - REORDENADO: SEGUNDO (después de Impacto) */}
       <section id="pilares" className="py-20 sm:py-28 bg-gray-50">
@@ -214,122 +296,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* PLANES SECTION */}
-      <section id="planes" className="py-20 sm:py-28 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Impact Section - REORDENADO: PRIMERO (antes de Pilares) */}
+      <section id="impacto" className="py-20 sm:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Nuestros Planes</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Lo que Nuestros Participantes Experimentan
+            </h2>
             <p className="text-lg text-gray-600">
-              Elige el plan que mejor se ajusta a tu ritmo y disponibilidad
+              Resultados tangibles en bienestar físico, mental y comunitario
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Plan Mensual - POPULAR */}
-            <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-blue-500 transform md:scale-105">
-              <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white py-3 px-6 text-center font-bold text-sm">
-                ⭐ MÁS POPULAR
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {impactStats.map((stat, index) => (
+              <div key={index} className="bg-gray-50 rounded-2xl p-8 text-center">
+                <p className="text-5xl font-bold text-blue-500 mb-2">{stat.number}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{stat.label}</h3>
+                <p className="text-sm text-gray-600">{stat.description}</p>
               </div>
-
-              <div className="pt-16 px-8 pb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Plan Mensual</h3>
-                <p className="text-gray-600 mb-6">4 sesiones de 2 horas cada una</p>
-
-                <div className="bg-blue-50 rounded-lg p-6 mb-8">
-                  <p className="text-gray-600 text-sm mb-1">Precio mensual</p>
-                  <p className="text-4xl font-bold text-gray-900">
-                    $150.000
-                    <span className="text-lg text-gray-600 font-normal">/mes</span>
-                  </p>
-                </div>
-
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">4 sesiones de 2 horas</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Válido por 6 semanas</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Sin penalizaciones por faltas</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Acceso a facilitador especializado</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Café incluido en cada sesión</span>
-                  </li>
-                </ul>
-
-                <Link
-                  href="/planes?plan=mensual"
-                  className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition transform text-center block"
-                >
-                  Seleccionar Plan
-                </Link>
-              </div>
-            </div>
-
-            {/* Plan Por Sesión - ✅ MEJORADO */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-indigo-300 hover:border-indigo-500 transition">
-              <div className="px-8 pt-8 pb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Pago por Sesión</h3>
-                <p className="text-gray-600 mb-6">Sin compromisos, paga lo que uses</p>
-
-                <div className="bg-indigo-50 rounded-lg p-6 mb-8">
-                  <p className="text-gray-600 text-sm mb-1">Precio por sesión</p>
-                  <p className="text-4xl font-bold text-gray-900">
-                    $40.000
-                    <span className="text-lg text-gray-600 font-normal">/sesión</span>
-                  </p>
-                </div>
-
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">$40.000 por sesión de 2 horas</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Sin contratos ni compromisos</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Flexibilidad total</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Acceso a facilitador especializado</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-indigo-500 font-bold mt-1">✓</span>
-                    <span className="text-gray-700">Café incluido en cada sesión</span>
-                  </li>
-                </ul>
-
-                <Link
-                  href="/planes?plan=sesion"
-                  className="w-full bg-indigo-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-600 active:scale-95 transition transform text-center block"
-                >
-                  Seleccionar Plan
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
-            <p className="text-gray-700">
-              📧 <a href="mailto:soporte@clubsenior.co" className="text-blue-500 hover:underline">soporte@clubsenior.co</a> | 
-              📞 <a href="tel:+5718000000" className="text-blue-500 hover:underline">+57 1 8000 0000</a>
+          {/* Testimonial */}
+          <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-12 border border-green-200">
+            <p className="text-lg text-gray-700 italic mb-6">
+              "Desde que comencé con ClubSenior, tengo más energía y me siento conectada con mi
+              comunidad. Las tardes de café se convirtieron en mi momento favorito de la semana.
+              Nunca pensé que pudiera hacer amigos nuevos a mi edad."
             </p>
+            <p className="font-semibold text-gray-900">María García, 72 años</p>
+            <p className="text-sm text-gray-600">Bogotá, Colombia</p>
           </div>
         </div>
+      </section>
       </section>
 
       {/* CTA Section */}
