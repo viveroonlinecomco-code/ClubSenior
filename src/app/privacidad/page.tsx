@@ -1,12 +1,31 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
 export default function PrivacidadPage() {
+  const router = useRouter();
+  const [canGoBack, setCanGoBack] = useState(false);
+
+  useEffect(() => {
+    // Detectar si hay historial anterior
+    setCanGoBack(window.history.length > 1);
+  }, []);
+
+  const handleBack = () => {
+    if (canGoBack) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white py-12 px-4 sm:py-16">
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => window.history.back()}
+          onClick={handleBack}
           className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium mb-8"
         >
           ← Atrás

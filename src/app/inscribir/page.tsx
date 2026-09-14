@@ -64,7 +64,7 @@ export default function InscribirPage() {
         {/* Back Button */}
         <div className="mb-8">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => router.push('/')}
             className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium mb-4"
           >
             ← Atrás

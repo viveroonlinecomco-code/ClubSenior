@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useProximasActividades } from '@/hooks/useProximasActividades';
 import { PersonalReportCard } from '@/components/personal-report-card';
@@ -10,9 +11,16 @@ import AttendanceTable from './components/attendance-table';
 import PaymentHistory from './components/payment-history';
 
 export default function FamiliaPage() {
+  const router = useRouter();
+  const [canGoBack, setCanGoBack] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'profile' | 'reports' | 'payments'>('overview');
   const { data, loading, error } = useDashboardData();
   const { actividades, loading: actividadesLoading, error: actividadesError } = useProximasActividades();
+
+  useEffect(() => {
+    // Detectar si hay historial anterior
+    setCanGoBack(window.history.length > 1);
+  }, []);
 
   const handleInscribirse = async (actividadId: number) => {
     try {
@@ -58,7 +66,13 @@ export default function FamiliaPage() {
       <div className="bg-white border-b border-gray-200 py-4 px-4">
         <div className="max-w-7xl mx-auto">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => {
+              if (canGoBack) {
+                router.back();
+              } else {
+                router.push('/');
+              }
+            }}
             className="flex items-center gap-2 text-blue-500 hover:text-blue-600 font-medium mb-4"
           >
             ← Atrás
