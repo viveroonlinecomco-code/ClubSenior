@@ -114,26 +114,26 @@ export default function PlanesPage() {
           {planes.map((plan) => (
             <div
               key={plan.id}
-              className={`rounded-lg shadow-lg overflow-hidden transition transform hover:scale-105 ${
+              className={`rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:shadow-2xl hover:scale-105 ${
                 selectedPlan === plan.id
                   ? 'ring-4 ring-blue-500 scale-105'
                   : plan.recomendado
-                  ? 'ring-2 ring-blue-600'
-                  : ''
+                  ? 'ring-2 ring-blue-300 hover:ring-blue-500'
+                  : 'hover:ring-2 hover:ring-indigo-300'
               } bg-white`}
             >
               {plan.recomendado && (
-                <div className="bg-blue-500 hover:bg-blue-600 transition-colors text-white text-center py-2 text-sm font-bold">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all text-white text-center py-3 text-sm font-bold animate-pulse">
                   ⭐ MÁS POPULAR
                 </div>
               )}
 
-              <div className="p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{plan.nombre}</h2>
-                <p className="text-gray-600 text-sm mb-6">{plan.descripcion}</p>
+              <div className="p-8 h-full flex flex-col">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition">{plan.nombre}</h2>
+                <p className="text-gray-600 text-sm mb-6 flex-grow">{plan.descripcion}</p>
 
-                {/* Precio */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8">
+                {/* Precio con efecto hover */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300">
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold text-gray-900">
                       ${plan.precio.toLocaleString('es-CO')}
@@ -144,27 +144,27 @@ export default function PlanesPage() {
                   </div>
                 </div>
 
-                {/* Características */}
+                {/* Características con animación */}
                 <div className="space-y-3 mb-8">
                   {plan.caracteristicas.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <span className="text-blue-500 font-bold">✓</span>
+                    <div key={idx} className="flex items-center gap-3 hover:translate-x-1 transition-transform">
+                      <span className="text-blue-500 font-bold text-lg">✓</span>
                       <span className="text-gray-700">{feature.substring(2)}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* ✅ FIX #3: Botón con color dinámico + visual feedback */}
+                {/* Botón con más feedback visual */}
                 <button
                   onClick={() => handleSelectPlan(plan.id)}
                   disabled={loading && selectedPlan === plan.id}
-                  className={`w-full py-3 rounded-lg font-bold text-white transition transform ${
+                  className={`w-full py-3 rounded-lg font-bold text-white transition-all transform duration-200 ${
                     selectedPlan === plan.id
-                      ? 'bg-blue-600 hover:bg-blue-700 ring-2 ring-blue-400 scale-105'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 ring-2 ring-blue-400 scale-105'
                       : plan.recomendado
-                      ? 'bg-blue-500 hover:bg-blue-600'
-                      : 'bg-indigo-500 hover:bg-indigo-600'
-                  } ${loading && selectedPlan === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-lg'
+                      : 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 hover:shadow-lg'
+                  } ${loading && selectedPlan === plan.id ? 'opacity-50 cursor-not-allowed' : 'active:scale-95'}`}
                 >
                   {loading && selectedPlan === plan.id ? (
                     <span className="flex items-center justify-center gap-2">
@@ -179,9 +179,9 @@ export default function PlanesPage() {
                   )}
                 </button>
 
-                {/* ✅ FIX #4: Indicador visual de selección */}
+                {/* Indicador visual mejorado */}
                 {selectedPlan === plan.id && (
-                  <div className="mt-3 text-center">
+                  <div className="mt-3 text-center animate-pulse">
                     <span className="text-blue-600 font-semibold text-sm">✓ Plan seleccionado</span>
                   </div>
                 )}
@@ -190,17 +190,47 @@ export default function PlanesPage() {
           ))}
         </div>
 
-        {/* Info adicional */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 mt-12">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">¿Preguntas?</h3>
-          <p className="text-gray-700 mb-4">
-            Si tienes dudas sobre cuál plan es mejor para ti, contáctanos:
+        {/* Info adicional - Mejorada */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-8 mt-12 hover:shadow-lg transition-shadow">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">¿Preguntas sobre nuestros planes?</h3>
+          <p className="text-gray-700 mb-6 text-lg">
+            Estamos disponibles para ayudarte a elegir el mejor plan para ti.
           </p>
-          <ul className="text-gray-700 space-y-2">
-            <li>📧 info@clubsenior.com.co</li>
-            <li>📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a></li>
-            <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
-          </ul>
+          <div className="flex flex-wrap gap-6 items-center">
+            {/* Email */}
+            <a
+              href="mailto:info@clubsenior.com.co"
+              className="flex items-center gap-3 bg-white px-6 py-3 rounded-lg hover:bg-blue-50 transition-all hover:shadow-md group"
+            >
+              <span className="text-2xl">📧</span>
+              <div>
+                <div className="text-xs text-gray-500">Email</div>
+                <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition">
+                  info@clubsenior.com.co
+                </div>
+              </div>
+            </a>
+            
+            {/* WhatsApp con icono */}
+            <a
+              href="https://wa.me/573002937403?text=Hola%20ClubSenior%2C%20tengo%20preguntas%20sobre%20los%20planes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-white px-6 py-3 rounded-lg hover:bg-green-50 transition-all hover:shadow-md group"
+            >
+              <span className="text-2xl">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-green-500 group-hover:scale-110 transition-transform">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.869 1.171c-.384.202-.778.405-1.156.605C3.416 2.4.998.559.213 3.957 1.43 7.357 4.412 11.255 8.131 13.39c.78.413 1.542.798 2.271 1.146 1.265.665 2.672 1.184 4.177 1.184h.004c2.418 0 4.709-.768 6.632-2.228.732-.577 1.404-1.264 1.985-2.032.58-.768 1.077-1.621 1.368-2.529.29-.908.444-1.869.444-2.86 0-2.418-.768-4.709-2.228-6.632z"/>
+                </svg>
+              </span>
+              <div>
+                <div className="text-xs text-gray-500">WhatsApp</div>
+                <div className="font-semibold text-gray-900 group-hover:text-green-600 transition">
+                  3002937403
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
 
