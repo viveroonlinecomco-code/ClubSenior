@@ -199,14 +199,14 @@ export default function PlanesPage() {
           <div className="flex flex-wrap gap-6 items-center">
             {/* Email */}
             <a
-              href="mailto:info@clubsenior.com.co"
+              href="mailto:promesaobca@gmail.com"
               className="flex items-center gap-3 bg-white px-6 py-3 rounded-lg hover:bg-blue-50 transition-all hover:shadow-md group"
             >
               <span className="text-2xl">📧</span>
               <div>
                 <div className="text-xs text-gray-500">Email</div>
                 <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition">
-                  info@clubsenior.com.co
+                  promesaobca@gmail.com
                 </div>
               </div>
             </a>

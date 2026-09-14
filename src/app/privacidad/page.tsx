@@ -168,7 +168,7 @@ export default function PrivacidadPage() {
               <br />
               <strong>WhatsApp:</strong> <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">3002937403</a>
               <br />
-              <strong>Email:</strong> <a href="mailto:info@clubsenior.com.co" className="text-blue-500 hover:underline">info@clubsenior.com.co</a>
+              <strong>Email:</strong> <a href="mailto:promesaobca@gmail.com" className="text-blue-500 hover:underline">promesaobca@gmail.com</a>
             </p>
           </section>
 

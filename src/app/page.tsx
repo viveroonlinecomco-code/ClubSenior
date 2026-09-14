@@ -236,7 +236,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
             <p className="text-gray-700">
-              📧 <a href="mailto:info@clubsenior.com.co" className="text-blue-500 hover:underline">info@clubsenior.com.co</a> | 
+              📧 <a href="mailto:promesaobca@gmail.com" className="text-blue-500 hover:underline">promesaobca@gmail.com</a> | 
               📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a>
             </p>
           </div>
@@ -363,7 +363,7 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Soporte</h3>
               <ul className="text-sm space-y-2">
-                <li>📧 info@clubsenior.com.co</li>
+                <li>📧 promesaobca@gmail.com</li>
                 <li>📞 <a href="https://wa.me/573002937403" className="hover:text-white transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>

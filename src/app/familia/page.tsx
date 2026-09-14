@@ -447,7 +447,7 @@ export default function FamiliaPage() {
             <div>
               <h3 className="font-bold text-gray-900 mb-3">Soporte</h3>
               <ul className="text-gray-600 text-sm space-y-2">
-                <li>📧 info@clubsenior.com.co</li>
+                <li>📧 promesaobca@gmail.com</li>
                 <li>📞 <a href="https://wa.me/573002937403" className="hover:text-blue-500 transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
