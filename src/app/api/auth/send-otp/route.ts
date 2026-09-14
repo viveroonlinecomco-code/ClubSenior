@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateCSRFToken } from '@/lib/middleware/csrf';
+import { checkRateLimit } from '@/lib/middleware';
+import { z } from 'zod';
 
 /**
  * Generate a random 6-digit OTP code
@@ -131,11 +133,19 @@ async function sendOTPEmail(email: string, code: string) {
   }
 }
 
+// ✅ FIX #5: Validación de payload con Zod
+const SendOTPSchema = z.object({
+  email: z.string().email('Email inválido'),
+})
+
 /**
  * POST /api/auth/send-otp
  * Generate and send OTP code to email
+ * ✅ FIX #5: Con rate limiting
  */
 export async function POST(request: NextRequest) {
+  const context = '[POST /api/auth/send-otp]'
+  
   try {
     // CSRF Protection: Validate request origin
     const csrfError = await validateCSRFToken(request);
@@ -144,14 +154,50 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email } = body;
 
-    if (!email || !email.includes('@')) {
-      return NextResponse.json(
-        { error: 'Valid email required' },
-        { status: 400 }
-      );
+    // ✅ FIX #5: Validar con Zod
+    let validatedData
+    try {
+      validatedData = SendOTPSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Invalid email format',
+            errors: error.errors 
+          },
+          { status: 400 }
+        )
+      }
+      throw error
     }
+
+    const email = validatedData.email.toLowerCase();
+
+    // ✅ FIX #5: RATE LIMITING por email
+    const rateLimitKey = `otp:send:${email}`
+    const { allowed, remaining } = checkRateLimit(rateLimitKey)
+
+    if (!allowed) {
+      console.warn(`${context} Rate limit exceeded for ${email}`)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Demasiados intentos. Por favor, intenta de nuevo más tarde.',
+          retryAfter: 60,
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': '60',
+            'X-RateLimit-Remaining': '0',
+          }
+        }
+      )
+    }
+
+    console.log(`${context} Email: ${email}, Remaining attempts: ${remaining}`)
 
     // Generate OTP code
     const code = generateOTP();
@@ -171,11 +217,11 @@ export async function POST(request: NextRequest) {
       email,
     });
   } catch (error: any) {
-    console.error('Error in send-otp:', error);
+    console.error(`${context} Error:`, error);
     return NextResponse.json(
       { 
+        success: false,
         error: error.message || 'Error sending OTP',
-        details: error.toString(),
       },
       { status: 500 }
     );

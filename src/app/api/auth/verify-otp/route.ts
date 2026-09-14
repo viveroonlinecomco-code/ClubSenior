@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateCSRFToken } from '@/lib/middleware/csrf';
+import { checkRateLimit } from '@/lib/middleware';
+import { z } from 'zod';
 
 /**
  * Verify OTP code
@@ -79,15 +81,49 @@ async function verifyOTPInDatabase(email: string, code: string) {
   }
 }
 
+// ✅ FIX #5: Validación de payload con Zod
+const VerifyOTPSchema = z.object({
+  email: z.string().email('Email inválido'),
+  code: z.string().min(6, 'Código debe tener 6 dígitos'),
+})
+
 /**
  * POST /api/auth/verify-otp
  * Verify OTP code - does NOT create Auth user
  * 
  * IMPORTANT: This only verifies the OTP.
  * User creation in Auth happens in create-profile endpoint.
+ * ✅ FIX #5: Con rate limiting por IP (brute force protection)
  */
 export async function POST(request: NextRequest) {
+  const context = '[POST /api/auth/verify-otp]'
+  
   try {
+    // ✅ FIX #5: RATE LIMITING por IP (previene brute force)
+    const ipAddress = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    const rateLimitKey = `otp:verify:${ipAddress}`
+    const { allowed, remaining } = checkRateLimit(rateLimitKey)
+
+    if (!allowed) {
+      console.warn(`${context} Rate limit exceeded for IP: ${ipAddress}`)
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Demasiados intentos de verificación. Por favor, intenta de nuevo más tarde.',
+          retryAfter: 60,
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': '60',
+            'X-RateLimit-Remaining': '0',
+          }
+        }
+      )
+    }
+
+    console.log(`${context} IP: ${ipAddress}, Remaining attempts: ${remaining}`)
+
     // CSRF Protection: Validate request origin
     const csrfError = await validateCSRFToken(request);
     if (csrfError) {
@@ -95,16 +131,28 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { email, code } = body;
 
-    console.log(`[VERIFY-OTP] Request received - email: ${email}, code: ${code?.substring(0, 3)}***`);
-
-    if (!email || !code) {
-      return NextResponse.json(
-        { error: 'Email and code required' },
-        { status: 400 }
-      );
+    // ✅ FIX #5: Validar con Zod
+    let validatedData
+    try {
+      validatedData = VerifyOTPSchema.parse(body)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Email y código requeridos',
+            errors: error.errors 
+          },
+          { status: 400 }
+        )
+      }
+      throw error
     }
+
+    const { email, code } = validatedData
+
+    console.log(`${context} Request received - email: ${email}, code: ${code?.substring(0, 3)}***`);
 
     // Verify OTP
     const result = await verifyOTPInDatabase(email, code);
