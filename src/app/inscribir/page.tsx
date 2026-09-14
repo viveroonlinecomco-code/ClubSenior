@@ -161,7 +161,7 @@ export default function InscribirPage() {
 
         {/* Mobile Help */}
         <div className="mt-12 sm:mt-16 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-500">
-          <p>¿Necesitas ayuda? Contacta a soporte@clubsenior.com.co</p>
+          <p>¿Necesitas ayuda? Contacta a info@clubsenior.com.co</p>
         </div>
       </div>
     </div>

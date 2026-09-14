@@ -236,7 +236,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
             <p className="text-gray-700">
-              📧 <a href="mailto:soporte@clubsenior.co" className="text-blue-500 hover:underline">soporte@clubsenior.co</a> | 
+              📧 <a href="mailto:info@clubsenior.com.co" className="text-blue-500 hover:underline">info@clubsenior.com.co</a> | 
               📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a>
             </p>
           </div>
