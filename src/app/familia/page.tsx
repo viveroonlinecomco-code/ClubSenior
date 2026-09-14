@@ -433,8 +433,8 @@ export default function FamiliaPage() {
             <div>
               <h3 className="font-bold text-gray-900 mb-3">Soporte</h3>
               <ul className="text-gray-600 text-sm space-y-2">
-                <li>📧 soporte@clubsenior.co</li>
-                <li>📞 +57 1 8000 0000</li>
+                <li>📧 info@clubsenior.com.co</li>
+                <li>📞 <a href="https://wa.me/573002937403" className="hover:text-blue-500 transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
             </div>
@@ -442,12 +442,12 @@ export default function FamiliaPage() {
               <h3 className="font-bold text-gray-900 mb-3">Legal</h3>
               <ul className="text-gray-600 text-sm space-y-2">
                 <li>
-                  <a href="#" className="hover:text-blue-500 transition">
+                  <a href="/terminos" className="hover:text-blue-500 transition">
                     Términos de Servicio
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-blue-500 transition">
+                  <a href="/privacidad" className="hover:text-blue-500 transition">
                     Política de Privacidad
                   </a>
                 </li>

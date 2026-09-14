@@ -96,7 +96,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
           className="w-5 h-5 mt-1 cursor-pointer"
         />
         <label className="text-gray-700 cursor-pointer">
-          Acepto los <span className="font-semibold">Términos de Servicio</span> de ClubSenior
+          Acepto los <a href="/terminos" target="_blank" className="font-semibold text-blue-500 hover:underline">Términos de Servicio</a> de ClubSenior
         </label>
       </div>
       {errors.terminosAceptados && (
@@ -133,7 +133,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
           className="w-5 h-5 mt-1 cursor-pointer"
         />
         <label className="text-gray-700 cursor-pointer">
-          Acepto la <span className="font-semibold">Política de Privacidad</span> de ClubSenior
+          Acepto la <a href="/privacidad" target="_blank" className="font-semibold text-blue-500 hover:underline">Política de Privacidad</a> de ClubSenior
         </label>
       </div>
       {errors.politicaPrivacidadAceptada && (

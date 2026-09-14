@@ -237,7 +237,7 @@ export default function HomePage() {
             <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
             <p className="text-gray-700">
               📧 <a href="mailto:soporte@clubsenior.co" className="text-blue-500 hover:underline">soporte@clubsenior.co</a> | 
-              📞 <a href="tel:+5718000000" className="text-blue-500 hover:underline">+57 1 8000 0000</a>
+              📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a>
             </p>
           </div>
         </div>
@@ -363,8 +363,8 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Soporte</h3>
               <ul className="text-sm space-y-2">
-                <li>📧 soporte@clubsenior.co</li>
-                <li>📞 +57 1 8000 0000</li>
+                <li>📧 info@clubsenior.com.co</li>
+                <li>📞 <a href="https://wa.me/573002937403" className="hover:text-white transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
             </div>
@@ -372,12 +372,12 @@ export default function HomePage() {
               <h3 className="text-white font-semibold mb-3">Legal</h3>
               <ul className="text-sm space-y-2">
                 <li>
-                  <a href="#" className="hover:text-white transition">
+                  <a href="/terminos" className="hover:text-white transition">
                     Términos de Servicio
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition">
+                  <a href="/privacidad" className="hover:text-white transition">
                     Política de Privacidad
                   </a>
                 </li>

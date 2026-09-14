@@ -197,8 +197,8 @@ export default function PlanesPage() {
             Si tienes dudas sobre cuál plan es mejor para ti, contáctanos:
           </p>
           <ul className="text-gray-700 space-y-2">
-            <li>📧 soporte@clubsenior.co</li>
-            <li>📞 +57 1 8000 000</li>
+            <li>📧 info@clubsenior.com.co</li>
+            <li>📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a></li>
             <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
           </ul>
         </div>
