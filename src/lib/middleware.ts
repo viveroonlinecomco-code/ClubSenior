@@ -474,12 +474,51 @@ export function middleware(request: NextRequest) {
   })()
 }
 
+// ✅ FIX #3: Completar matcher con TODAS las rutas protegidas
+// Asegurar que JWT es requerido en endpoints sensibles
 export const config = {
   matcher: [
+    // Dashboard & Profile
     '/api/dashboard/:path*',
     '/api/perfil/:path*',
-    '/api/actividades/:path*',
+    '/api/perfil',
+
+    // Subscription & Payment (AGREGADAS)
+    '/api/suscripcion/:path*',
+    '/api/suscripcion',
     '/api/suscripciones/:path*',
+    '/api/suscripciones',
+    '/api/pagos/:path*',
+    '/api/pagos',
+
+    // Participant & Family data (AGREGADAS)
     '/api/participantes/:path*',
+    '/api/participantes',
+    '/api/family-relationships/:path*',
+    '/api/family-relationships',
+
+    // Contracts & Signatures (AGREGADAS)
+    '/api/firmas/:path*',
+    '/api/firmas',
+    '/api/contratos/:path*',
+    '/api/contratos',
+
+    // Reports (AGREGADAS)
+    '/api/reportes/:path*',
+    '/api/reportes',
+
+    // Activities & Attendance (AGREGADAS)
+    '/api/actividades/:path*',
+    '/api/actividades',
+    '/api/asistencias/:path*',
+    '/api/asistencias',
+
+    // Facilitator routes (AGREGADAS)
+    '/api/facilitador/:path*',
+    '/api/facilitador',
+
+    // Admin routes (AGREGADAS)
+    '/api/admin/:path*',
+    '/api/admin',
   ],
 }
