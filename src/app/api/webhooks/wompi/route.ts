@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import crypto from 'crypto'
+import { WompiEventSchema } from '@/schemas/wompi'
+import { z } from 'zod'
 
 const WOMPI_WEBHOOK_SECRET = process.env.WOMPI_WEBHOOK_SECRET
 
@@ -52,8 +54,48 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const event = JSON.parse(rawBody)
-    console.log(`[${context}] Event type:`, event.event)
+    // ✅ FIX #2: Validar payload con Zod ANTES de procesar
+    let event
+    try {
+      const parsed = JSON.parse(rawBody)
+      event = WompiEventSchema.parse(parsed)
+      console.log(`[${context}] Event validated:`, event.event)
+    } catch (validationError: any) {
+      const errorMessage = validationError instanceof z.ZodError
+        ? `Zod validation failed: ${validationError.errors.map(e => e.message).join(', ')}`
+        : `JSON parse error: ${validationError.message}`
+
+      console.warn(`[${context}] Invalid webhook payload:`, errorMessage)
+
+      // Registrar intento de webhook inválido
+      try {
+        await supabase.from('webhook_logs').insert({
+          webhook_source: 'wompi',
+          webhook_event_type: 'VALIDATION_FAILED',
+          external_id: 'unknown',
+          payload: (() => {
+            try {
+              return JSON.parse(rawBody)
+            } catch {
+              return { raw: rawBody.substring(0, 100) }
+            }
+          })(),
+          processed: false,
+          error_message: errorMessage,
+        })
+      } catch (logError) {
+        console.error('[${context}] Failed to log validation error:', logError)
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Invalid webhook payload',
+          errors: validationError instanceof z.ZodError ? validationError.errors : undefined,
+        },
+        { status: 400 }
+      )
+    }
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -173,13 +215,39 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      // ✅ FIX #1: CRITICAL - Obtener sponsor_id de la BD, NO del webhook
+      // Previene inyección: webhook malformado no puede manipular notificaciones
+      const { data: suscripcion, error: suscError } = await supabase
+        .from('suscripciones')
+        .select('sponsor_id, participante_id')
+        .eq('id', suscripcion_id)
+        .single()
+
+      if (suscError || !suscripcion) {
+        console.error(`[${context}] Subscription not found:`, suscripcion_id)
+        await supabase.from('webhook_logs').insert({
+          webhook_source: 'wompi',
+          webhook_event_type: event.event,
+          external_id: externalId,
+          payload: event,
+          processed: false,
+          error_message: 'Subscription not found',
+        })
+        return NextResponse.json(
+          { success: false, message: 'Subscription not found' },
+          { status: 404 }
+        )
+      }
+
+      // Actualizar estado a fallo_pago
       await supabase
         .from('suscripciones')
         .update({ estado: 'fallo_pago' })
         .eq('id', suscripcion_id)
 
+      // ✅ Usar sponsor_id verificado de BD, no del webhook
       await supabase.from('notificaciones').insert({
-        usuario_id: event.data?.sponsor_id,
+        usuario_id: suscripcion.sponsor_id,
         evento_tipo: 'pago_fallido',
         titulo: 'Pago rechazado',
         mensaje: 'El pago no pudo ser procesado.',
