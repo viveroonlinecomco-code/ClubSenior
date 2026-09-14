@@ -178,52 +178,55 @@ export default function FamiliaPage() {
                   ) : (
                     <div className="space-y-4">
                       {actividades.map((act) => {
-                        const colorMap: Record<string, { from: string; to: string; border: string; button: string }> = {
+                        const colorMap: Record<string, { from: string; to: string; border: string; icon: string }> = {
                           fisica: { 
                             from: 'from-red-50', 
                             to: 'to-orange-50', 
                             border: 'border-red-200',
-                            button: 'bg-red-600 hover:bg-red-700'
+                            icon: '💪'
                           },
                           cognitiva: { 
                             from: 'from-blue-50', 
                             to: 'to-indigo-50', 
                             border: 'border-blue-200',
-                            button: 'bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700'
+                            icon: '🧠'
                           },
                           social: { 
                             from: 'from-purple-50', 
                             to: 'to-pink-50', 
                             border: 'border-purple-200',
-                            button: 'bg-purple-600 hover:bg-purple-700'
+                            icon: '👥'
                           },
                           tertulia: { 
                             from: 'from-amber-50', 
                             to: 'to-yellow-50', 
                             border: 'border-amber-200',
-                            button: 'bg-amber-600 hover:bg-amber-700'
+                            icon: '📖'
                           },
                         };
                         
-                        const colors = colorMap[act.tipo] || colorMap.social;
+                        const colors = colorMap[act.modulo] || colorMap.social;
+                        const fecha = new Date(act.fecha).toLocaleDateString('es-CO', { weekday: 'long', month: 'short', day: 'numeric' });
                         
                         return (
                           <div 
                             key={act.id}
                             className={`bg-gradient-to-br ${colors.from} ${colors.to} rounded-xl p-6 border ${colors.border}`}
                           >
-                            <div className="mb-3">
+                            <div className="flex justify-between items-start mb-3">
                               <h3 className="text-lg font-bold text-gray-900">
-                                {act.emoji} {act.nombre}
+                                {colors.icon} {act.titulo}
                               </h3>
+                              <span className="text-sm font-semibold text-gray-600 bg-white/60 px-3 py-1 rounded-full">
+                                {act.hora_inicio}
+                              </span>
                             </div>
-                            <p className="text-sm text-gray-700 mb-4">
+                            <p className="text-sm text-gray-600 mb-3">
+                              📅 {fecha}
+                            </p>
+                            <p className="text-sm text-gray-700">
                               {act.descripcion}
                             </p>
-                            <div className="text-xs text-gray-600">
-                              <p className="font-semibold">Objetivo:</p>
-                              <p>{act.objetivo}</p>
-                            </div>
                           </div>
                         );
                       })}

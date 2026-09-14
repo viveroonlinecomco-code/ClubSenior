@@ -3,16 +3,15 @@
 import { useState, useEffect } from 'react';
 
 export interface Actividad {
-  id: number;
-  emoji: string;
-  nombre: string;
-  tipo: 'fisica' | 'cognitiva' | 'social' | 'tertulia';
+  id: string;
+  titulo: string;
   descripcion: string;
-  objetivo: string;
-  dia: string;
+  fecha: string;
   hora_inicio: string;
-  duracion_minutos: number;
-  semana: number;
+  hora_fin: string;
+  modulo: 'fisica' | 'cognitiva' | 'social' | 'tertulia';
+  condominio_id: string;
+  created_at: string;
 }
 
 export function useProximasActividades() {
@@ -23,10 +22,19 @@ export function useProximasActividades() {
   useEffect(() => {
     const fetchActividades = async () => {
       try {
+        const token = localStorage.getItem('auth_token');
+        const userId = localStorage.getItem('auth_user_id');
+        
+        if (!token || !userId) {
+          throw new Error('No autenticado');
+        }
+
         const response = await fetch('/api/actividades/proximas', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'x-user-id': userId,
           },
         });
 
@@ -36,7 +44,7 @@ export function useProximasActividades() {
         }
 
         const data = await response.json();
-        setActividades(data.actividades || []);
+        setActividades(data.data?.actividades || []);
         setError(null);
       } catch (err: any) {
         console.error('[useProximasActividades] Error:', err.message);

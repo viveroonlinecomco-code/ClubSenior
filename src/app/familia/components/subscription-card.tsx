@@ -124,10 +124,10 @@ export default function SubscriptionCard({ suscripcion }: SubscriptionCardProps)
 
           <div className="flex gap-4 pt-4">
             <a
-              href="/planes"
+              href="/pagar?plan=actualizar"
               className="flex-1 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition text-center block"
             >
-              Cambiar Plan
+              Actualizar Suscripción
             </a>
             <button
               onClick={() => setShowCancelModal(true)}
