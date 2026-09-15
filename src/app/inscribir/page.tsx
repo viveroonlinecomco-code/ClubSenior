@@ -127,7 +127,7 @@ export default function InscribirPage() {
         {/* Header */}
         <div className="mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-            Únete a ClubSenior
+            Únete a Grupo Plateado
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
             Paso {currentStep} de 4 • {Math.round((currentStep / 4) * 100)}% completado
@@ -218,7 +218,7 @@ export default function InscribirPage() {
 
         {/* Mobile Help */}
         <div className="mt-12 sm:mt-16 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-500">
-          <p>¿Necesitas ayuda? Contacta a promesaobca@gmail.com</p>
+          <p>¿Necesitas ayuda? Contacta a servicioalcliente@tardesdelcafe.com</p>
         </div>
       </div>
     </div>

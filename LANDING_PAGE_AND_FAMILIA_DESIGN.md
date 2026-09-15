@@ -1,6 +1,6 @@
 # 🎨 **LANDING PAGE & FAMILIA DASHBOARD**
 
-**Proyecto:** ClubSenior - Tardes de Café, Mente y Saberes  
+**Proyecto:** Grupo Plateado - Tardes de Café, Mente y Saberes  
 **Enfoque:** UX/UI Design + Propósito Central  
 **Prioridad:** PROPÓSITO siempre visible en ambas páginas  
 
@@ -20,7 +20,7 @@ https://club-senior.vercel.app/
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │                                                                │
-│  [Logo: ClubSenior]                                            │
+│  [Logo: Grupo Plateado]                                            │
 │                                                                │
 │  Tardes de Café, Mente y Saberes                              │
 │                                                                │
@@ -34,7 +34,7 @@ https://club-senior.vercel.app/
 │                                                                │
 │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
 │                                                                │
-│  En ClubSenior encontrarás:                                    │
+│  En Grupo Plateado encontrarás:                                    │
 │  ✓ Actividades diseñadas para tu bienestar                    │
 │  ✓ Comunidad de personas como tú                               │
 │  ✓ Oportunidad de compartir tu sabiduría                      │
@@ -106,7 +106,7 @@ https://club-senior.vercel.app/
 │  └────────┘  └────────┘  └────────┘  └────────┘             │
 │                                                                │
 │  Testimonial Card:                                            │
-│  "Desde que comencé con ClubSenior, tengo más energía y     │
+│  "Desde que comencé con Grupo Plateado, tengo más energía y     │
 │   me siento conectada con mi comunidad. Nunca pensé que      │
 │   pudiera hacer amigos nuevos a mi edad."                     │
 │   - María, 72 años, Bogotá                                    │
@@ -135,7 +135,7 @@ https://club-senior.vercel.app/
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │                                                                │
-│ Sobre ClubSenior                                              │
+│ Sobre Grupo Plateado                                              │
 │ Conectando generaciones, creando comunidad a través de        │
 │ actividades significativas.                                    │
 │                                                                │
@@ -144,7 +144,7 @@ https://club-senior.vercel.app/
 │ +57 1 8000 000      Política de Privacidad                    │
 │ Chat en vivo         Contacta con nosotros                    │
 │                                                                │
-│ © 2026 ClubSenior. Todos los derechos reservados.            │
+│ © 2026 Grupo Plateado. Todos los derechos reservados.            │
 │                                                                │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -165,7 +165,7 @@ https://club-senior.vercel.app/familia
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │ Mi Familia                                                     │
-│ Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes    │
+│ Bienvenido a Grupo Plateado - Tardes de Café, Mente & Saberes    │
 │                                                                │
 │ ┌──────────────────────────────────────────────────────────┐ │
 │ │ 🎯 NUESTRO PROPÓSITO:                                    │ │
@@ -174,7 +174,7 @@ https://club-senior.vercel.app/familia
 │ │ significativas. Creemos que nunca es tarde para          │ │
 │ │ aprender, compartir y crear impacto.                     │ │
 │ │                                                           │ │
-│ │ En ClubSenior encontrarás:                               │ │
+│ │ En Grupo Plateado encontrarás:                               │ │
 │ │ ✓ Actividades diseñadas para tu bienestar               │ │
 │ │ ✓ Comunidad de personas como tú                          │ │
 │ │ ✓ Oportunidad de compartir tu sabiduría                 │ │

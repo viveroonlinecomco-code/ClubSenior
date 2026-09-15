@@ -1,6 +1,6 @@
 ---
 name: TESTING_GUIDE
-description: Complete testing guide for ClubSenior - Vitest, unit tests, integration tests, best practices
+description: Complete testing guide for Grupo Plateado - Vitest, unit tests, integration tests, best practices
 ---
 
 # 🧪 TESTING SUITE - CLUBSENIOR

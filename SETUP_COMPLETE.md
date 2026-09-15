@@ -1,4 +1,4 @@
-# 🚀 SETUP COMPLETO - ClubSenior
+# 🚀 SETUP COMPLETO - Grupo Plateado
 
 Tardes de Café, Mente & Saberes  
 Versión: v0.1.0 (Checkpoint 4 completado)
@@ -25,12 +25,12 @@ El proyecto está **100% listo** con:
 
 ```bash
 # Con token (recomendado):
-git clone https://oauth2:ghp_11CAJBQKI0LvQYRTDn91bz_LNPsopgHczNmnXMb8z6QdejXzkhlJoqWEiwTCQ0Y6kBIH67QA5IdCzdCDSH@github.com/viveroonlinecomco-code/ClubSenior.git
+git clone https://oauth2:ghp_11CAJBQKI0LvQYRTDn91bz_LNPsopgHczNmnXMb8z6QdejXzkhlJoqWEiwTCQ0Y6kBIH67QA5IdCzdCDSH@github.com/viveroonlinecomco-code/Grupo Plateado.git
 
 # O sin token (requiere SSH key):
-git clone git@github.com:viveroonlinecomco-code/ClubSenior.git
+git clone git@github.com:viveroonlinecomco-code/Grupo Plateado.git
 
-cd ClubSenior
+cd Grupo Plateado
 ```
 
 ### 2️⃣ Instalar dependencias
@@ -164,7 +164,7 @@ curl -X POST http://localhost:3000/api/webhooks/wompi \
 ## 📁 ESTRUCTURA DEL PROYECTO
 
 ```
-ClubSenior/
+Grupo Plateado/
 ├── src/
 │   ├── app/                          # Next.js 16 app directory
 │   │   ├── (marketing)/              # Landing page
@@ -454,7 +454,7 @@ Si tienes problemas:
 ## 🎉 ¡LISTO PARA INICIAR!
 
 ```bash
-cd ClubSenior
+cd Grupo Plateado
 npm install
 # Configura .env.local
 npm run dev

@@ -86,7 +86,7 @@ export default function FamiliaPage() {
           <div className="flex justify-between items-start mb-8">
             <div>
               <h1 className="text-4xl font-bold mb-2 text-gray-900">Generación Silver</h1>
-              <p className="text-gray-700">Bienvenido a ClubSenior - Tardes de Café, Mente & Saberes</p>
+              <p className="text-gray-700">Bienvenido a Grupo Plateado - Tardes de Café, Mente & Saberes</p>
             </div>
             
             {/* Logout Button */}
@@ -439,7 +439,7 @@ export default function FamiliaPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h3 className="font-bold text-gray-900 mb-3">Sobre ClubSenior</h3>
+              <h3 className="font-bold text-gray-900 mb-3">Sobre Grupo Plateado</h3>
               <p className="text-gray-600 text-sm">
                 Conectando generaciones, creando comunidad a través de actividades significativas.
               </p>
@@ -447,7 +447,7 @@ export default function FamiliaPage() {
             <div>
               <h3 className="font-bold text-gray-900 mb-3">Soporte</h3>
               <ul className="text-gray-600 text-sm space-y-2">
-                <li>📧 promesaobca@gmail.com</li>
+                <li>📧 servicioalcliente@tardesdelcafe.com</li>
                 <li>📞 <a href="https://wa.me/573002937403" className="hover:text-blue-500 transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
@@ -475,7 +475,7 @@ export default function FamiliaPage() {
           </div>
 
           <div className="border-t border-gray-300 pt-8 text-center text-gray-600 text-sm">
-            <p>&copy; 2026 ClubSenior. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Grupo Plateado. Todos los derechos reservados.</p>
           </div>
         </div>
       </div>

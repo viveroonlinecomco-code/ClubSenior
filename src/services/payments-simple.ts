@@ -223,9 +223,9 @@ async function sendPaymentConfirmationEmail(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'ClubSenior <noreply@resend.dev>',
+      from: 'Grupo Plateado <noreply@resend.dev>',
       to: email,
-      subject: '✅ Pago Confirmado - ClubSenior',
+      subject: '✅ Pago Confirmado - Grupo Plateado',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0;">
@@ -252,13 +252,13 @@ async function sendPaymentConfirmationEmail(
             </p>
 
             <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-top: 20px;">
-              ¡Gracias por ser parte de <strong>ClubSenior</strong>!
+              ¡Gracias por ser parte de <strong>Grupo Plateado</strong>!
             </p>
 
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
             
             <p style="font-size: 12px; color: #6b7280; text-align: center;">
-              ClubSenior - Tardes de Café, Mente & Saberes<br>
+              Grupo Plateado - Tardes de Café, Mente & Saberes<br>
               Conectando generaciones, creando comunidad
             </p>
           </div>

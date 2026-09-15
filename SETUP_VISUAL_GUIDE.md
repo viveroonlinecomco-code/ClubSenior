@@ -3,8 +3,8 @@
 ## PASO 1: Clonar el proyecto
 
 ```bash
-git clone https://github.com/viveroonlinecomco-code/ClubSenior.git
-cd ClubSenior
+git clone https://github.com/viveroonlinecomco-code/Grupo Plateado.git
+cd Grupo Plateado
 ```
 
 ---
@@ -60,7 +60,7 @@ Copia: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.yyy...
 
 ```bash
 # En tu editor favorito:
-# ClubSenior/.env.local
+# Grupo Plateado/.env.local
 ```
 
 ### ✏️ Reemplaza estos valores:
@@ -94,7 +94,7 @@ https://supabase.com/dashboard/project/popgpdhtyhckvkjmiknq/sql
 ### 📋 Copia TODO el contenido de:
 
 ```
-Tu proyecto ClubSenior → supabase/migrations/001_init_schema.sql
+Tu proyecto Grupo Plateado → supabase/migrations/001_init_schema.sql
 ```
 
 ### ▶️ Click en: `RUN` (esquina superior derecha)
@@ -112,7 +112,7 @@ Espera a que termine (30-60 segundos)
 ### 📋 Copia TODO el contenido de:
 
 ```
-Tu proyecto ClubSenior → supabase/seed.sql
+Tu proyecto Grupo Plateado → supabase/seed.sql
 ```
 
 ### ▶️ Click en: `RUN`
@@ -127,7 +127,7 @@ Esto crea:
 ## PASO 7: Verificar que funciona
 
 ```bash
-# En terminal, dentro de ClubSenior/
+# En terminal, dentro de Grupo Plateado/
 
 # Verificar tipos TypeScript
 npm run typecheck
@@ -268,7 +268,7 @@ Si llegaste hasta aquí, **TODO FUNCIONA** ✨
 | Dashboard Supabase | https://supabase.com/dashboard/project/popgpdhtyhckvkjmiknq |
 | API Settings | https://supabase.com/dashboard/project/popgpdhtyhckvkjmiknq/settings/api |
 | SQL Editor | https://supabase.com/dashboard/project/popgpdhtyhckvkjmiknq/sql |
-| GitHub Repo | https://github.com/viveroonlinecomco-code/ClubSenior |
+| GitHub Repo | https://github.com/viveroonlinecomco-code/Grupo Plateado |
 | App Local | http://localhost:3000 |
 
 ---

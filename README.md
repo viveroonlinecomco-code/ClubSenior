@@ -1,10 +1,10 @@
-# 🎯 ClubSenior - Tardes de Café, Mente & Saberes
+# 🎯 Grupo Plateado - Tardes de Café, Mente & Saberes
 
 Plataforma web B2C para gestión de programas de bienestar para adultos mayores en condominios.
 
 **Status:** MVP Funcional - CP5 Fase 6 Completa  
 **Live Demo:** https://club-senior.vercel.app  
-**GitHub:** https://github.com/viveroonlinecomco-code/ClubSenior
+**GitHub:** https://github.com/viveroonlinecomco-code/Grupo Plateado
 
 ---
 
@@ -58,8 +58,8 @@ Git:        GitHub + GitHub Actions CI/CD
 
 ```bash
 # 1. Clonar repositorio
-git clone https://github.com/viveroonlinecomco-code/ClubSenior.git
-cd ClubSenior
+git clone https://github.com/viveroonlinecomco-code/Grupo Plateado.git
+cd Grupo Plateado
 
 # 2. Instalar dependencias
 npm install --legacy-peer-deps
@@ -352,14 +352,14 @@ git push origin feature/nombre
 ## 📞 Soporte
 
 - **Email:** soporte@clubsenior.co
-- **GitHub Issues:** https://github.com/viveroonlinecomco-code/ClubSenior/issues
+- **GitHub Issues:** https://github.com/viveroonlinecomco-code/Grupo Plateado/issues
 - **Documentación:** https://docs.clubsenior.co (próximamente)
 
 ---
 
 ## 📄 Licencia
 
-Propiedad intelectual de ClubSenior. Todos los derechos reservados.
+Propiedad intelectual de Grupo Plateado. Todos los derechos reservados.
 
 ---
 

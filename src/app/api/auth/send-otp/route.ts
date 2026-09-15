@@ -88,13 +88,13 @@ async function sendOTPEmail(email: string, code: string) {
       body: JSON.stringify({
         from: 'OTP <otp@tardesdelcafe.com>',
         to: email, // Send to the user's email
-        subject: 'Tu Código de Verificación - ClubSenior',
+        subject: 'Tu Código de Verificación - Grupo Plateado',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1e40af; margin-bottom: 20px;">Código de Verificación</h2>
             
             <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-              Hemos recibido una solicitud para verificar tu correo electrónico en ClubSenior.
+              Hemos recibido una solicitud para verificar tu correo electrónico en Grupo Plateado.
             </p>
             
             <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
@@ -112,7 +112,7 @@ async function sendOTPEmail(email: string, code: string) {
             <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
             
             <p style="font-size: 12px; color: #999; margin: 0;">
-              ClubSenior - Tardes de Café, Mente & Saberes<br>
+              Grupo Plateado - Tardes de Café, Mente & Saberes<br>
               Conectando generaciones, creando comunidad
             </p>
           </div>

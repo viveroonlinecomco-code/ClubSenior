@@ -34,7 +34,7 @@ export default function PrivacidadPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Política de Privacidad</h1>
-          <p className="text-gray-600">ClubSenior - Tardes de Café, Mente & Saberes</p>
+          <p className="text-gray-600">Grupo Plateado - Tardes de Café, Mente & Saberes</p>
           <p className="text-gray-500 text-sm mt-2">Última actualización: Septiembre 2026</p>
         </div>
 
@@ -43,7 +43,7 @@ export default function PrivacidadPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introducción</h2>
             <p>
-              En ClubSenior, tu privacidad es importante para nosotros. Esta Política de Privacidad explica 
+              En Grupo Plateado, tu privacidad es importante para nosotros. Esta Política de Privacidad explica 
               cómo recopilamos, usamos y protegemos tu información personal.
             </p>
           </section>
@@ -94,7 +94,7 @@ export default function PrivacidadPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Protección de Datos</h2>
             <p>
-              ClubSenior utiliza encriptación SSL/TLS para proteger tu información. Tu contraseña y datos de pago 
+              Grupo Plateado utiliza encriptación SSL/TLS para proteger tu información. Tu contraseña y datos de pago 
               se almacenan de forma segura en Supabase, una plataforma confiable de base de datos.
             </p>
             <p className="mt-3">
@@ -132,7 +132,7 @@ export default function PrivacidadPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Cookies</h2>
             <p>
-              ClubSenior utiliza cookies para mejorar tu experiencia. Las cookies se usan para:
+              Grupo Plateado utiliza cookies para mejorar tu experiencia. Las cookies se usan para:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
               <li>Mantener tu sesión activa</li>
@@ -156,7 +156,7 @@ export default function PrivacidadPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Cambios a Esta Política</h2>
             <p>
-              ClubSenior puede actualizar esta Política de Privacidad en cualquier momento. Los cambios serán notificados 
+              Grupo Plateado puede actualizar esta Política de Privacidad en cualquier momento. Los cambios serán notificados 
               por email. Continuar usando el servicio implica aceptación de los cambios.
             </p>
           </section>
@@ -168,13 +168,13 @@ export default function PrivacidadPage() {
               <br />
               <strong>WhatsApp:</strong> <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">3002937403</a>
               <br />
-              <strong>Email:</strong> <a href="mailto:promesaobca@gmail.com" className="text-blue-500 hover:underline">promesaobca@gmail.com</a>
+              <strong>Email:</strong> <a href="mailto:servicioalcliente@tardesdelcafe.com" className="text-blue-500 hover:underline">servicioalcliente@tardesdelcafe.com</a>
             </p>
           </section>
 
           <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
             <p className="text-sm text-gray-700">
-              <strong>Cumplimiento Normativo:</strong> ClubSenior cumple con las leyes colombianas de protección de datos, 
+              <strong>Cumplimiento Normativo:</strong> Grupo Plateado cumple con las leyes colombianas de protección de datos, 
               incluyendo la Ley 1581 de 2012 (Ley de Habeas Data).
             </p>
           </section>

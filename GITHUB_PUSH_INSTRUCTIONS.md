@@ -1,4 +1,4 @@
-# GitHub Push Instructions — ClubSenior Repository
+# GitHub Push Instructions — Grupo Plateado Repository
 
 ## Current Project Status
 
@@ -23,7 +23,7 @@
 # Configure remote (replace URL with correct one)
 cd /home/claude/club-saberes-web
 git remote remove origin
-git remote add origin https://github.com/YOUR-ORG/ClubSenior.git
+git remote add origin https://github.com/YOUR-ORG/Grupo Plateado.git
 
 # Push
 git branch -M main
@@ -45,7 +45,7 @@ git push -u origin master
 
 cd /home/claude/club-saberes-web
 git remote remove origin
-git remote add origin https://github.com/YOUR-ORG/ClubSenior.git
+git remote add origin https://github.com/YOUR-ORG/Grupo Plateado.git
 git branch -M main
 git push -u origin main
 ```

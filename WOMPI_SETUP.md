@@ -1,4 +1,4 @@
-# 💳 Configuración de Wompi - ClubSenior
+# 💳 Configuración de Wompi - Grupo Plateado
 
 ## Requisitos
 

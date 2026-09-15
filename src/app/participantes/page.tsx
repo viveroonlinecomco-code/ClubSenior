@@ -274,7 +274,7 @@ export default function ParticipantesPage() {
       {/* Footer */}
       <div className="bg-gray-100 border-t border-gray-300 py-8 px-4 mt-12">
         <div className="max-w-6xl mx-auto text-center text-gray-600 text-sm">
-          <p>&copy; 2026 ClubSenior. Todos los derechos reservados.</p>
+          <p>&copy; 2026 Grupo Plateado. Todos los derechos reservados.</p>
         </div>
       </div>
     </div>

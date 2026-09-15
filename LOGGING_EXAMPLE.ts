@@ -129,11 +129,11 @@ export async function POST(request: NextRequest) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'ClubSenior <noreply@clubsenior.com.co>',
+        from: 'Grupo Plateado <noreply@clubsenior.com.co>',
         to: email,
         subject: `Tu código de verificación: ${otpCode}`,
         html: `
-          <h1>ClubSenior</h1>
+          <h1>Grupo Plateado</h1>
           <p>Tu código de verificación es: <strong>${otpCode}</strong></p>
           <p>Este código expira en 10 minutos.</p>
         `,
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
 
     logEmailSent({
       to: email,
-      subject: 'Código de verificación ClubSenior',
+      subject: 'Código de verificación Grupo Plateado',
       template: 'otp-verification',
       success: emailSuccess,
       provider: 'resend',

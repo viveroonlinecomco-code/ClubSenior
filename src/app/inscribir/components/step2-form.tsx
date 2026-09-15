@@ -79,10 +79,10 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
         </button>
         {expandedSection === 'terms' && (
           <div className="bg-white px-6 py-4 border-t border-gray-300 max-h-64 overflow-y-auto text-gray-600 text-sm space-y-4">
-            <p><strong>1. Aceptación de Términos</strong><br />Al utilizar ClubSenior, aceptas estos términos y condiciones en su totalidad.</p>
-            <p><strong>2. Descripción del Servicio</strong><br />ClubSenior proporciona actividades recreativas y educativas para adultos mayores.</p>
+            <p><strong>1. Aceptación de Términos</strong><br />Al utilizar Grupo Plateado, aceptas estos términos y condiciones en su totalidad.</p>
+            <p><strong>2. Descripción del Servicio</strong><br />Grupo Plateado proporciona actividades recreativas y educativas para adultos mayores.</p>
             <p><strong>3. Responsabilidades del Usuario</strong><br />El usuario es responsable de la exactitud de la información proporcionada.</p>
-            <p><strong>4. Limitación de Responsabilidad</strong><br />ClubSenior no es responsable de daños indirectos que surjan del uso del servicio.</p>
+            <p><strong>4. Limitación de Responsabilidad</strong><br />Grupo Plateado no es responsable de daños indirectos que surjan del uso del servicio.</p>
           </div>
         )}
       </div>
@@ -96,7 +96,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
           className="w-5 h-5 mt-1 cursor-pointer"
         />
         <label className="text-gray-700 cursor-pointer">
-          Acepto los <a href="/terminos" target="_blank" className="font-semibold text-blue-500 hover:underline">Términos de Servicio</a> de ClubSenior
+          Acepto los <a href="/terminos" target="_blank" className="font-semibold text-blue-500 hover:underline">Términos de Servicio</a> de Grupo Plateado
         </label>
       </div>
       {errors.terminosAceptados && (
@@ -116,7 +116,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
         </button>
         {expandedSection === 'privacy' && (
           <div className="bg-white px-6 py-4 border-t border-gray-300 max-h-64 overflow-y-auto text-gray-600 text-sm space-y-4">
-            <p><strong>1. Recopilación de Datos</strong><br />ClubSenior recopila información personal para proporcionar nuestros servicios.</p>
+            <p><strong>1. Recopilación de Datos</strong><br />Grupo Plateado recopila información personal para proporcionar nuestros servicios.</p>
             <p><strong>2. Uso de Información</strong><br />Utilizamos tu información para procesar pagos, enviar notificaciones y mejorar nuestro servicio.</p>
             <p><strong>3. Protección de Datos</strong><br />Implementamos medidas de seguridad estándar para proteger tu información.</p>
             <p><strong>4. Compartir Información</strong><br />No compartimos tu información personal con terceros sin tu consentimiento.</p>
@@ -133,7 +133,7 @@ export default function Step2Form({ onSubmit, initialData }: Step2FormProps) {
           className="w-5 h-5 mt-1 cursor-pointer"
         />
         <label className="text-gray-700 cursor-pointer">
-          Acepto la <a href="/privacidad" target="_blank" className="font-semibold text-blue-500 hover:underline">Política de Privacidad</a> de ClubSenior
+          Acepto la <a href="/privacidad" target="_blank" className="font-semibold text-blue-500 hover:underline">Política de Privacidad</a> de Grupo Plateado
         </label>
       </div>
       {errors.politicaPrivacidadAceptada && (

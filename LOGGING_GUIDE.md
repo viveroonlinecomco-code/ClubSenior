@@ -1,6 +1,6 @@
 ---
 name: LOGGING_GUIDE
-description: Comprehensive logging setup guide for ClubSenior using Pino
+description: Comprehensive logging setup guide for Grupo Plateado using Pino
 ---
 
 # 📊 LOGGING GUIDE - CLUBSENIOR

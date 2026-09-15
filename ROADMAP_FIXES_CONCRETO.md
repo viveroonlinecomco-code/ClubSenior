@@ -17,7 +17,7 @@
 
 ### Paso 1.1: Instalar dependencia
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 npm install jsonwebtoken
 npm install --save-dev @types/jsonwebtoken
 ```

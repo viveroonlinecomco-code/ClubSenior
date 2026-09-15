@@ -57,7 +57,7 @@ export default function HomePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-blue-700 rounded-lg"></div>
-              <span className="text-lg font-bold text-gray-900">ClubSenior</span>
+              <span className="text-lg font-bold text-gray-900">Grupo Plateado</span>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a href="#proposito" className="text-sm text-gray-600 hover:text-gray-900">
@@ -236,7 +236,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">¿Preguntas sobre nuestros planes?</p>
             <p className="text-gray-700">
-              📧 <a href="mailto:promesaobca@gmail.com" className="text-blue-500 hover:underline">promesaobca@gmail.com</a> | 
+              📧 <a href="mailto:servicioalcliente@tardesdelcafe.com" className="text-blue-500 hover:underline">servicioalcliente@tardesdelcafe.com</a> | 
               📞 <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">WhatsApp: 3002937403</a>
             </p>
           </div>
@@ -321,7 +321,7 @@ export default function HomePage() {
           {/* Testimonial */}
           <div className="mt-16 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-12 border border-green-200">
             <p className="text-lg text-gray-700 italic mb-6">
-              "Desde que comencé con ClubSenior, tengo más energía y me siento conectada con mi
+              "Desde que comencé con Grupo Plateado, tengo más energía y me siento conectada con mi
               comunidad. Las tardes de café se convirtieron en mi momento favorito de la semana.
               Nunca pensé que pudiera hacer amigos nuevos a mi edad."
             </p>
@@ -355,7 +355,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h3 className="text-white font-semibold mb-3">Sobre ClubSenior</h3>
+              <h3 className="text-white font-semibold mb-3">Sobre Grupo Plateado</h3>
               <p className="text-sm leading-relaxed">
                 Conectando generaciones, creando comunidad a través de actividades significativas.
               </p>
@@ -363,7 +363,7 @@ export default function HomePage() {
             <div>
               <h3 className="text-white font-semibold mb-3">Soporte</h3>
               <ul className="text-sm space-y-2">
-                <li>📧 promesaobca@gmail.com</li>
+                <li>📧 servicioalcliente@tardesdelcafe.com</li>
                 <li>📞 <a href="https://wa.me/573002937403" className="hover:text-white transition">WhatsApp: 3002937403</a></li>
                 <li>💬 Chat en vivo (Lun-Vie 9-18)</li>
               </ul>
@@ -391,7 +391,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2026 ClubSenior. Todos los derechos reservados.</p>
+            <p>&copy; 2026 Grupo Plateado. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
         tipo: 'mandato',
         version: '1.0',
         titulo: 'Contrato de Mandato Comercial',
-        descripcion: 'Términos y condiciones de ClubSenior',
+        descripcion: 'Términos y condiciones de Grupo Plateado',
         activo: true,
         aceptado: false,
       })

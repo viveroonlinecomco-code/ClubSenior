@@ -50,7 +50,7 @@ Day 7:           Beta onboarding prep                      ~ 2 hours
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 # Edit the file using str_replace or manually
 # Then commit:
 git add src/app/familia/layout.tsx
@@ -107,7 +107,7 @@ module.exports = nextConfig
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 git add next.config.js
 git commit -m "Security: Add Content Security Policy headers"
 git push origin main
@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 git add src/lib/middleware/csrf.ts
 # Edit the 4 auth endpoints to add validateCSRFToken call
 git add src/app/api/auth/*/route.ts
@@ -371,7 +371,7 @@ seed().catch(console.error)
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 npx ts-node src/scripts/seed-activities.ts
 ```
 
@@ -382,7 +382,7 @@ npx ts-node src/scripts/seed-activities.ts
 ## Task 2.3: Verify in Supabase
 
 1. Go to Supabase Dashboard
-2. Select ClubSenior project
+2. Select Grupo Plateado project
 3. Click "actividades" table
 4. Verify 8 activities are there
 5. Check columns: nombre, tipo, objetivo, implementos, semana, dia, duracion_minutos
@@ -591,7 +591,7 @@ export default function ActividadesPage() {
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 git add src/app/familia/actividades/page.tsx
 git commit -m "Feature: Add activities browsing page with filters"
 git push origin main
@@ -618,7 +618,7 @@ Find the navigation/sidebar section and add:
 
 **Execute:**
 ```bash
-cd /tmp/ClubSenior
+cd /tmp/Grupo Plateado
 git add src/app/familia/layout.tsx
 git commit -m "Feature: Add actividades link to familia navigation"
 git push origin main

@@ -27,10 +27,10 @@ export async function sendWelcomeEmail(email: string, fullName: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <promesaobca@gmail.com>',
+        from: 'Grupo Plateado <servicioalcliente@tardesdelcafe.com>',
         to: email,
-        subject: '¡Bienvenido a ClubSenior!',
-        html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"><h1 style="color: #2563eb;">¡Bienvenido a ClubSenior!</h1><p>Hola ${fullName},</p><p>Tu registro en ClubSenior ha sido completado exitosamente. Ahora puedes acceder a todas nuestras actividades y servicios.</p><h2 style="color: #1e40af; margin-top: 30px;">¿Qué viene ahora?</h2><ul style="line-height: 1.8;"><li>Explora nuestras actividades semanales</li><li>Conecta con otros miembros de la comunidad</li><li>Accede a reportes de progreso</li><li>Participa en talleres y charlas</li></ul><p style="margin-top: 30px;"><a href="${APP_URL}/familia" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">Ir a mi Dashboard</a></p><hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;"><p style="color: #666; font-size: 12px;">Si tienes preguntas, contáctanos: <a href="mailto:promesaobca@gmail.com">promesaobca@gmail.com</a></p></div>`,
+        subject: '¡Bienvenido a Grupo Plateado!',
+        html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;"><h1 style="color: #2563eb;">¡Bienvenido a Grupo Plateado!</h1><p>Hola ${fullName},</p><p>Tu registro en Grupo Plateado ha sido completado exitosamente. Ahora puedes acceder a todas nuestras actividades y servicios.</p><h2 style="color: #1e40af; margin-top: 30px;">¿Qué viene ahora?</h2><ul style="line-height: 1.8;"><li>Explora nuestras actividades semanales</li><li>Conecta con otros miembros de la comunidad</li><li>Accede a reportes de progreso</li><li>Participa en talleres y charlas</li></ul><p style="margin-top: 30px;"><a href="${APP_URL}/familia" style="background-color: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">Ir a mi Dashboard</a></p><hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;"><p style="color: #666; font-size: 12px;">Si tienes preguntas, contáctanos: <a href="mailto:servicioalcliente@tardesdelcafe.com">servicioalcliente@tardesdelcafe.com</a></p></div>`,
       }),
     });
 
@@ -67,9 +67,9 @@ export async function sendPaymentConfirmationEmail(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <promesaobca@gmail.com>',
+        from: 'Grupo Plateado <servicioalcliente@tardesdelcafe.com>',
         to: email,
-        subject: '✅ Pago confirmado - ClubSenior',
+        subject: '✅ Pago confirmado - Grupo Plateado',
         html: `<div style="font-family: Arial, sans-serif;"><h1 style="color: #16a34a;">✅ Pago Confirmado</h1><p>Tu pago de $${monto.toLocaleString('es-CO')} para ${planNombre} ha sido aprobado. Referencia: ${referencia}</p></div>`,
       }),
     });
@@ -103,7 +103,7 @@ export async function sendWeeklyReportEmail(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <promesaobca@gmail.com>',
+        from: 'Grupo Plateado <servicioalcliente@tardesdelcafe.com>',
         to: email,
         subject: `📊 Reporte Semanal de ${nombreParticipante}`,
         html: `<div style="font-family: Arial, sans-serif;"><h1>📊 Reporte Semanal</h1><p>${resumen}</p><p>Calificación: ${stars}</p></div>`,

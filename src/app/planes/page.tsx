@@ -199,21 +199,21 @@ export default function PlanesPage() {
           <div className="flex flex-wrap gap-6 items-center">
             {/* Email */}
             <a
-              href="mailto:promesaobca@gmail.com"
+              href="mailto:servicioalcliente@tardesdelcafe.com"
               className="flex items-center gap-3 bg-white px-6 py-3 rounded-lg hover:bg-blue-50 transition-all hover:shadow-md group"
             >
               <span className="text-2xl">📧</span>
               <div>
                 <div className="text-xs text-gray-500">Email</div>
                 <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition">
-                  promesaobca@gmail.com
+                  servicioalcliente@tardesdelcafe.com
                 </div>
               </div>
             </a>
             
             {/* WhatsApp con icono */}
             <a
-              href="https://wa.me/573002937403?text=Hola%20ClubSenior%2C%20tengo%20preguntas%20sobre%20los%20planes"
+              href="https://wa.me/573002937403?text=Hola%20Grupo Plateado%2C%20tengo%20preguntas%20sobre%20los%20planes"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 bg-white px-6 py-3 rounded-lg hover:bg-green-50 transition-all hover:shadow-md group"
@@ -237,7 +237,7 @@ export default function PlanesPage() {
       {/* Footer */}
       <div className="bg-gray-100 border-t border-gray-300 py-8 px-4 mt-12">
         <div className="max-w-6xl mx-auto text-center text-gray-600 text-sm">
-          <p>&copy; 2026 ClubSenior. Todos los derechos reservados.</p>
+          <p>&copy; 2026 Grupo Plateado. Todos los derechos reservados.</p>
         </div>
       </div>
     </div>

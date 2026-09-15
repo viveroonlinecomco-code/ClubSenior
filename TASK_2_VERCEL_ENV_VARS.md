@@ -42,7 +42,7 @@ a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0
 Go to **Vercel Dashboard**:
 
 1. **Open:** https://vercel.com/dashboard
-2. **Select:** ClubSenior project
+2. **Select:** Grupo Plateado project
 3. **Go to:** Storage → Create Database → KV Store
 4. **Click:** Create database → Name it: "clubsenior-cache"
 5. **Accept** the terms
@@ -66,7 +66,7 @@ After creation, you'll see:
 **Go to Vercel Project Settings:**
 
 1. **Open:** https://vercel.com/dashboard
-2. **Select:** ClubSenior project
+2. **Select:** Grupo Plateado project
 3. **Click:** Settings → Environment Variables
 4. **You should see the existing ones:**
    ```
@@ -224,7 +224,7 @@ Should return:
 
 ### Where to find things:
 - **Vercel Dashboard:** https://vercel.com/dashboard
-- **ClubSenior Project:** Select from list
+- **Grupo Plateado Project:** Select from list
 - **Environment Variables:** Settings → Environment Variables
 - **KV Database:** Storage → (your database)
 - **Deployments:** Deployments tab

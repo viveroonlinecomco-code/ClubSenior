@@ -1,6 +1,6 @@
 # 👋 START HERE
 
-Bienvenido a **ClubSenior** - Tardes de Café, Mente & Saberes
+Bienvenido a **Grupo Plateado** - Tardes de Café, Mente & Saberes
 
 Este proyecto está **100% listo** para usar. Solo necesitas 5 minutos para configurarlo.
 
@@ -43,8 +43,8 @@ Este proyecto está **100% listo** para usar. Solo necesitas 5 minutos para conf
 ### 1. Clonar / Descargar el repo
 
 ```bash
-git clone https://github.com/viveroonlinecomco-code/ClubSenior.git
-cd ClubSenior
+git clone https://github.com/viveroonlinecomco-code/Grupo Plateado.git
+cd Grupo Plateado
 ```
 
 ### 2. Instalar dependencies
@@ -126,7 +126,7 @@ Abre: `http://localhost:3000`
 ## 📚 Estructura del proyecto
 
 ```
-ClubSenior/
+Grupo Plateado/
 ├── src/app/               ← Páginas (Next.js 16 app router)
 ├── src/components/        ← React components (14 total)
 ├── src/services/          ← Business logic

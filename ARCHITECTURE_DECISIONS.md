@@ -1,6 +1,6 @@
 # 📐 **Architecture Decision Records (ADR)**
 
-**Project:** ClubSenior - Tardes de Café, Mente y Saberes  
+**Project:** Grupo Plateado - Tardes de Café, Mente y Saberes  
 **Date:** September 11-12, 2026  
 **Status:** Production Ready  
 

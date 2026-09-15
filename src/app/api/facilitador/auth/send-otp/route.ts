@@ -134,14 +134,14 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'ClubSenior <noreply@resend.dev>',
+        from: 'Grupo Plateado <noreply@resend.dev>',
         to: email,
-        subject: '🔐 Tu código de acceso - ClubSenior Facilitador',
+        subject: '🔐 Tu código de acceso - Grupo Plateado Facilitador',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
               <h1 style="margin: 0; font-size: 28px;">🔐 Acceso Facilitador</h1>
-              <p style="margin: 10px 0 0 0; opacity: 0.9;">ClubSenior - Tardes de Café</p>
+              <p style="margin: 10px 0 0 0; opacity: 0.9;">Grupo Plateado - Tardes de Café</p>
             </div>
             
             <div style="background: white; padding: 40px; border: 1px solid #e5e7eb; border-radius: 0 0 12px 12px;">
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
               
               <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
-                ClubSenior - Panel Facilitador<br>
+                Grupo Plateado - Panel Facilitador<br>
                 Conectando generaciones, creando comunidad
               </p>
             </div>

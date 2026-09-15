@@ -16,7 +16,7 @@ export default function AdminLayout({
           <nav className="h-full flex flex-col">
             {/* Logo */}
             <div className="p-6 border-b dark:border-gray-700">
-              <h2 className="text-2xl font-bold text-purple-600">ClubSenior</h2>
+              <h2 className="text-2xl font-bold text-purple-600">Grupo Plateado</h2>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Panel Facilitador</p>
             </div>
 

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         {
           usuario_email: usuarioId,
           tipo: 'sponsor',
-          contenido: 'Contrato de Sponsor - ClubSenior',
+          contenido: 'Contrato de Sponsor - Grupo Plateado',
           aceptado: sponsorContractAceptado,
           firma_base64: sponsorFirma,
           email: email,
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         {
           usuario_email: usuarioId,
           tipo: 'participant',
-          contenido: 'Contrato de Participante - ClubSenior',
+          contenido: 'Contrato de Participante - Grupo Plateado',
           aceptado: participantContractAceptado,
           firma_base64: participantFirma,
           email: email,

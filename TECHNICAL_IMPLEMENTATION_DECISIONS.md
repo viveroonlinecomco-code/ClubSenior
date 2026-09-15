@@ -1,6 +1,6 @@
 # 🔧 **Technical Implementation Decisions**
 
-**Project:** ClubSenior  
+**Project:** Grupo Plateado  
 **Date:** September 11-12, 2026  
 **Focus:** Specific tool/library choices and rationale  
 

@@ -4,10 +4,10 @@
 
 1. Ir a https://analytics.google.com
 2. Crear cuenta nueva (o usar existente)
-3. Crear propiedad "ClubSenior"
+3. Crear propiedad "Grupo Plateado"
 4. Seleccionar "Web"
 5. Completar datos:
-   - Nombre del sitio: ClubSenior
+   - Nombre del sitio: Grupo Plateado
    - URL: https://clubsenior.com.co
 6. Copiar el **Measurement ID** (empieza con `G-`)
 

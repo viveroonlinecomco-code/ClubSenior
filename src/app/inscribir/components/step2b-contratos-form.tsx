@@ -163,7 +163,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
             onClick={() => setExpandedSection(expandedSection === 'sponsor' ? null : 'sponsor')}
             className="w-full bg-gray-50 hover:bg-gray-100 px-6 py-4 flex justify-between items-center font-semibold text-gray-900"
           >
-            <span>📋 Contrato de Sponsor (ClubSenior)</span>
+            <span>📋 Contrato de Sponsor (Grupo Plateado)</span>
             <span className={`transform transition ${expandedSection === 'sponsor' ? 'rotate-180' : ''}`}>
               ▼
             </span>
@@ -173,7 +173,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               <p><strong>CONTRATO DE SPONSOR - CLUBSENIOR</strong></p>
               
               <p><strong>1. OBJETO DEL CONTRATO</strong><br />
-                ClubSenior ofrece servicios de actividades recreativas, educativas, sociales y de bienestar para adultos mayores, incluyendo sesiones semanales facilitadas por profesionales capacitados, acceso a plataforma digital y reportes de progreso.
+                Grupo Plateado ofrece servicios de actividades recreativas, educativas, sociales y de bienestar para adultos mayores, incluyendo sesiones semanales facilitadas por profesionales capacitados, acceso a plataforma digital y reportes de progreso.
               </p>
 
               <p><strong>2. RESPONSABILIDADES DE CLUBSENIOR</strong><br />
@@ -186,7 +186,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               </p>
 
               <p><strong>3. LIMITACIÓN DE RESPONSABILIDAD</strong><br />
-                ClubSenior NO es responsable por lesiones durante actividades (excepto negligencia directa), daños por inasistencia, circunstancias de fuerza mayor, o pérdida de datos por seguridad débil de contraseña. ClubSenior es recreativo, NO proporciona servicios médicos.
+                Grupo Plateado NO es responsable por lesiones durante actividades (excepto negligencia directa), daños por inasistencia, circunstancias de fuerza mayor, o pérdida de datos por seguridad débil de contraseña. Grupo Plateado es recreativo, NO proporciona servicios médicos.
               </p>
 
               <p><strong>4. PRIVACIDAD Y DATOS</strong><br />
@@ -201,7 +201,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               </p>
 
               <p><strong>6. RESOLUCIÓN DE CONFLICTOS</strong><br />
-                Contactar promesaobca@gmail.com. ClubSenior ofrecerá solución en 10 días hábiles. Si no se resuelve, se somete a jurisdicción de juzgados de Bogotá, Colombia.
+                Contactar servicioalcliente@tardesdelcafe.com. Grupo Plateado ofrecerá solución en 10 días hábiles. Si no se resuelve, se somete a jurisdicción de juzgados de Bogotá, Colombia.
               </p>
 
               <p><strong>7. ACEPTACIÓN</strong><br />
@@ -221,7 +221,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
             className="w-5 h-5 mt-1 cursor-pointer"
           />
           <label className="text-gray-700 cursor-pointer">
-            Acepto el Contrato de Sponsor de ClubSenior
+            Acepto el Contrato de Sponsor de Grupo Plateado
           </label>
         </div>
         {errors.sponsorContractAceptado && (
@@ -277,7 +277,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               <p><strong>CONTRATO DE PARTICIPANTE - CLUBSENIOR</strong></p>
 
               <p><strong>1. PARTES</strong><br />
-                Familia/Responsable del adulto mayor (participante) en actividades semanales de ClubSenior, plataforma recreativa y educativa.
+                Familia/Responsable del adulto mayor (participante) en actividades semanales de Grupo Plateado, plataforma recreativa y educativa.
               </p>
 
               <p><strong>2. RESPONSABILIDADES DE LA FAMILIA</strong><br />
@@ -290,15 +290,15 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               </p>
 
               <p><strong>3. AUTORIZACIÓN MÉDICA</strong><br />
-                La familia autoriza la participación sabiendo que participante está en condiciones de salud adecuadas. ClubSenior NO proporciona servicios médicos, solo recreativos. Se autoriza contacto a médico en emergencias.
+                La familia autoriza la participación sabiendo que participante está en condiciones de salud adecuadas. Grupo Plateado NO proporciona servicios médicos, solo recreativos. Se autoriza contacto a médico en emergencias.
               </p>
 
               <p><strong>4. PROTECCIÓN DE DATOS</strong><br />
-                ClubSenior almacena datos personales, médicos y de participación en servidores seguros. Datos se usan para gestión, comunicación y emergencias. NO se comparten sin consentimiento. Familia puede solicitar acceso, corrección o eliminación en cualquier momento.
+                Grupo Plateado almacena datos personales, médicos y de participación en servidores seguros. Datos se usan para gestión, comunicación y emergencias. NO se comparten sin consentimiento. Familia puede solicitar acceso, corrección o eliminación en cualquier momento.
               </p>
 
               <p><strong>5. COMUNICACIÓN Y REPORTES</strong><br />
-                ClubSenior envía confirmación de pago inmediatamente, reportes semanales cada viernes con asistencia y recomendaciones, y comunicaciones urgentes si algo significativo ocurre.
+                Grupo Plateado envía confirmación de pago inmediatamente, reportes semanales cada viernes con asistencia y recomendaciones, y comunicaciones urgentes si algo significativo ocurre.
               </p>
 
               <p><strong>6. CANCELACIÓN Y REEMBOLSOS</strong><br />
@@ -309,7 +309,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               </p>
 
               <p><strong>7. LIMITACIÓN DE RESPONSABILIDAD</strong><br />
-                ClubSenior NO es responsable por lesiones (salvo negligencia grave), inasistencia, daños por conducta inapropiada (familia responsable), o fuerza mayor.
+                Grupo Plateado NO es responsable por lesiones (salvo negligencia grave), inasistencia, daños por conducta inapropiada (familia responsable), o fuerza mayor.
               </p>
 
               <p><strong>8. CONSENTIMIENTO</strong><br />
@@ -329,7 +329,7 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
             className="w-5 h-5 mt-1 cursor-pointer"
           />
           <label className="text-gray-700 cursor-pointer">
-            Acepto el Contrato de Participante de ClubSenior
+            Acepto el Contrato de Participante de Grupo Plateado
           </label>
         </div>
         {errors.participantContractAceptado && (

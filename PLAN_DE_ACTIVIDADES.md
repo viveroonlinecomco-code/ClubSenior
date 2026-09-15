@@ -1,9 +1,9 @@
-# 📅 **PLAN DE ACTIVIDADES - ClubSenior**
+# 📅 **PLAN DE ACTIVIDADES - Grupo Plateado**
 
 **Proyecto:** Tardes de Café, Mente y Saberes  
 **Período:** 2026 (Continuo)  
 **Público:** Adultos mayores 65+ años  
-**Plataforma:** App ClubSenior (iOS, Android, Web)  
+**Plataforma:** App Grupo Plateado (iOS, Android, Web)  
 
 ---
 

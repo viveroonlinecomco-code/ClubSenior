@@ -1,4 +1,4 @@
-# 🔐 ClubSenior Authentication Flows Explained
+# 🔐 Grupo Plateado Authentication Flows Explained
 
 ## 🆕 FIXED: Both Flows Now Work! (Commit: d4e52c9)
 

@@ -1,6 +1,6 @@
-# SETUP LOCAL — ClubSenior
+# SETUP LOCAL — Grupo Plateado
 
-**Repositorio:** https://github.com/viveroonlinecomco-code/ClubSenior  
+**Repositorio:** https://github.com/viveroonlinecomco-code/Grupo Plateado  
 **Token GitHub:** `ghp_11CAJBQKI0LvQYRTDn91bz_LNPsopgHczNmnXMb8z6QdejXzkhlJoqWEiwTCQ0Y6kBIH67QA5IdCzdCDSH`
 
 ---
@@ -11,15 +11,15 @@
 # Abre Terminal/PowerShell en tu máquina
 
 # Opción A: Con HTTPS + token (más simple)
-git clone https://oauth2:ghp_11CAJBQKI0LvQYRTDn91bz_LNPsopgHczNmnXMb8z6QdejXzkhlJoqWEiwTCQ0Y6kBIH67QA5IdCzdCDSH@github.com/viveroonlinecomco-code/ClubSenior.git
+git clone https://oauth2:ghp_11CAJBQKI0LvQYRTDn91bz_LNPsopgHczNmnXMb8z6QdejXzkhlJoqWEiwTCQ0Y6kBIH67QA5IdCzdCDSH@github.com/viveroonlinecomco-code/Grupo Plateado.git
 
 # Opción B: Con SSH (más seguro, requiere configuración)
-git clone git@github.com:viveroonlinecomco-code/ClubSenior.git
+git clone git@github.com:viveroonlinecomco-code/Grupo Plateado.git
 ```
 
 **Resultado esperado:**
 ```
-Cloning into 'ClubSenior'...
+Cloning into 'Grupo Plateado'...
 remote: Enumerating objects: 45, done.
 remote: Counting objects: 100% (45/45), done.
 ...
@@ -30,7 +30,7 @@ remote: Counting objects: 100% (45/45), done.
 ## PASO 2: Instalar dependencias
 
 ```bash
-cd ClubSenior
+cd Grupo Plateado
 
 # Instalar npm packages
 npm install
@@ -56,7 +56,7 @@ npm run build
 1. Go to https://supabase.com
 2. Sign in / Create account
 3. New project:
-   - **Name:** ClubSenior-Dev
+   - **Name:** Grupo Plateado-Dev
    - **Database password:** [genera contraseña fuerte]
    - **Region:** closest to you (or us-east-1)
 4. **Wait for project creation** (2-3 minutos)
@@ -72,7 +72,7 @@ npm run build
 ### Crear `.env.local`
 
 ```bash
-# En la carpeta ClubSenior, crea .env.local
+# En la carpeta Grupo Plateado, crea .env.local
 cp .env.example .env.local
 
 # Edita .env.local con tus valores:
@@ -96,7 +96,7 @@ cp .env.example .env.local
 ## PASO 4: Ejecutar en desarrollo
 
 ```bash
-# En carpeta ClubSenior
+# En carpeta Grupo Plateado
 npm run dev
 
 # Open browser
@@ -150,7 +150,7 @@ git push origin feature/checkpoint-3-auth
 ## ESTRUCTURA DEL PROYECTO
 
 ```
-ClubSenior/
+Grupo Plateado/
 ├── src/
 │   ├── app/              # Next.js App Router
 │   │   ├── (marketing)/  # Landing page (CHECKPOINT 3)

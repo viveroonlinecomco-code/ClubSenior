@@ -1,5 +1,5 @@
 /**
- * Seed script for ClubSenior database
+ * Seed script for Grupo Plateado database
  * Run with: npx tsx scripts/seed-database.ts
  * 
  * Seeds:
@@ -21,7 +21,7 @@ if (!supabaseUrl || !serviceRoleKey) {
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 async function seedDatabase() {
-  console.log('🌱 Seeding ClubSenior database...\n');
+  console.log('🌱 Seeding Grupo Plateado database...\n');
 
   try {
     // 1. Create condominios

@@ -34,7 +34,7 @@ export default function TerminosPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Términos de Servicio</h1>
-          <p className="text-gray-600">ClubSenior - Tardes de Café, Mente & Saberes</p>
+          <p className="text-gray-600">Grupo Plateado - Tardes de Café, Mente & Saberes</p>
           <p className="text-gray-500 text-sm mt-2">Última actualización: Septiembre 2026</p>
         </div>
 
@@ -43,7 +43,7 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Aceptación de Términos</h2>
             <p>
-              Al acceder y utilizar ClubSenior, aceptas estar vinculado por estos Términos de Servicio. 
+              Al acceder y utilizar Grupo Plateado, aceptas estar vinculado por estos Términos de Servicio. 
               Si no estás de acuerdo con alguna parte de estos términos, no puedes utilizar nuestro servicio.
             </p>
           </section>
@@ -51,7 +51,7 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Descripción del Servicio</h2>
             <p>
-              ClubSenior es una plataforma diseñada para conectar la Generación Silver (adultos mayores) 
+              Grupo Plateado es una plataforma diseñada para conectar la Generación Silver (adultos mayores) 
               con actividades significativas, fomentando el bienestar mental, físico y social a través de 
               sesiones semanales de "Tardes de Café, Mente & Saberes".
             </p>
@@ -96,14 +96,14 @@ export default function TerminosPage() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Participantes y Responsabilidades</h2>
             <p>
               Las familias son responsables de proporcionar información precisa sobre los participantes (adultos mayores). 
-              ClubSenior no se responsabiliza por información inexacta proporcionada durante el registro.
+              Grupo Plateado no se responsabiliza por información inexacta proporcionada durante el registro.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Limitación de Responsabilidad</h2>
             <p>
-              ClubSenior no es responsable por lesiones, enfermedades o daños que ocurran durante las sesiones. 
+              Grupo Plateado no es responsable por lesiones, enfermedades o daños que ocurran durante las sesiones. 
               Cada participante asume su propio riesgo. Se recomienda consultar con un médico antes de participar.
             </p>
           </section>
@@ -111,7 +111,7 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Modificación de Términos</h2>
             <p>
-              ClubSenior se reserva el derecho de modificar estos términos en cualquier momento. 
+              Grupo Plateado se reserva el derecho de modificar estos términos en cualquier momento. 
               Los cambios entrarán en vigencia inmediatamente. Seguir usando el servicio implica aceptación de los nuevos términos.
             </p>
           </section>
@@ -123,13 +123,13 @@ export default function TerminosPage() {
               <br />
               <strong>WhatsApp:</strong> <a href="https://wa.me/573002937403" className="text-blue-500 hover:underline">3002937403</a>
               <br />
-              <strong>Email:</strong> <a href="mailto:promesaobca@gmail.com" className="text-blue-500 hover:underline">promesaobca@gmail.com</a>
+              <strong>Email:</strong> <a href="mailto:servicioalcliente@tardesdelcafe.com" className="text-blue-500 hover:underline">servicioalcliente@tardesdelcafe.com</a>
             </p>
           </section>
 
           <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
             <p className="text-sm text-gray-700">
-              <strong>Nota Legal:</strong> Estos Términos de Servicio son un acuerdo vinculante entre tú y ClubSenior. 
+              <strong>Nota Legal:</strong> Estos Términos de Servicio son un acuerdo vinculante entre tú y Grupo Plateado. 
               Si tienes dudas legales, te recomendamos consultar con un abogado.
             </p>
           </section>

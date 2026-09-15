@@ -15,7 +15,7 @@ const ThemeProvider = dynamic(
 );
 
 export const metadata = {
-  title: 'ClubSenior - Tardes de Café, Mente & Saberes',
+  title: 'Grupo Plateado - Tardes de Café, Mente & Saberes',
   description: 'Conectando generaciones, creando comunidad',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
   themeColor: [

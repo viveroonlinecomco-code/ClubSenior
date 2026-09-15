@@ -1,4 +1,4 @@
-# 🔧 ClubSenior Sign-In Troubleshooting
+# 🔧 Grupo Plateado Sign-In Troubleshooting
 
 ## ✅ Fix Implemented (Sept 11, 2026)
 
@@ -62,7 +62,7 @@ Expected response:
 
 ### Check Vercel Environment Variables
 
-Go to **Vercel Dashboard** → **ClubSenior Project** → **Settings** → **Environment Variables**
+Go to **Vercel Dashboard** → **Grupo Plateado Project** → **Settings** → **Environment Variables**
 
 Required variables:
 - ✅ `NEXT_PUBLIC_SUPABASE_URL` → `https://popgpdhtyhckvkjmiknq.supabase.co`

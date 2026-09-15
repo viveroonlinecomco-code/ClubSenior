@@ -3,8 +3,8 @@
 ## 1️⃣ Clonar repositorio
 
 ```bash
-git clone https://github.com/viveroonlinecomco-code/ClubSenior.git
-cd ClubSenior
+git clone https://github.com/viveroonlinecomco-code/Grupo Plateado.git
+cd Grupo Plateado
 ```
 
 ## 2️⃣ Instalar & verificar

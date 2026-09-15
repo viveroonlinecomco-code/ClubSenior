@@ -234,7 +234,7 @@ POST /api/reportes/crear
 
 ## 🚀 MVP COMPLETAMENTE FUNCIONAL
 
-**ClubSenior ahora incluye:**
+**Grupo Plateado ahora incluye:**
 
 ✅ Autenticación OTP (email)  
 ✅ Registro de familias y participantes (abuelos)  
