@@ -15,9 +15,15 @@
     @apply transition-colors duration-300;
   }
 
-  /* Focus visible para accesibilidad */
+  /* Focus visible para accesibilidad - mejorado para dark mode */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-blue-500;
+    @apply dark:outline-blue-400;
+  }
+  
+  /* Mejorar visibilidad de links en dark mode */
+  a {
+    @apply dark:hover:underline;
   }
 
   /* Smooth transitions para modo oscuro */
@@ -41,9 +47,9 @@
   .btn-secondary {
     @apply px-4 py-2 bg-slate-200 text-slate-900 rounded-lg font-semibold;
     @apply hover:bg-slate-300 active:bg-slate-400;
-    @apply dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-700;
+    @apply dark:bg-slate-700 dark:text-slate-50 dark:hover:bg-slate-600;
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
-    @apply dark:focus:ring-offset-slate-950;
+    @apply dark:focus:ring-offset-slate-950 dark:focus:ring-blue-400;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
     @apply transition-all duration-200;
   }
@@ -88,25 +94,25 @@
   /* Badges */
   .badge-primary {
     @apply inline-flex items-center px-3 py-1 rounded-full;
-    @apply bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200;
+    @apply bg-blue-100 dark:bg-blue-900/50 text-blue-900 dark:text-blue-100;
     @apply text-sm font-semibold;
   }
 
   .badge-success {
     @apply inline-flex items-center px-3 py-1 rounded-full;
-    @apply bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-200;
+    @apply bg-green-100 dark:bg-green-900/50 text-green-900 dark:text-green-100;
     @apply text-sm font-semibold;
   }
 
   .badge-warning {
     @apply inline-flex items-center px-3 py-1 rounded-full;
-    @apply bg-amber-100 dark:bg-amber-900/30 text-amber-900 dark:text-amber-200;
+    @apply bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-100;
     @apply text-sm font-semibold;
   }
 
   .badge-danger {
     @apply inline-flex items-center px-3 py-1 rounded-full;
-    @apply bg-red-100 dark:bg-red-900/30 text-red-900 dark:text-red-200;
+    @apply bg-red-100 dark:bg-red-900/50 text-red-900 dark:text-red-100;
     @apply text-sm font-semibold;
   }
 }

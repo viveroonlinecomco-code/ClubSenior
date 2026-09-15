@@ -131,30 +131,62 @@ export async function withJWTAuth(
 interface RateLimitEntry {
   count: number
   resetTime: number
+  method?: string
 }
 
 const rateLimitMap = new Map<string, RateLimitEntry>()
-const RATE_LIMIT_WINDOW = 60 * 1000
-const RATE_LIMIT_MAX_REQUESTS = 100
+const RATE_LIMIT_WINDOW_SLOW = 15 * 60 * 1000 // 15 minutos para GET
+const RATE_LIMIT_WINDOW_FAST = 60 * 1000 // 1 minuto para POST/PUT/DELETE
+const RATE_LIMIT_MAX_REQUESTS_SLOW = 100
+const RATE_LIMIT_MAX_REQUESTS_FAST = 10
 
-export function checkRateLimit(key: string): { allowed: boolean; remaining: number } {
+/**
+ * Check rate limit con diferentes límites por tipo de request
+ * GET: 100 por 15 minutos (usuarios normales)
+ * POST/PUT/DELETE: 10 por minuto (protección contra abuso)
+ */
+export function checkRateLimit(key: string, method: string = 'GET'): { allowed: boolean; remaining: number } {
   const now = Date.now()
+  const isFastMethod = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)
+  const maxRequests = isFastMethod ? RATE_LIMIT_MAX_REQUESTS_FAST : RATE_LIMIT_MAX_REQUESTS_SLOW
+  const window = isFastMethod ? RATE_LIMIT_WINDOW_FAST : RATE_LIMIT_WINDOW_SLOW
+  
   const entry = rateLimitMap.get(key)
 
   if (!entry || now > entry.resetTime) {
     rateLimitMap.set(key, {
       count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW,
+      resetTime: now + window,
+      method,
     })
-    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1 }
+    return { allowed: true, remaining: maxRequests - 1 }
   }
 
-  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+  if (entry.count >= maxRequests) {
     return { allowed: false, remaining: 0 }
   }
 
   entry.count++
-  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - entry.count }
+  return { allowed: true, remaining: maxRequests - entry.count }
+}
+
+/**
+ * Cleanup old rate limit entries cada hora para no llenar memoria
+ */
+export function cleanupRateLimitMap() {
+  const now = Date.now()
+  const maxAge = 60 * 60 * 1000 // 1 hora
+  
+  for (const [key, entry] of rateLimitMap.entries()) {
+    if (now - entry.resetTime > maxAge) {
+      rateLimitMap.delete(key)
+    }
+  }
+}
+
+// Ejecutar cleanup cada 30 minutos
+if (typeof global !== 'undefined' && !process.env.IS_RUNNING_CLEANUP) {
+  setInterval(cleanupRateLimitMap, 30 * 60 * 1000)
 }
 
 // ============================================================================
@@ -247,7 +279,9 @@ export async function withLogging(
         ? options.rateLimitKey(request)
         : ipAddress
 
-      const { allowed, remaining } = checkRateLimit(rateLimitKey)
+      const { allowed, remaining } = checkRateLimit(rateLimitKey, method)
+      const isFastMethod = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)
+      const retryWindow = isFastMethod ? 60 : 900 // segundos
 
       if (!allowed) {
         logRequest({
@@ -265,13 +299,17 @@ export async function withLogging(
           {
             success: false,
             error: 'Rate limit exceeded',
-            retryAfter: RATE_LIMIT_WINDOW / 1000,
+            message: isFastMethod 
+              ? 'Demasiadas solicitudes. Intenta de nuevo en 1 minuto.'
+              : 'Demasiadas solicitudes. Intenta de nuevo en 15 minutos.',
+            retryAfter: retryWindow,
           },
           {
             status: 429,
             headers: {
-              'Retry-After': String(RATE_LIMIT_WINDOW / 1000),
-              'X-RateLimit-Remaining': '0',
+              'Retry-After': String(retryWindow),
+              'X-RateLimit-Remaining': String(remaining),
+              'X-RateLimit-Limit': isFastMethod ? '10' : '100',
             },
           }
         )

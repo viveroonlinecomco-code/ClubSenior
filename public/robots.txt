@@ -1,0 +1,25 @@
+# ClubSenior - Robots.txt
+# Instrucciones para motores de búsqueda
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /facilitador/
+Disallow: /familia/
+Disallow: /_next/
+Disallow: /public/
+Disallow: /*.json$
+
+# Delay for aggressive bots
+User-agent: MJ12bot
+Crawl-delay: 10
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://clubsenior.com.co/sitemap.xml
