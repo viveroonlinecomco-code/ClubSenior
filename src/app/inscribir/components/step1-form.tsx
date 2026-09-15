@@ -182,13 +182,11 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
           }`}
         >
           <option value="">Selecciona una ciudad</option>
-          <option value="Bogotá">Bogotá</option>
-          <option value="Medellín">Medellín</option>
-          <option value="Cali">Cali</option>
-          <option value="Barranquilla">Barranquilla</option>
-          <option value="Cartagena">Cartagena</option>
-          <option value="Bucaramanga">Bucaramanga</option>
-          <option value="Otro">Otro</option>
+          <option value="Cajicá">Cajicá</option>
+          <option value="Chía">Chía</option>
+          <option value="Tabio">Tabio</option>
+          <option value="Sopó">Sopó</option>
+          <option value="Zipaquirá">Zipaquirá</option>
         </select>
         {errors.ciudad && <p className="text-red-500 text-sm mt-1">{errors.ciudad}</p>}
       </div>
