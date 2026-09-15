@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 
 const Step3Schema = z.object({
-  planSeleccionado: z.enum(['individual', 'condominio']),
+  planSeleccionado: z.enum(['mensual', 'sesion']),
 });
 
 interface Step3FormProps {
@@ -13,44 +13,39 @@ interface Step3FormProps {
 }
 
 const PLANES = {
-  individual: {
-    nombre: 'Plan Individual',
-    precio: 160000,
-    descripcion: 'Perfecto para un adulto mayor',
+  mensual: {
+    nombre: 'Plan Mensual',
+    precio: 150000,
+    descripcion: '4 sesiones de 2 horas cada una',
     beneficios: [
-      '1 Adulto Mayor',
-      'Actividades semanales',
-      'Reportes de bienestar',
+      '4 sesiones de 2 horas',
+      'Válido por 6 semanas',
+      'Sin penalizaciones por faltas',
+      'Acceso a facilitador especializado',
+      'Reportes de progreso',
       'Acceso a dashboard familiar',
-      'Soporte por email',
     ],
   },
-  condominio: {
-    nombre: 'Plan Condominio',
-    precio: 450000,
-    descripcion: 'Para comunidades y condominios',
+  sesion: {
+    nombre: 'Plan Por Sesión',
+    precio: 40000,
+    descripcion: 'Paga solo por cada sesión',
     beneficios: [
-      'Hasta 50 Adultos Mayores',
-      'Actividades diarias',
-      'Reportes detallados',
-      'Dashboard para administrador',
-      'Soporte prioritario',
-      'Capacitación de facilitadores',
+      '1 sesión de 2 horas',
+      'Sin compromiso de continuidad',
+      'Máxima flexibilidad',
+      'Acceso a facilitador especializado',
+      'Ambiente seguro y acogedor',
+      'Acceso a dashboard familiar',
     ],
   },
 };
 
 export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
-  const [planSeleccionado, setPlanSeleccionado] = useState<'individual' | 'condominio'>(
-    initialData?.planSeleccionado || 'individual'
+  const [planSeleccionado, setPlanSeleccionado] = useState<'mensual' | 'sesion'>(
+    initialData?.planSeleccionado || 'mensual'
   );
   const [loading, setLoading] = useState(false);
-  const [mostrarPago, setMostrarPago] = useState(false);
-  const [email, setEmail] = useState('');
-  const [nombreTarjeta, setNombreTarjeta] = useState('');
-  const [numeroTarjeta, setNumeroTarjeta] = useState('');
-  const [vencimiento, setVencimiento] = useState('');
-  const [cvv, setCvv] = useState('');
 
   const planInfo = PLANES[planSeleccionado];
 
@@ -62,28 +57,20 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
     }).format(valor);
   };
 
+  // ✅ CRITICAL FIX: Solo enviar plan seleccionado
+  // Wompi maneja el pago - NO solicitamos datos de tarjeta
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (!email || !nombreTarjeta || !numeroTarjeta || !vencimiento || !cvv) {
-        alert('Por favor completa todos los campos de pago');
-        setLoading(false);
-        return;
-      }
-
-      console.log('Procesando pago con Wompi...', {
-        plan: planSeleccionado,
-        monto: planInfo.precio,
-        email,
-      });
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Completando registro con plan:', planSeleccionado);
+      // Enviar solo el plan seleccionado
+      // El pago será manejado por Wompi en el siguiente paso
       onSubmit({ planSeleccionado });
     } catch (error) {
-      console.error('Error en pago:', error);
-      alert('Error al procesar el pago. Intenta nuevamente.');
+      console.error('Error:', error);
+      alert('Error. Intenta nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -94,7 +81,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Selecciona tu Plan</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {(['individual', 'condominio'] as const).map(plan => (
+        {(['mensual', 'sesion'] as const).map(plan => (
           <div
             key={plan}
             onClick={() => setPlanSeleccionado(plan)}
@@ -111,7 +98,7 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
               </div>
               <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center">
                 {planSeleccionado === plan && (
-                  <div className="w-4 h-4 bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 rounded-full"></div>
+                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                 )}
               </div>
             </div>
@@ -136,9 +123,10 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
         ))}
       </div>
 
+      {/* Resumen de pago */}
       <div className="bg-gray-50 p-6 rounded-lg border border-gray-300">
         <div className="flex justify-between mb-2">
-          <span className="text-gray-600">Plan:</span>
+          <span className="text-gray-600">Plan Seleccionado:</span>
           <span className="font-semibold">{planInfo.nombre}</span>
         </div>
         <div className="flex justify-between mb-2">
@@ -151,108 +139,36 @@ export default function Step3Form({ onSubmit, initialData }: Step3FormProps) {
             <span className="text-2xl font-bold text-blue-500">{formatearMoneda(planInfo.precio)}</span>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-4">*Primer pago del mes. Se renovará automáticamente cada mes.</p>
+        <p className="text-xs text-gray-500 mt-4">
+          *Primer pago del mes. Se renovará automáticamente cada mes.
+        </p>
       </div>
 
-      {!mostrarPago ? (
-        <button
-          type="button"
-          onClick={() => setMostrarPago(true)}
-          className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
-        >
-          Proceder al Pago
-        </button>
-      ) : (
-        <>
-          <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-300 space-y-4">
-            <h3 className="font-bold text-gray-900 mb-4">Información de Pago</h3>
+      {/* ✅ INFO: Wompi maneja el pago */}
+      <div className="bg-green-50 p-4 rounded border border-green-300 text-green-800 text-sm">
+        <p className="font-semibold mb-2">🔒 Seguridad de Pago</p>
+        <p>
+          El pago es procesado de forma segura por Wompi (proveedor oficial de pagos).
+          Después de completar el registro, serás redirigido a Wompi para completar la transacción.
+        </p>
+      </div>
 
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="tu@email.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                required
-              />
-            </div>
+      {/* ✅ SOLO botón de completar - SIN pedir datos de tarjeta */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+      >
+        {loading ? 'Procesando...' : 'Completar Registro (Paso a Wompi)'}
+      </button>
 
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">Nombre en Tarjeta</label>
-              <input
-                type="text"
-                value={nombreTarjeta}
-                onChange={e => setNombreTarjeta(e.target.value)}
-                placeholder="Juan García"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 font-semibold mb-2">Número de Tarjeta</label>
-              <input
-                type="text"
-                value={numeroTarjeta}
-                onChange={e => setNumeroTarjeta(e.target.value.replace(/\D/g, '').slice(0, 16))}
-                placeholder="1234 5678 9012 3456"
-                maxLength={19}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 font-mono"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">Vencimiento</label>
-                <input
-                  type="text"
-                  value={vencimiento}
-                  onChange={e => setVencimiento(e.target.value)}
-                  placeholder="MM/YY"
-                  maxLength={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 font-mono"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-2">CVV</label>
-                <input
-                  type="text"
-                  value={cvv}
-                  onChange={e => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  placeholder="123"
-                  maxLength={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 font-mono"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-3 rounded border border-yellow-200 text-yellow-800 text-sm">
-              🔒 Esta es una demo. En producción usaremos Wompi para procesar pagos de forma segura.
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Procesando pago...' : `Pagar ${formatearMoneda(planInfo.precio)}`}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMostrarPago(false)}
-            className="w-full text-gray-600 hover:text-gray-900 font-semibold py-2"
-          >
-            Cancelar Pago
-          </button>
-        </>
-      )}
+      <button
+        type="button"
+        onClick={() => window.history.back()}
+        className="w-full text-gray-600 hover:text-gray-900 font-semibold py-2"
+      >
+        ← Atrás
+      </button>
     </form>
   );
 }
