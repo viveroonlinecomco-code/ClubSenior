@@ -24,22 +24,24 @@ export async function validateCSRFToken(req: NextRequest) {
       
       try {
         const parsedUrl = new URL(url)
-        const host = parsedUrl.hostname
+        const host = parsedUrl.hostname?.toLowerCase() || ''
         
-        // Allow production domains
-        if (host === 'club-senior.vercel.app') return true
+        // Allow production domains - TARDESDELCAFE
         if (host === 'www.tardesdelcafe.com') return true
         if (host === 'tardesdelcafe.com') return true
+        if (host.endsWith('.tardesdelcafe.com')) return true
         
-        // Allow ALL Vercel preview deployments (*.vercel.app)
+        // Allow vercel domains
+        if (host === 'club-senior.vercel.app') return true
         if (host.endsWith('.vercel.app')) return true
         
         // Allow localhost for development
         if (process.env.NODE_ENV === 'development' && 
-            (host === 'localhost' || host === '127.0.0.1')) return true
+            (host === 'localhost' || host === '127.0.0.1' || host === '::1')) return true
         
         return false
-      } catch {
+      } catch (err) {
+        console.error('[CSRF] Error parsing URL:', url, err)
         return false
       }
     }
@@ -47,8 +49,9 @@ export async function validateCSRFToken(req: NextRequest) {
     // Validate origin header (browsers always send this for cross-origin requests)
     if (origin && !isOriginAllowed(origin)) {
       console.warn(`[CSRF] Invalid origin: ${origin}`)
+      console.warn(`[CSRF] Parsed origin hostname might be invalid`)
       return NextResponse.json(
-        { error: 'CSRF validation failed: Invalid origin' },
+        { error: 'CSRF validation failed: Invalid origin', origin },
         { status: 403 }
       )
     }
@@ -57,10 +60,13 @@ export async function validateCSRFToken(req: NextRequest) {
     if (referer && !isOriginAllowed(referer)) {
       console.warn(`[CSRF] Invalid referer: ${referer}`)
       return NextResponse.json(
-        { error: 'CSRF validation failed: Invalid referer' },
+        { error: 'CSRF validation failed: Invalid referer', referer },
         { status: 403 }
       )
     }
+    
+    // Debug: Log successful CSRF validation
+    console.log(`[CSRF] ✅ Validation passed for origin: ${origin || 'none'}, referer: ${referer || 'none'}`)
 
     // CSRF token is valid
     return null
