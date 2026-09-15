@@ -27,6 +27,15 @@ export default function InscribirPage() {
   const router = useRouter();
 
   const handleStep1Submit = (data: any) => {
+    // Verificar que el usuario tiene auth_token (pasó por OTP)
+    const token = localStorage.getItem('auth_token');
+
+    if (!token) {
+      alert('Debes completar la verificación de OTP primero.');
+      router.push('/signin');
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       nombreAbuelo: data.nombreAbuelo,
@@ -95,14 +104,104 @@ export default function InscribirPage() {
     }
   };
 
-  const handleStep3Submit = (data: any) => {
-    setFormData(prev => ({
-      ...prev,
-      planSeleccionado: data.planSeleccionado,
-    }));
-    console.log('Datos completos:', { ...formData, ...data });
-    // TODO: Guardar suscripción en BD
-    router.push('/familia');
+  const handleStep3Submit = async (data: any) => {
+    try {
+      setFormData(prev => ({
+        ...prev,
+        planSeleccionado: data.planSeleccionado,
+      }));
+
+      const datosCompletos = {
+        // Paso 1
+        nombreAbuelo: formData.nombreAbuelo,
+        apellidoAbuelo: formData.apellidoAbuelo,
+        email: formData.email,
+        telefono: formData.telefono,
+        fechaNacimiento: formData.fechaNacimiento,
+        ciudad: formData.ciudad,
+
+        // Paso 2
+        terminosAceptados: formData.terminosAceptados,
+        politicaPrivacidadAceptada: formData.politicaPrivacidadAceptada,
+
+        // Paso 3
+        sponsorContractAceptado: formData.sponsorContractAceptado,
+        participantContractAceptado: formData.participantContractAceptado,
+        sponsorFirma: formData.sponsorFirma,
+        participantFirma: formData.participantFirma,
+
+        // Paso 4
+        planSeleccionado: data.planSeleccionado,
+      };
+
+      console.log('Datos completos para guardar:', datosCompletos);
+
+      // PASO 1: Registrar usuario (crear en BD)
+      console.log('Registrando usuario...');
+      const registerResponse = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          nombreAbuelo: formData.nombreAbuelo,
+          apellidoAbuelo: formData.apellidoAbuelo,
+          telefono: formData.telefono,
+        }),
+      });
+
+      const registerData = await registerResponse.json();
+
+      if (!registerResponse.ok) {
+        // Si el usuario ya existe, continuar (no es error)
+        if (registerResponse.status === 409) {
+          console.log('Usuario ya existe, continuando...');
+        } else {
+          throw new Error(registerData.error || 'Error registrando usuario');
+        }
+      } else {
+        console.log('Usuario registrado exitosamente:', registerData);
+        // Guardar token en localStorage si se retorna
+        if (registerData.token) {
+          localStorage.setItem('auth_token', registerData.token);
+          localStorage.setItem('auth_email', formData.email);
+        }
+      }
+
+      // PASO 2: Crear suscripción
+      console.log('Creando suscripción...');
+      const token = localStorage.getItem('auth_token') || '';
+
+      const subscripcionResponse = await fetch('/api/suscripcion/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          planSeleccionado: data.planSeleccionado,
+        }),
+      });
+
+      const subscripcionData = await subscripcionResponse.json();
+
+      if (!subscripcionResponse.ok) {
+        console.error('Error creando suscripción:', subscripcionData);
+        throw new Error(subscripcionData.error || 'No se pudo crear la suscripción');
+      }
+
+      console.log('Suscripción creada exitosamente:', subscripcionData);
+
+      // PASO 3: Ir a /familia
+      console.log('Redirigiendo a /familia...');
+      router.push('/familia');
+    } catch (error: any) {
+      console.error('Error en handleStep3Submit:', error);
+      alert(
+        'Error completando registro: ' +
+          (error.message || 'Por favor intenta de nuevo')
+      );
+    }
   };
 
   const handleBack = () => {
