@@ -135,33 +135,10 @@ export default function InscribirPage() {
         planSeleccionado: data.planSeleccionado,
       }));
 
-      const datosCompletos = {
-        // Paso 1
-        nombreAbuelo: formData.nombreAbuelo,
-        apellidoAbuelo: formData.apellidoAbuelo,
-        email: formData.email,
-        telefono: formData.telefono,
-        fechaNacimiento: formData.fechaNacimiento,
-        ciudad: formData.ciudad,
-
-        // Paso 2
-        terminosAceptados: formData.terminosAceptados,
-        politicaPrivacidadAceptada: formData.politicaPrivacidadAceptada,
-
-        // Paso 3
-        sponsorContractAceptado: formData.sponsorContractAceptado,
-        participantContractAceptado: formData.participantContractAceptado,
-        sponsorFirma: formData.sponsorFirma,
-        participantFirma: formData.participantFirma,
-
-        // Paso 4
-        planSeleccionado: data.planSeleccionado,
-      };
-
-      console.log('Datos completos para guardar:', datosCompletos);
+      console.log('Paso 4 - Completando registro y generando enlace Wompi...');
 
       // PASO 1: Registrar usuario (crear en BD)
-      console.log('Registrando usuario...');
+      console.log('1️⃣ Registrando usuario...');
       const registerResponse = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -170,6 +147,13 @@ export default function InscribirPage() {
           nombreAbuelo: formData.nombreAbuelo,
           apellidoAbuelo: formData.apellidoAbuelo,
           telefono: formData.telefono,
+          fechaNacimiento: formData.fechaNacimiento,
+          ciudad: formData.ciudad,
+          terminosAceptados: formData.terminosAceptados,
+          politicaPrivacidadAceptada: formData.politicaPrivacidadAceptada,
+          sponsorContractAceptado: formData.sponsorContractAceptado,
+          participantContractAceptado: formData.participantContractAceptado,
+          planSeleccionado: data.planSeleccionado,
         }),
       });
 
@@ -183,7 +167,7 @@ export default function InscribirPage() {
           throw new Error(registerData.error || 'Error registrando usuario');
         }
       } else {
-        console.log('Usuario registrado exitosamente:', registerData);
+        console.log('✅ Usuario registrado exitosamente:', registerData);
         // Guardar token en localStorage si se retorna
         if (registerData.token) {
           localStorage.setItem('auth_token', registerData.token);
@@ -191,36 +175,39 @@ export default function InscribirPage() {
         }
       }
 
-      // PASO 2: Crear suscripción
-      console.log('Creando suscripción...');
-      const token = localStorage.getItem('auth_token') || '';
-
-      const subscripcionResponse = await fetch('/api/suscripcion/create', {
+      // PASO 2: Generar enlace de Wompi para pago
+      console.log('2️⃣ Generando enlace de pago Wompi...');
+      const wompiResponse = await fetch('/api/pagos/crear-inscripcion', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: formData.email,
           planSeleccionado: data.planSeleccionado,
+          email: formData.email,
         }),
       });
 
-      const subscripcionData = await subscripcionResponse.json();
+      const wompiData = await wompiResponse.json();
 
-      if (!subscripcionResponse.ok) {
-        console.error('Error creando suscripción:', subscripcionData);
-        throw new Error(subscripcionData.error || 'No se pudo crear la suscripción');
+      if (!wompiResponse.ok) {
+        console.error('Error generando enlace Wompi:', wompiData);
+        throw new Error(wompiData.error || 'No se pudo generar el enlace de pago');
       }
 
-      console.log('Suscripción creada exitosamente:', subscripcionData);
+      console.log('✅ Enlace Wompi generado:', wompiData.referencia);
 
-      // PASO 3: Ir a /familia
-      console.log('Redirigiendo a /familia...');
-      router.push('/familia');
+      // PASO 3: Redirigir a Wompi para completar el pago
+      // ✅ Wompi maneja TODO el pago de forma segura
+      console.log('3️⃣ Redirigiendo a Wompi...');
+      console.log('Enlace:', wompiData.wompi_checkout_url);
+      
+      // Mostrar un mensaje de espera
+      alert(`Redirigiendo a Wompi para completar el pago de ${data.planSeleccionado === 'mensual' ? '$150.000' : '$40.000'}...`);
+      
+      // Redirigir a Wompi
+      window.location.href = wompiData.wompi_checkout_url;
+
     } catch (error: any) {
-      console.error('Error en handleStep3Submit:', error);
+      console.error('❌ Error en handleStep3Submit:', error);
       alert(
         'Error completando registro: ' +
           (error.message || 'Por favor intenta de nuevo')
