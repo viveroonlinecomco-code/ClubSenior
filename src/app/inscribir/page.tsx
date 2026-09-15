@@ -29,22 +29,6 @@ export default function InscribirPage() {
     planSeleccionado: 'individual',
   });
 
-  // ✅ FIX: Validar que tenemos datos mínimos para cada paso
-  const canAccessStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        return true; // Siempre se puede acceder a paso 1
-      case 2:
-        return !!formData.email; // Necesita email (de paso 1)
-      case 3:
-        return !!formData.email && !!formData.nombreAbuelo; // Necesita paso 1 + 2
-      case 4:
-        return !!formData.email && !!formData.nombreAbuelo && !!formData.terminosAceptados; // Necesita paso 1 + 2 + 3
-      default:
-        return false;
-    }
-  };
-
   // ✅ Cargar datos desde sessionStorage si regresa de OTP
   useEffect(() => {
     const inscribirData = sessionStorage.getItem('inscribirData');
@@ -65,15 +49,6 @@ export default function InscribirPage() {
       }
     }
   }, []);
-
-  // ✅ Si intenta acceder a un paso que no debería, redirige a paso 1
-  useEffect(() => {
-    if (stepFromUrl > currentStep && !canAccessStep(stepFromUrl)) {
-      console.warn(`[INSCRIBIR] Intento de acceso a paso ${stepFromUrl} sin completar previos. Redirigiendo a paso 1.`);
-      setCurrentStep(1);
-      router.push('/inscribir');
-    }
-  }, [stepFromUrl, currentStep, router]);
 
   const handleStep1Submit = (data: any) => {
     // Verificar que el usuario tiene auth_token (pasó por OTP)
