@@ -14,11 +14,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { withJWTAuth } from '@/lib/middleware';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 interface ExportData {
   exportedAt: string;
   version: string;
@@ -34,6 +29,11 @@ interface ExportData {
 export async function GET(request: NextRequest) {
   return withJWTAuth(request, async (req, userId) => {
     try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
       console.log(`[EXPORT] Starting data export for user: ${userId}`);
 
       // Fetch user data

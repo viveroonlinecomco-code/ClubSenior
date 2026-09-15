@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Step1Form from './components/step1-form';
 import Step2Form from './components/step2-form';
+import Step2BContratosForm from './components/step2b-contratos-form';
 import Step3Form from './components/step3-form';
 
 export default function InscribirPage() {
@@ -17,6 +18,10 @@ export default function InscribirPage() {
     ciudad: '',
     terminosAceptados: false,
     politicaPrivacidadAceptada: false,
+    sponsorContractAceptado: false,
+    participantContractAceptado: false,
+    sponsorFirma: '',
+    participantFirma: '',
     planSeleccionado: 'individual',
   });
   const router = useRouter();
@@ -43,12 +48,48 @@ export default function InscribirPage() {
     setCurrentStep(3);
   };
 
+  const handleStep2BSubmit = (data: any) => {
+    setFormData(prev => ({
+      ...prev,
+      sponsorContractAceptado: data.sponsorContractAceptado,
+      participantContractAceptado: data.participantContractAceptado,
+      sponsorFirma: data.sponsorFirma,
+      participantFirma: data.participantFirma,
+    }));
+    // Guardar contratos en API
+    saveContracts(data);
+    setCurrentStep(4);
+  };
+
+  const saveContracts = async (data: any) => {
+    try {
+      const response = await fetch('/api/contratos/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuarioId: formData.email, // Usar email como ID temporal
+          email: formData.email,
+          sponsorContractAceptado: data.sponsorContractAceptado,
+          participantContractAceptado: data.participantContractAceptado,
+          sponsorFirma: data.sponsorFirma,
+          participantFirma: data.participantFirma,
+        }),
+      });
+      if (!response.ok) {
+        console.error('Error guardando contratos:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error al guardar contratos:', error);
+    }
+  };
+
   const handleStep3Submit = (data: any) => {
     setFormData(prev => ({
       ...prev,
       planSeleccionado: data.planSeleccionado,
     }));
     console.log('Datos completos:', { ...formData, ...data });
+    // TODO: Guardar suscripción en BD
     router.push('/familia');
   };
 
@@ -77,7 +118,7 @@ export default function InscribirPage() {
             Únete a ClubSenior
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            Paso {currentStep} de 3 • {Math.round((currentStep / 3) * 100)}% completado
+            Paso {currentStep} de 4 • {Math.round((currentStep / 4) * 100)}% completado
           </p>
         </div>
 
@@ -86,18 +127,18 @@ export default function InscribirPage() {
           <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
             <div
               className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(currentStep / 3) * 100}%` }}
+              style={{ width: `${(currentStep / 4) * 100}%` }}
               role="progressbar"
               aria-valuenow={currentStep}
               aria-valuemin={1}
-              aria-valuemax={3}
+              aria-valuemax={4}
             ></div>
           </div>
         </div>
 
         {/* Step Indicators */}
         <div className="flex justify-between mb-8 sm:mb-12">
-          {[1, 2, 3].map((step, idx) => (
+          {[1, 2, 3, 4].map((step, idx) => (
             <div key={step} className="flex items-center flex-1">
               <div
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition-all duration-300 ${
@@ -133,6 +174,9 @@ export default function InscribirPage() {
               <Step2Form onSubmit={handleStep2Submit} initialData={formData} />
             )}
             {currentStep === 3 && (
+              <Step2BContratosForm onSubmit={handleStep2BSubmit} initialData={formData} />
+            )}
+            {currentStep === 4 && (
               <Step3Form onSubmit={handleStep3Submit} initialData={formData} />
             )}
           </div>
@@ -155,7 +199,8 @@ export default function InscribirPage() {
           <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
             {currentStep === 1 && '📋 Información básica del adulto mayor'}
             {currentStep === 2 && '✓ Acepta los términos y condiciones'}
-            {currentStep === 3 && '💳 Selecciona tu plan'}
+            {currentStep === 3 && '✍️ Acepta contratos legales con firma digital'}
+            {currentStep === 4 && '💳 Selecciona tu plan'}
           </p>
         </div>
 
