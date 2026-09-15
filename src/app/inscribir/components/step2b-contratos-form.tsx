@@ -39,14 +39,21 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
   const [isDrawing, setIsDrawing] = useState<'sponsor' | 'participant' | null>(null);
 
   // ============ CANVAS DRAWING LOGIC ============
-  const startDrawing = (type: 'sponsor' | 'participant', e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Helper para obtener coordenadas de mouse o touch
+  const getCoordinates = (canvas: HTMLCanvasElement, e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const rect = canvas.getBoundingClientRect();
+    const isTouch = 'touches' in e;
+    const x = isTouch ? (e as React.TouchEvent).touches[0].clientX - rect.left : (e as React.MouseEvent).clientX - rect.left;
+    const y = isTouch ? (e as React.TouchEvent).touches[0].clientY - rect.top : (e as React.MouseEvent).clientY - rect.top;
+    return { x, y };
+  };
+
+  const startDrawing = (type: 'sponsor' | 'participant', e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     setIsDrawing(type);
     const canvas = type === 'sponsor' ? sponsorCanvasRef.current : participantCanvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const { x, y } = getCoordinates(canvas, e as any);
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
@@ -55,15 +62,13 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
     }
   };
 
-  const draw = (type: 'sponsor' | 'participant', e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (type: 'sponsor' | 'participant', e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (isDrawing !== type) return;
 
     const canvas = type === 'sponsor' ? sponsorCanvasRef.current : participantCanvasRef.current;
     if (!canvas) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const { x, y } = getCoordinates(canvas, e as any);
 
     const ctx = canvas.getContext('2d');
     if (ctx) {
@@ -235,7 +240,10 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               onMouseMove={(e) => draw('sponsor', e)}
               onMouseUp={() => stopDrawing('sponsor')}
               onMouseLeave={() => stopDrawing('sponsor')}
-              className="border-2 border-gray-300 rounded-lg cursor-crosshair bg-white w-full"
+              onTouchStart={(e) => startDrawing('sponsor', e as any)}
+              onTouchMove={(e) => draw('sponsor', e as any)}
+              onTouchEnd={() => stopDrawing('sponsor')}
+              className="border-2 border-gray-300 rounded-lg cursor-crosshair bg-white w-full touch-none"
             />
             {errors.sponsorFirma && (
               <p className="text-red-500 text-sm">{errors.sponsorFirma}</p>
@@ -340,7 +348,10 @@ export default function Step2BContratosForm({ onSubmit, initialData }: Step2BCon
               onMouseMove={(e) => draw('participant', e)}
               onMouseUp={() => stopDrawing('participant')}
               onMouseLeave={() => stopDrawing('participant')}
-              className="border-2 border-gray-300 rounded-lg cursor-crosshair bg-white w-full"
+              onTouchStart={(e) => startDrawing('participant', e as any)}
+              onTouchMove={(e) => draw('participant', e as any)}
+              onTouchEnd={() => stopDrawing('participant')}
+              className="border-2 border-gray-300 rounded-lg cursor-crosshair bg-white w-full touch-none"
             />
             {errors.participantFirma && (
               <p className="text-red-500 text-sm">{errors.participantFirma}</p>

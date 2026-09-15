@@ -48,7 +48,7 @@ export default function InscribirPage() {
     setCurrentStep(3);
   };
 
-  const handleStep2BSubmit = (data: any) => {
+  const handleStep2BSubmit = async (data: any) => {
     setFormData(prev => ({
       ...prev,
       sponsorContractAceptado: data.sponsorContractAceptado,
@@ -56,12 +56,17 @@ export default function InscribirPage() {
       sponsorFirma: data.sponsorFirma,
       participantFirma: data.participantFirma,
     }));
-    // Guardar contratos en API
-    saveContracts(data);
-    setCurrentStep(4);
+    // Guardar contratos en API y esperar resultado
+    const result = await saveContracts(data);
+    if (result.success) {
+      setCurrentStep(4);
+    } else {
+      console.error('No se pudieron guardar los contratos. Intenta de nuevo.');
+      // Aquí se podría mostrar un toast/error al usuario
+    }
   };
 
-  const saveContracts = async (data: any) => {
+  const saveContracts = async (data: any): Promise<{ success: boolean; message?: string }> => {
     try {
       const response = await fetch('/api/contratos/guardar', {
         method: 'POST',
@@ -75,11 +80,18 @@ export default function InscribirPage() {
           participantFirma: data.participantFirma,
         }),
       });
+      
+      const responseData = await response.json();
+      
       if (!response.ok) {
-        console.error('Error guardando contratos:', await response.text());
+        console.error('Error guardando contratos:', responseData);
+        return { success: false, message: responseData.error || 'Error desconocido' };
       }
-    } catch (error) {
+      
+      return { success: true, message: 'Contratos guardados correctamente' };
+    } catch (error: any) {
       console.error('Error al guardar contratos:', error);
+      return { success: false, message: error.message };
     }
   };
 
