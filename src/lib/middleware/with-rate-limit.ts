@@ -17,7 +17,6 @@ export function withRateLimit(handler: RequestHandler, strict: boolean = false) 
     // Obtener IP del cliente
     const ip = request.headers.get('x-forwarded-for') || 
                request.headers.get('x-real-ip') ||
-               request.ip ||
                'unknown';
 
     // Verificar rate limit
@@ -56,7 +55,6 @@ export async function globalRateLimitMiddleware(request: NextRequest) {
   // Obtener IP
   const ip = request.headers.get('x-forwarded-for') || 
              request.headers.get('x-real-ip') ||
-             request.ip ||
              'unknown';
 
   // Solo limitar GET requests que no sean auth
