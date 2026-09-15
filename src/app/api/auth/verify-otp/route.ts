@@ -19,9 +19,9 @@ async function verifyOTPInDatabase(email: string, code: string) {
 
     console.log(`[OTP] Verifying code for email: ${email}`);
 
-    // Get OTP record
+    // Get OTP record - buscar SIN filtrar por verified (recién creado no tiene verificación)
     const response = await fetch(
-      `${supabaseUrl}/rest/v1/otp_codes?email=eq.${encodeURIComponent(email)}&code=eq.${code}&verified=eq.false`,
+      `${supabaseUrl}/rest/v1/otp_codes?email=eq.${encodeURIComponent(email)}&code=eq.${code}`,
       {
         method: 'GET',
         headers: {
@@ -170,7 +170,8 @@ export async function POST(request: NextRequest) {
       success: true,
       message: result.message,
       email: result.email,
-      // Don't return auth token - user creation happens in create-profile
+      // ✅ NUEVO: Retornar token después de verificar OTP
+      token: Buffer.from(email.toLowerCase()).toString('base64'),
     });
   } catch (error: any) {
     console.error('[VERIFY-OTP] Error:', error);
