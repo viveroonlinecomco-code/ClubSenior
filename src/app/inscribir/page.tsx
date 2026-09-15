@@ -82,25 +82,38 @@ export default function InscribirPage() {
   };
 
   const handleStep2BSubmit = async (data: any) => {
-    setFormData(prev => ({
-      ...prev,
-      sponsorContractAceptado: data.sponsorContractAceptado,
-      participantContractAceptado: data.participantContractAceptado,
-      sponsorFirma: data.sponsorFirma,
-      participantFirma: data.participantFirma,
-    }));
-    // Guardar contratos en API y esperar resultado
-    const result = await saveContracts(data);
-    if (result.success) {
+    try {
+      setFormData(prev => ({
+        ...prev,
+        sponsorContractAceptado: data.sponsorContractAceptado,
+        participantContractAceptado: data.participantContractAceptado,
+        sponsorFirma: data.sponsorFirma,
+        participantFirma: data.participantFirma,
+      }));
+
+      console.log('[PASO 3] Guardando contratos...');
+      
+      const result = await saveContracts(data);
+      
+      if (!result.success) {
+        console.error('[PASO 3] Error guardando contratos:', result.message);
+        alert(`❌ Error guardando contratos:\n${result.message}`);
+        return;
+      }
+
+      console.log('[PASO 3] ✅ Contratos guardados exitosamente');
+      console.log('[PASO 3] Avanzando a Paso 4...');
       setCurrentStep(4);
-    } else {
-      console.error('No se pudieron guardar los contratos. Intenta de nuevo.');
-      // Aquí se podría mostrar un toast/error al usuario
+    } catch (error: any) {
+      console.error('[PASO 3] Error crítico:', error);
+      alert(`❌ Error inesperado:\n${error.message}`);
     }
   };
 
   const saveContracts = async (data: any): Promise<{ success: boolean; message?: string }> => {
     try {
+      console.log('[SAVE CONTRATOS] Enviando POST /api/contratos/guardar');
+      
       const response = await fetch('/api/contratos/guardar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -113,18 +126,32 @@ export default function InscribirPage() {
           participantFirma: data.participantFirma,
         }),
       });
+
+      console.log('[SAVE CONTRATOS] Response status:', response.status);
       
       const responseData = await response.json();
+      console.log('[SAVE CONTRATOS] Response:', responseData);
       
       if (!response.ok) {
-        console.error('Error guardando contratos:', responseData);
-        return { success: false, message: responseData.error || 'Error desconocido' };
+        const errorMessage = responseData.error || `Error ${response.status}`;
+        console.error('[SAVE CONTRATOS] Error:', errorMessage);
+        return { 
+          success: false, 
+          message: errorMessage
+        };
       }
       
-      return { success: true, message: 'Contratos guardados correctamente' };
+      console.log('[SAVE CONTRATOS] ✅ Contratos guardados:', responseData);
+      return { 
+        success: true, 
+        message: 'Contratos guardados correctamente' 
+      };
     } catch (error: any) {
-      console.error('Error al guardar contratos:', error);
-      return { success: false, message: error.message };
+      console.error('[SAVE CONTRATOS] Error crítico:', error);
+      return { 
+        success: false, 
+        message: error.message || 'Error desconocido' 
+      };
     }
   };
 
