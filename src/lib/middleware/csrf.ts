@@ -26,8 +26,10 @@ export async function validateCSRFToken(req: NextRequest) {
         const parsedUrl = new URL(url)
         const host = parsedUrl.hostname
         
-        // Allow production domain
+        // Allow production domains
         if (host === 'club-senior.vercel.app') return true
+        if (host === 'www.tardesdelcafe.com') return true
+        if (host === 'tardesdelcafe.com') return true
         
         // Allow ALL Vercel preview deployments (*.vercel.app)
         if (host.endsWith('.vercel.app')) return true
