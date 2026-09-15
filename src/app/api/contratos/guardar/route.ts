@@ -32,13 +32,12 @@ export async function POST(req: NextRequest) {
       .from('contratos')
       .insert([
         {
-          usuario_id: usuarioId,
+          usuario_email: usuarioId,
           tipo: 'sponsor',
           contenido: 'Contrato de Sponsor - ClubSenior',
           aceptado: sponsorContractAceptado,
           firma_base64: sponsorFirma,
           email: email,
-          fecha_aceptacion: new Date().toISOString(),
         },
       ])
       .select()
@@ -57,13 +56,12 @@ export async function POST(req: NextRequest) {
       .from('contratos')
       .insert([
         {
-          usuario_id: usuarioId,
+          usuario_email: usuarioId,
           tipo: 'participant',
           contenido: 'Contrato de Participante - ClubSenior',
           aceptado: participantContractAceptado,
           firma_base64: participantFirma,
           email: email,
-          fecha_aceptacion: new Date().toISOString(),
         },
       ])
       .select()
@@ -77,22 +75,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // PASO 3: Actualizar usuario con contratos_aceptados = true
-    const { error: updateError } = await supabase
-      .from('usuarios')
-      .update({
-        contratos_aceptados: true,
-        contratos_fecha_aceptacion: new Date().toISOString(),
-      })
-      .eq('id', usuarioId);
-
-    if (updateError) {
-      console.error('Error actualizando usuario:', updateError);
-      return NextResponse.json(
-        { error: `Error actualizando usuario: ${updateError.message}` },
-        { status: 500 }
-      );
-    }
+    // Contratos guardados exitosamente - no modificar tabla usuarios existente
 
     // SUCCESS
     return NextResponse.json(
