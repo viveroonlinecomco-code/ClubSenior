@@ -178,10 +178,10 @@ export default function HomePage() {
                 </ul>
 
                 <Link
-                  href="/pagar?plan=mensual"
+                  href="/inscribir"
                   className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 active:scale-95 transition transform text-center block"
                 >
-                  Seleccionar Plan
+                  Crear Cuenta
                 </Link>
               </div>
             </div>
@@ -224,10 +224,10 @@ export default function HomePage() {
                 </ul>
 
                 <Link
-                  href="/pagar?plan=sesion"
+                  href="/inscribir"
                   className="w-full bg-indigo-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-600 active:scale-95 transition transform text-center block"
                 >
-                  Seleccionar Plan
+                  Crear Cuenta
                 </Link>
               </div>
             </div>
