@@ -91,11 +91,15 @@ export async function GET(request: NextRequest) {
       console.error('[DASHBOARD] Error fetching reportes:', err);
     }
 
-    // 2. Fetch suscripcion for this user
+    // 2. Fetch usuario data AND suscripcion for this user
+    let usuario = null;
     let suscripcion = null;
+    let usuario_id = null;
+    
     try {
+      // ✅ CRITICAL FIX: Fetch usuario WITH all personal data
       const usuariosResponse = await fetch(
-        `${supabaseUrl}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}&select=id`,
+        `${supabaseUrl}/rest/v1/usuarios?email=eq.${encodeURIComponent(email)}`,
         {
           headers: {
             'apikey': supabaseKey,
@@ -107,7 +111,8 @@ export async function GET(request: NextRequest) {
       if (usuariosResponse.ok) {
         const usuarios = await usuariosResponse.json();
         if (Array.isArray(usuarios) && usuarios.length > 0) {
-          const usuario_id = usuarios[0].id;
+          usuario = usuarios[0];
+          usuario_id = usuario.id;
 
           const suscrResponse = await fetch(
             `${supabaseUrl}/rest/v1/suscripciones?usuario_id=eq.${usuario_id}&order=created_at.desc&limit=1`,
@@ -128,7 +133,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (err) {
-      console.error('[DASHBOARD] Error fetching suscripcion:', err);
+      console.error('[DASHBOARD] Error fetching usuario/suscripcion:', err);
     }
 
     // 3. Fetch asistencias for this user
@@ -151,20 +156,33 @@ export async function GET(request: NextRequest) {
       console.error('[DASHBOARD] Error fetching asistencias:', err);
     }
 
-    // Return complete dashboard data
+    // ✅ CRITICAL FIX: Return REAL user data from database, not hardcoded
     const data = {
       success: true,
       email,
       user: { 
         email,
-        nombre: 'Clara',
-        apellido: 'Rodríguez',
+        id: usuario?.id || null,
+        nombre: usuario?.nombre_abuelo || 'Usuario',
+        apellido: usuario?.apellido_abuelo || 'Grupo Plateado',
+        ciudad: usuario?.ciudad || null,
+        fecha_nacimiento: usuario?.fecha_nacimiento || null,
+        terminos_aceptados: usuario?.terminos_aceptados || false,
+        politica_privacidad_aceptada: usuario?.politica_privacidad_aceptada || false,
+        contratos_sponsor_firmado: usuario?.contratos_sponsor_firmado || false,
+        contratos_participant_firmado: usuario?.contratos_participant_firmado || false,
+        inscripcion_completada: usuario?.inscripcion_completada || false,
       },
-      suscripcion,
+      suscripcion: suscripcion ? {
+        ...suscripcion,
+        plan: usuario?.suscripcion_plan || suscripcion?.plan_type,
+        estado: usuario?.suscripcion_estado || 'activa',
+        fecha_pago: usuario?.fecha_pago_ultimo || null,
+      } : null,
       reportes,
       asistencias,
       pagos: [],
-      message: 'Welcome to your dashboard!',
+      message: `Bienvenido ${usuario?.nombre_abuelo || 'a Grupo Plateado'}!`,
     };
 
     return NextResponse.json(data);

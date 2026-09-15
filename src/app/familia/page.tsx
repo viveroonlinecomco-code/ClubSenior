@@ -58,6 +58,31 @@ export default function FamiliaPage() {
     );
   }
 
+  // ✅ CRITICAL VALIDATION: Check if user completed inscription
+  if (data && !data?.user?.inscripcion_completada) {
+    // User hasn't completed all 4 steps or payment
+    if (!data?.user?.nombre_abuelo || !data?.suscripcion) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center max-w-md">
+            <p className="text-red-600 mb-4 text-lg font-semibold">
+              ⚠️ Inscripción Incompleta
+            </p>
+            <p className="text-gray-600 mb-6">
+              Por favor completa todos los pasos de registro para acceder al dashboard.
+            </p>
+            <button
+              onClick={() => router.push('/inscribir')}
+              className="bg-blue-500 hover:bg-blue-600 transition text-white px-6 py-2 rounded-lg font-semibold"
+            >
+              Completar Inscripción
+            </button>
+          </div>
+        </div>
+      );
+    }
+  }
+
   const noSuscripcion = !data?.suscripcion;
 
   return (

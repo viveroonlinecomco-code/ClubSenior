@@ -40,12 +40,23 @@ export async function POST(request: NextRequest) {
 
     console.log('[REGISTER] OTP verified ✅');
 
-    // Step 2: Insert into usuarios table
+    // Step 2: Insert into usuarios table with ALL data
     console.log('[REGISTER] Inserting into usuarios...');
     
     const usuarioData = {
       email: email.toLowerCase(),
       phone: telefono || null,
+      // ✅ NEW: Guardar TODOS los datos personales
+      nombre_abuelo: body.nombreAbuelo || null,
+      apellido_abuelo: body.apellidoAbuelo || null,
+      fecha_nacimiento: body.fechaNacimiento || null,
+      ciudad: body.ciudad || null,
+      terminos_aceptados: body.terminosAceptados === true,
+      politica_privacidad_aceptada: body.politicaPrivacidadAceptada === true,
+      contratos_sponsor_firmado: body.sponsorContractAceptado === true,
+      contratos_participant_firmado: body.participantContractAceptado === true,
+      suscripcion_plan: body.planSeleccionado || null,
+      inscripcion_completada: false, // Se marca true después de pago
     };
 
     console.log('[REGISTER] Payload:', JSON.stringify(usuarioData));

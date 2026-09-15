@@ -103,11 +103,12 @@ export default function VerificarOtpPage() {
           }
         }
 
-        setSuccessMessage('✅ Correo verificado! Redirigiendo...');
+        setSuccessMessage('✅ Correo verificado! Redirigiendo al Paso 2...');
         sessionStorage.removeItem('pendingEmail');
-        sessionStorage.removeItem('inscribirData');
+        // DO NOT remove inscribirData - needed for Paso 2
         setTimeout(() => {
-          router.push('/familia');
+          // ✅ CRITICAL FIX: Return to inscribir step 2, NOT familia
+          router.push('/inscribir?step=2');
         }, 2000);
       }
     } catch (error: any) {

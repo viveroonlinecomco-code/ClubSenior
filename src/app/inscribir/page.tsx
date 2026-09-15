@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Step1Form from './components/step1-form';
 import Step2Form from './components/step2-form';
 import Step2BContratosForm from './components/step2b-contratos-form';
 import Step3Form from './components/step3-form';
 
 export default function InscribirPage() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const stepFromUrl = searchParams?.get('step') ? parseInt(searchParams.get('step')!) : 1;
+  
+  const [currentStep, setCurrentStep] = useState(stepFromUrl);
   const [formData, setFormData] = useState({
     nombreAbuelo: '',
     apellidoAbuelo: '',
@@ -24,7 +28,27 @@ export default function InscribirPage() {
     participantFirma: '',
     planSeleccionado: 'individual',
   });
-  const router = useRouter();
+
+  // Load form data from sessionStorage if returning from OTP verification
+  useEffect(() => {
+    const inscribirData = sessionStorage.getItem('inscribirData');
+    if (inscribirData) {
+      try {
+        const data = JSON.parse(inscribirData);
+        setFormData(prev => ({
+          ...prev,
+          nombreAbuelo: data.nombreAbuelo || '',
+          apellidoAbuelo: data.apellidoAbuelo || '',
+          email: data.email || '',
+          telefono: data.telefono || '',
+          fechaNacimiento: data.fechaNacimiento || '',
+          ciudad: data.ciudad || '',
+        }));
+      } catch (err) {
+        console.error('Error loading inscribir data:', err);
+      }
+    }
+  }, []);
 
   const handleStep1Submit = (data: any) => {
     // Verificar que el usuario tiene auth_token (pasó por OTP)
