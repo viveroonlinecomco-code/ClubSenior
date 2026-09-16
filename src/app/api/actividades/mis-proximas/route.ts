@@ -119,10 +119,10 @@ export async function GET(request: NextRequest) {
     const condominioId = condominios[0].id;
     console.log('[MIS-PROXIMAS] Condominio ID:', condominioId);
 
-    // Step 3: Get upcoming activities for this condominio
+    // Step 3: Get upcoming activities_programadas for this condominio
     const today = new Date().toISOString().split('T')[0];
     const activitiesResponse = await fetch(
-      `${supabaseUrl}/rest/v1/actividades?condominio_id=eq.${condominioId}&fecha=gte.${today}&order=fecha.asc,hora_inicio.asc`,
+      `${supabaseUrl}/rest/v1/actividades_programadas?condominio_id=eq.${condominioId}&fecha=gte.${today}&order=fecha.asc,hora_inicio.asc&select=id,actividad_id,fecha,hora_inicio,hora_fin,notas,condominio_id`,
       {
         method: 'GET',
         headers: {
@@ -133,14 +133,44 @@ export async function GET(request: NextRequest) {
     );
 
     if (!activitiesResponse.ok) {
-      console.error('[MIS-PROXIMAS] Activities fetch failed');
+      console.error('[MIS-PROXIMAS] Activities programadas fetch failed');
       return NextResponse.json(
         { error: 'Failed to fetch activities' },
         { status: 500 }
       );
     }
 
-    const actividades = await activitiesResponse.json();
+    let actividades = await activitiesResponse.json();
+    
+    // Step 4: Enrich with actividad details (titulo, descripcion, modulo)
+    if (Array.isArray(actividades) && actividades.length > 0) {
+      const enrichedActividades = await Promise.all(
+        actividades.map(async (act) => {
+          try {
+            const actDetailsResponse = await fetch(
+              `${supabaseUrl}/rest/v1/actividades?id=eq.${act.actividad_id}&select=id,titulo,descripcion,modulo`,
+              {
+                headers: {
+                  'apikey': supabaseKey,
+                  'Authorization': `Bearer ${supabaseKey}`,
+                },
+              }
+            );
+            if (actDetailsResponse.ok) {
+              const details = await actDetailsResponse.json();
+              if (Array.isArray(details) && details.length > 0) {
+                return { ...act, ...details[0] };
+              }
+            }
+          } catch (err) {
+            console.warn('[MIS-PROXIMAS] Error enriching activity:', act.id);
+          }
+          return act;
+        })
+      );
+      actividades = enrichedActividades;
+    }
+    
     console.log(`[MIS-PROXIMAS] Found ${actividades.length} activities ✅`);
 
     return NextResponse.json({

@@ -26,15 +26,18 @@ interface ProfileEditFormProps {
     terminos_aceptados?: boolean;
     politica_privacidad_aceptada?: boolean;
   };
+  readOnlyFields?: string[]; // Email, nombre_abuelo, apellido_abuelo, etc.
   onSave?: (data: any) => void;
 }
 
-export default function ProfileEditForm({ initialData, onSave }: ProfileEditFormProps) {
+export default function ProfileEditForm({ initialData, readOnlyFields = [], onSave }: ProfileEditFormProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [condominios, setCondominios] = useState<Condominio[]>([]);
   const [condominiosLoading, setCondominiosLoading] = useState(false);
+  
+  const isReadOnly = (fieldName: string) => readOnlyFields.includes(fieldName);
   
   const [formData, setFormData] = useState({
     nombre_abuelo: initialData.nombre_abuelo || '',
@@ -256,21 +259,58 @@ export default function ProfileEditForm({ initialData, onSave }: ProfileEditForm
         )}
 
         <form className="space-y-8">
+          {readOnlyFields.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                🔒 <strong>Campos protegidos:</strong> Algunos campos son editables solo por administrador. Contáctanos si necesitas cambiarlos.
+              </p>
+            </div>
+          )}
+
           {/* DATOS PERSONALES */}
           <div>
             <h4 className="text-lg font-semibold text-gray-800 mb-4">📋 Datos Personales</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Nombre *</label>
-                <input type="text" name="nombre_abuelo" value={formData.nombre_abuelo} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Nombre {isReadOnly('nombre_abuelo') && '🔒'}
+                </label>
+                <input 
+                  type="text" 
+                  name="nombre_abuelo" 
+                  value={formData.nombre_abuelo} 
+                  onChange={handleChange}
+                  disabled={isReadOnly('nombre_abuelo')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${isReadOnly('nombre_abuelo') ? 'border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed' : 'border-gray-300 focus:ring-blue-500'}`}
+                  required 
+                />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Apellido *</label>
-                <input type="text" name="apellido_abuelo" value={formData.apellido_abuelo} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Apellido {isReadOnly('apellido_abuelo') && '🔒'}
+                </label>
+                <input 
+                  type="text" 
+                  name="apellido_abuelo" 
+                  value={formData.apellido_abuelo} 
+                  onChange={handleChange}
+                  disabled={isReadOnly('apellido_abuelo')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${isReadOnly('apellido_abuelo') ? 'border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed' : 'border-gray-300 focus:ring-blue-500'}`}
+                  required 
+                />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">Teléfono</label>
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Teléfono {isReadOnly('phone') && '🔒'}
+                </label>
+                <input 
+                  type="text" 
+                  name="phone" 
+                  value={formData.phone} 
+                  onChange={handleChange}
+                  disabled={isReadOnly('phone')}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${isReadOnly('phone') ? 'border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed' : 'border-gray-300 focus:ring-blue-500'}`}
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">Fecha de Nacimiento</label>

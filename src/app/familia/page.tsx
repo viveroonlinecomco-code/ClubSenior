@@ -324,14 +324,24 @@ export default function FamiliaPage() {
           <div className="space-y-6">
             <ProfileEditForm
               initialData={{
-                nombre_abuelo: data?.user.nombre || '',
-                apellido_abuelo: data?.user.apellido || '',
+                nombre_abuelo: data?.user.nombre_abuelo || data?.user.nombre || '',
+                apellido_abuelo: data?.user.apellido_abuelo || data?.user.apellido || '',
                 fecha_nacimiento: data?.user.fecha_nacimiento || '',
                 ciudad: data?.user.ciudad || '',
-                condominio: data?.suscripcion?.condominio || '',
+                condominio: data?.user.condominio || data?.suscripcion?.condominio || '',
                 phone: data?.user.phone || '',
                 email: data?.user.email || '',
+                eps: data?.user.eps || '',
+                emergencia_nombre: data?.user.emergencia_nombre || '',
+                emergencia_telefono: data?.user.emergencia_telefono || '',
+                familiar_nombre: data?.user.familiar_nombre || '',
+                familiar_relacion: data?.user.familiar_relacion || '',
+                familiar_telefono: data?.user.familiar_telefono || '',
+                contratos_aceptados: data?.user.contratos_aceptados || false,
+                terminos_aceptados: data?.user.terminos_aceptados || false,
+                politica_privacidad_aceptada: data?.user.politica_privacidad_aceptada || false,
               }}
+              readOnlyFields={['email', 'nombre_abuelo', 'apellido_abuelo', 'condominio']}
             />
             
             {data?.suscripcion && (
