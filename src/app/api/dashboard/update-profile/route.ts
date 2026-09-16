@@ -4,9 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 
 /**
  * POST /api/dashboard/update-profile
- * Actualiza información del perfil del usuario autenticado
- * 
- * Body: { nombre_abuelo, apellido_abuelo, fecha_nacimiento, ciudad, condominio, telefono }
+ * Actualiza información completa del perfil del usuario
  */
 export async function POST(request: NextRequest) {
   try {
@@ -49,7 +47,16 @@ export async function POST(request: NextRequest) {
       fecha_nacimiento,
       ciudad,
       condominio,
-      telefono,
+      phone,
+      eps,
+      emergencia_nombre,
+      emergencia_telefono,
+      familiar_nombre,
+      familiar_relacion,
+      familiar_telefono,
+      contratos_aceptados,
+      terminos_aceptados,
+      politica_privacidad_aceptada,
     } = body;
 
     // Conectar a Supabase
@@ -65,14 +72,25 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Actualizar usuario
+    // Construir objeto de actualización con todos los campos
     const updateData: any = {};
-    if (nombre_abuelo) updateData.nombre_abuelo = nombre_abuelo;
-    if (apellido_abuelo) updateData.apellido_abuelo = apellido_abuelo;
-    if (fecha_nacimiento) updateData.fecha_nacimiento = fecha_nacimiento;
-    if (ciudad) updateData.ciudad = ciudad;
-    if (condominio) updateData.condominio = condominio;
-    if (telefono) updateData.phone = telefono;
+    
+    if (nombre_abuelo !== undefined) updateData.nombre_abuelo = nombre_abuelo;
+    if (apellido_abuelo !== undefined) updateData.apellido_abuelo = apellido_abuelo;
+    if (fecha_nacimiento !== undefined) updateData.fecha_nacimiento = fecha_nacimiento;
+    if (ciudad !== undefined) updateData.ciudad = ciudad;
+    if (condominio !== undefined) updateData.condominio = condominio;
+    if (phone !== undefined) updateData.phone = phone;
+    if (eps !== undefined) updateData.eps = eps;
+    if (emergencia_nombre !== undefined) updateData.emergencia_nombre = emergencia_nombre;
+    if (emergencia_telefono !== undefined) updateData.emergencia_telefono = emergencia_telefono;
+    if (familiar_nombre !== undefined) updateData.familiar_nombre = familiar_nombre;
+    if (familiar_relacion !== undefined) updateData.familiar_relacion = familiar_relacion;
+    if (familiar_telefono !== undefined) updateData.familiar_telefono = familiar_telefono;
+    if (contratos_aceptados !== undefined) updateData.contratos_aceptados = contratos_aceptados;
+    if (terminos_aceptados !== undefined) updateData.terminos_aceptados = terminos_aceptados;
+    if (politica_privacidad_aceptada !== undefined) updateData.politica_privacidad_aceptada = politica_privacidad_aceptada;
+    if (updateData.phone) updateData.updated_at = new Date().toISOString(); // Marcar como actualizado
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
@@ -101,15 +119,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Perfil actualizado correctamente',
-      user: {
-        email: data.email,
-        nombre_abuelo: data.nombre_abuelo,
-        apellido_abuelo: data.apellido_abuelo,
-        fecha_nacimiento: data.fecha_nacimiento,
-        ciudad: data.ciudad,
-        condominio: data.condominio,
-        phone: data.phone,
-      },
+      user: data,
     });
   } catch (error: any) {
     console.error('[UPDATE-PROFILE] Error:', error);
