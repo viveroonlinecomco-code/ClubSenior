@@ -138,6 +138,21 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
   if (!isEditing) {
     return (
       <div className="space-y-6">
+        {/* ALERTA SI FALTAN DATOS */}
+        {(!formData.eps || !formData.emergencia_nombre || !formData.familiar_nombre) && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-sm text-yellow-800 font-semibold">
+              ⚠️ Tu perfil está incompleto. Completa tu información de emergencia y salud.
+            </p>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="mt-3 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition"
+            >
+              ✏️ Completar Ahora
+            </button>
+          </div>
+        )}
+
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-xl font-semibold text-gray-900">Mi Perfil</h3>
