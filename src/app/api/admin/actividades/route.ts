@@ -87,14 +87,16 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type'); // 'all' o null
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       { cookies: { getAll: () => [] } }
     );
 
-    // ✅ Listar actividades futuras ordenadas por fecha
-    const { data, error } = await supabase
+    let query = supabase
       .from('actividades')
       .select(`
         id,
@@ -109,8 +111,14 @@ export async function GET(request: NextRequest) {
           id,
           nombre
         )
-      `)
-      .gte('fecha', new Date().toISOString().split('T')[0])
+      `);
+
+    // ✅ Si type=all, devolver todas; si no, solo futuras
+    if (type !== 'all') {
+      query = query.gte('fecha', new Date().toISOString().split('T')[0]);
+    }
+
+    const { data, error } = await query
       .order('fecha', { ascending: true })
       .order('hora_inicio', { ascending: true });
 

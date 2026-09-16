@@ -5,59 +5,71 @@ import { useState, useEffect } from 'react';
 interface Actividad {
   id: string;
   titulo: string;
+}
+
+interface ActividadProgramada {
+  id: string;
+  actividad_id: string;
+  condominio_id: string;
   fecha: string;
   hora_inicio: string;
   hora_fin: string;
-  condominio_id: string;
-  modulo: string;
+  notas: string;
+  actividades?: { id: string; titulo: string };
   condominios?: { id: string; nombre: string };
 }
+
+const CONDOMINIOS = [
+  { id: '3833343e-1bc5-43f1-aaee-05661b98b148', nombre: 'Condominio Central' },
+  { id: 'e39bbff1-c1ea-4e78-a4b3-996683165de0', nombre: 'Generación Silver' },
+];
 
 export default function ActividadesPage() {
   const [formData, setFormData] = useState({
     actividad_id: '',
-    descripcion: '',
+    condominio_id: CONDOMINIOS[0].id,
+    fecha: '',
+    hora_inicio: '14:00',
+    hora_fin: '15:00',
+    notas: '',
   });
 
   const [actividades, setActividades] = useState<Actividad[]>([]);
-  const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
+  const [actividadesProgramadas, setActividadesProgramadas] = useState<ActividadProgramada[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // ✅ Cargar actividades al montar
+  // ✅ Cargar actividades y programaciones al montar
   useEffect(() => {
     fetchActividades();
+    fetchActividadesProgramadas();
   }, []);
 
   const fetchActividades = async () => {
     try {
-      setLoading(true);
-      const res = await fetch('/api/admin/actividades');
+      const res = await fetch('/api/admin/actividades?type=all');
       const data = await res.json();
       if (data.success) {
         setActividades(data.actividades || []);
       }
     } catch (err: any) {
       console.error('Error cargando actividades:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleSelectActividad = (e: any) => {
-    const actividadId = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      actividad_id: actividadId,
-    }));
-
-    // ✅ Auto-llenar detalles de la actividad seleccionada
-    if (actividadId) {
-      const selected = actividades.find((a) => a.id === actividadId);
-      setActividadSeleccionada(selected || null);
-    } else {
-      setActividadSeleccionada(null);
+  const fetchActividadesProgramadas = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/admin/actividades-programadas');
+      const data = await res.json();
+      if (data.success) {
+        setActividadesProgramadas(data.actividades || []);
+      }
+    } catch (err: any) {
+      console.error('Error cargando actividades programadas:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,17 +85,33 @@ export default function ActividadesPage() {
     e.preventDefault();
     setError('');
     setSuccess('');
-
-    if (!formData.actividad_id) {
-      setError('Selecciona una actividad');
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // ✅ Aquí irías a asistencias con la actividad seleccionada
-      setSuccess(`✅ Actividad "${actividadSeleccionada?.titulo}" seleccionada`);
+      const res = await fetch('/api/admin/actividades-programadas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Error al crear programación');
+      }
+
+      setSuccess('✅ Actividad programada exitosamente');
+      setFormData({
+        actividad_id: '',
+        condominio_id: CONDOMINIOS[0].id,
+        fecha: '',
+        hora_inicio: '14:00',
+        hora_fin: '15:00',
+        notas: '',
+      });
+
+      // ✅ Recargar lista
+      await fetchActividadesProgramadas();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -94,13 +122,13 @@ export default function ActividadesPage() {
   return (
     <div>
       <h1 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '8px' }}>
-        📅 Actividades
+        📅 Actividades Programadas
       </h1>
       <p style={{ color: '#666', marginBottom: '32px' }}>
-        Seleccionar actividad y gestionar asistencias
+        Crear y gestionar programación de actividades
       </p>
 
-      {/* FORM SELECCIONAR */}
+      {/* FORM CREAR PROGRAMACIÓN */}
       <div
         style={{
           background: 'white',
@@ -111,7 +139,7 @@ export default function ActividadesPage() {
         }}
       >
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
-          🎯 Seleccionar Actividad
+          ➕ Nueva Programación
         </h2>
 
         {error && (
@@ -145,90 +173,138 @@ export default function ActividadesPage() {
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* ✅ DROPDOWN ACTIVIDADES */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-              Selecciona Actividad *
-            </label>
-            <select
-              name="actividad_id"
-              value={formData.actividad_id}
-              onChange={handleSelectActividad}
-              required
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontFamily: 'inherit',
-              }}
-            >
-              <option value="">-- Selecciona una actividad --</option>
-              {actividades.map((act) => (
-                <option key={act.id} value={act.id}>
-                  {act.titulo} - {new Date(act.fecha).toLocaleDateString('es-CO')} ({act.hora_inicio})
-                </option>
-              ))}
-            </select>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            {/* Actividad Dropdown */}
+            <div>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+                Actividad *
+              </label>
+              <select
+                name="actividad_id"
+                value={formData.actividad_id}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                }}
+              >
+                <option value="">-- Selecciona actividad --</option>
+                {actividades.map((act) => (
+                  <option key={act.id} value={act.id}>
+                    {act.titulo}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Condominio Dropdown */}
+            <div>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+                Condominio *
+              </label>
+              <select
+                name="condominio_id"
+                value={formData.condominio_id}
+                onChange={handleChange}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {CONDOMINIOS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* ✅ MOSTRAR DETALLES DE ACTIVIDAD SELECCIONADA */}
-          {actividadSeleccionada && (
-            <div
-              style={{
-                background: '#f3f4f6',
-                padding: '16px',
-                borderRadius: '4px',
-                marginBottom: '16px',
-                border: '1px solid #e5e7eb',
-              }}
-            >
-              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
-                📌 Detalles de la Actividad
-              </h3>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px' }}>
-                <div>
-                  <p style={{ color: '#666', marginBottom: '4px' }}>Título</p>
-                  <p style={{ fontWeight: '600' }}>{actividadSeleccionada.titulo}</p>
-                </div>
-                <div>
-                  <p style={{ color: '#666', marginBottom: '4px' }}>Condominio</p>
-                  <p style={{ fontWeight: '600' }}>{actividadSeleccionada.condominios?.nombre || 'N/A'}</p>
-                </div>
-                <div>
-                  <p style={{ color: '#666', marginBottom: '4px' }}>Fecha</p>
-                  <p style={{ fontWeight: '600' }}>
-                    {new Date(actividadSeleccionada.fecha).toLocaleDateString('es-CO')}
-                  </p>
-                </div>
-                <div>
-                  <p style={{ color: '#666', marginBottom: '4px' }}>Hora</p>
-                  <p style={{ fontWeight: '600' }}>
-                    {actividadSeleccionada.hora_inicio} - {actividadSeleccionada.hora_fin}
-                  </p>
-                </div>
-                <div>
-                  <p style={{ color: '#666', marginBottom: '4px' }}>Módulo</p>
-                  <p style={{ fontWeight: '600', textTransform: 'capitalize' }}>
-                    {actividadSeleccionada.modulo}
-                  </p>
-                </div>
-              </div>
+          {/* Fecha, Horas */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+                Fecha *
+              </label>
+              <input
+                type="date"
+                name="fecha"
+                value={formData.fecha}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                }}
+              />
             </div>
-          )}
 
-          {/* NOTAS (OPCIONAL) */}
+            <div>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+                Hora Inicio *
+              </label>
+              <input
+                type="time"
+                name="hora_inicio"
+                value={formData.hora_inicio}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+                Hora Fin *
+              </label>
+              <input
+                type="time"
+                name="hora_fin"
+                value={formData.hora_fin}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Notas */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-              Notas (Opcional)
+              Notas
             </label>
             <textarea
-              name="descripcion"
-              value={formData.descripcion}
+              name="notas"
+              value={formData.notas}
               onChange={handleChange}
-              placeholder="Agregar notas sobre esta actividad..."
+              placeholder="Agregar notas sobre esta programación..."
               rows={3}
               style={{
                 width: '100%',
@@ -244,25 +320,25 @@ export default function ActividadesPage() {
 
           <button
             type="submit"
-            disabled={loading || !formData.actividad_id}
+            disabled={loading}
             style={{
               width: '100%',
               padding: '12px',
-              background: loading || !formData.actividad_id ? '#ccc' : '#667eea',
+              background: loading ? '#ccc' : '#667eea',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               fontWeight: '600',
-              cursor: loading || !formData.actividad_id ? 'not-allowed' : 'pointer',
+              cursor: loading ? 'not-allowed' : 'pointer',
               fontSize: '14px',
             }}
           >
-            {loading ? '⏳ Procesando...' : '✅ Continuar a Asistencias'}
+            {loading ? '⏳ Creando...' : '✅ Crear Programación'}
           </button>
         </form>
       </div>
 
-      {/* LISTA ACTIVIDADES */}
+      {/* LISTA ACTIVIDADES PROGRAMADAS */}
       <div
         style={{
           background: 'white',
@@ -272,11 +348,11 @@ export default function ActividadesPage() {
         }}
       >
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
-          📋 Todas las Actividades ({actividades.length})
+          📋 Programaciones ({actividadesProgramadas.length})
         </h2>
 
-        {actividades.length === 0 ? (
-          <p style={{ color: '#999', fontSize: '14px' }}>No hay actividades registradas</p>
+        {actividadesProgramadas.length === 0 ? (
+          <p style={{ color: '#999', fontSize: '14px' }}>No hay actividades programadas</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table
@@ -288,25 +364,27 @@ export default function ActividadesPage() {
             >
               <thead>
                 <tr style={{ borderBottom: '2px solid #e0e0e0' }}>
-                  <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Título</th>
+                  <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Actividad</th>
                   <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Condominio</th>
                   <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Fecha</th>
                   <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Hora</th>
-                  <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Módulo</th>
+                  <th style={{ textAlign: 'left', padding: '12px', fontWeight: '600' }}>Notas</th>
                 </tr>
               </thead>
               <tbody>
-                {actividades.map((act) => (
-                  <tr key={act.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '12px' }}>{act.titulo}</td>
-                    <td style={{ padding: '12px' }}>{act.condominios?.nombre || 'N/A'}</td>
+                {actividadesProgramadas.map((prog) => (
+                  <tr key={prog.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                    <td style={{ padding: '12px' }}>{prog.actividades?.titulo || 'N/A'}</td>
+                    <td style={{ padding: '12px' }}>{prog.condominios?.nombre || 'N/A'}</td>
                     <td style={{ padding: '12px' }}>
-                      {new Date(act.fecha).toLocaleDateString('es-CO')}
+                      {new Date(prog.fecha).toLocaleDateString('es-CO')}
                     </td>
                     <td style={{ padding: '12px' }}>
-                      {act.hora_inicio} - {act.hora_fin}
+                      {prog.hora_inicio} - {prog.hora_fin}
                     </td>
-                    <td style={{ padding: '12px', textTransform: 'capitalize' }}>{act.modulo}</td>
+                    <td style={{ padding: '12px', fontSize: '12px', color: '#666' }}>
+                      {prog.notas || '-'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
