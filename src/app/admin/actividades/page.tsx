@@ -13,23 +13,14 @@ interface Actividad {
   condominios?: { id: string; nombre: string };
 }
 
-const CONDOMINIOS = [
-  { id: '3833343e-1bc5-43f1-aaee-05661b98b148', nombre: 'Condominio Central' },
-  { id: 'e39bbff1-c1ea-4e78-a4b3-996683165de0', nombre: 'Generación Silver' },
-];
-
 export default function ActividadesPage() {
   const [formData, setFormData] = useState({
-    titulo: '',
+    actividad_id: '',
     descripcion: '',
-    fecha: '',
-    hora_inicio: '14:00',
-    hora_fin: '15:00',
-    condominio_id: CONDOMINIOS[0].id,
-    modulo: 'fisica',
   });
 
   const [actividades, setActividades] = useState<Actividad[]>([]);
+  const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -54,6 +45,22 @@ export default function ActividadesPage() {
     }
   };
 
+  const handleSelectActividad = (e: any) => {
+    const actividadId = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      actividad_id: actividadId,
+    }));
+
+    // ✅ Auto-llenar detalles de la actividad seleccionada
+    if (actividadId) {
+      const selected = actividades.find((a) => a.id === actividadId);
+      setActividadSeleccionada(selected || null);
+    } else {
+      setActividadSeleccionada(null);
+    }
+  };
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -66,34 +73,17 @@ export default function ActividadesPage() {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (!formData.actividad_id) {
+      setError('Selecciona una actividad');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/actividades', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al crear actividad');
-      }
-
-      setSuccess('✅ Actividad creada exitosamente');
-      setFormData({
-        titulo: '',
-        descripcion: '',
-        fecha: '',
-        hora_inicio: '14:00',
-        hora_fin: '15:00',
-        condominio_id: CONDOMINIOS[0].id,
-        modulo: 'fisica',
-      });
-
-      // ✅ Recargar lista
-      await fetchActividades();
+      // ✅ Aquí irías a asistencias con la actividad seleccionada
+      setSuccess(`✅ Actividad "${actividadSeleccionada?.titulo}" seleccionada`);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -107,10 +97,10 @@ export default function ActividadesPage() {
         📅 Actividades
       </h1>
       <p style={{ color: '#666', marginBottom: '32px' }}>
-        Crear y gestionar actividades
+        Seleccionar actividad y gestionar asistencias
       </p>
 
-      {/* FORM CREAR */}
+      {/* FORM SELECCIONAR */}
       <div
         style={{
           background: 'white',
@@ -121,7 +111,7 @@ export default function ActividadesPage() {
         }}
       >
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
-          ➕ Nueva Actividad
+          🎯 Seleccionar Actividad
         </h2>
 
         {error && (
@@ -155,64 +145,90 @@ export default function ActividadesPage() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Título *
-              </label>
-              <input
-                type="text"
-                name="titulo"
-                value={formData.titulo}
-                onChange={handleChange}
-                placeholder="ej: Yoga"
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Condominio *
-              </label>
-              <select
-                name="condominio_id"
-                value={formData.condominio_id}
-                onChange={handleChange}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {CONDOMINIOS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
+          {/* ✅ DROPDOWN ACTIVIDADES */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-              Descripción
+              Selecciona Actividad *
+            </label>
+            <select
+              name="actividad_id"
+              value={formData.actividad_id}
+              onChange={handleSelectActividad}
+              required
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+              }}
+            >
+              <option value="">-- Selecciona una actividad --</option>
+              {actividades.map((act) => (
+                <option key={act.id} value={act.id}>
+                  {act.titulo} - {new Date(act.fecha).toLocaleDateString('es-CO')} ({act.hora_inicio})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* ✅ MOSTRAR DETALLES DE ACTIVIDAD SELECCIONADA */}
+          {actividadSeleccionada && (
+            <div
+              style={{
+                background: '#f3f4f6',
+                padding: '16px',
+                borderRadius: '4px',
+                marginBottom: '16px',
+                border: '1px solid #e5e7eb',
+              }}
+            >
+              <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '12px' }}>
+                📌 Detalles de la Actividad
+              </h3>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '14px' }}>
+                <div>
+                  <p style={{ color: '#666', marginBottom: '4px' }}>Título</p>
+                  <p style={{ fontWeight: '600' }}>{actividadSeleccionada.titulo}</p>
+                </div>
+                <div>
+                  <p style={{ color: '#666', marginBottom: '4px' }}>Condominio</p>
+                  <p style={{ fontWeight: '600' }}>{actividadSeleccionada.condominios?.nombre || 'N/A'}</p>
+                </div>
+                <div>
+                  <p style={{ color: '#666', marginBottom: '4px' }}>Fecha</p>
+                  <p style={{ fontWeight: '600' }}>
+                    {new Date(actividadSeleccionada.fecha).toLocaleDateString('es-CO')}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ color: '#666', marginBottom: '4px' }}>Hora</p>
+                  <p style={{ fontWeight: '600' }}>
+                    {actividadSeleccionada.hora_inicio} - {actividadSeleccionada.hora_fin}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ color: '#666', marginBottom: '4px' }}>Módulo</p>
+                  <p style={{ fontWeight: '600', textTransform: 'capitalize' }}>
+                    {actividadSeleccionada.modulo}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* NOTAS (OPCIONAL) */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
+              Notas (Opcional)
             </label>
             <textarea
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
-              placeholder="Detalles de la actividad..."
+              placeholder="Agregar notas sobre esta actividad..."
               rows={3}
               style={{
                 width: '100%',
@@ -226,111 +242,22 @@ export default function ActividadesPage() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Fecha *
-              </label>
-              <input
-                type="date"
-                name="fecha"
-                value={formData.fecha}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Hora Inicio *
-              </label>
-              <input
-                type="time"
-                name="hora_inicio"
-                value={formData.hora_inicio}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Hora Fin *
-              </label>
-              <input
-                type="time"
-                name="hora_fin"
-                value={formData.hora_fin}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: '14px' }}>
-                Módulo
-              </label>
-              <select
-                name="modulo"
-                value={formData.modulo}
-                onChange={handleChange}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                }}
-              >
-                <option value="fisica">Física</option>
-                <option value="mental">Mental</option>
-                <option value="social">Social</option>
-                <option value="general">General</option>
-              </select>
-            </div>
-          </div>
-
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !formData.actividad_id}
             style={{
               width: '100%',
               padding: '12px',
-              background: loading ? '#ccc' : '#667eea',
+              background: loading || !formData.actividad_id ? '#ccc' : '#667eea',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               fontWeight: '600',
-              cursor: loading ? 'not-allowed' : 'pointer',
+              cursor: loading || !formData.actividad_id ? 'not-allowed' : 'pointer',
               fontSize: '14px',
             }}
           >
-            {loading ? '⏳ Creando...' : '✅ Crear Actividad'}
+            {loading ? '⏳ Procesando...' : '✅ Continuar a Asistencias'}
           </button>
         </form>
       </div>
@@ -345,11 +272,11 @@ export default function ActividadesPage() {
         }}
       >
         <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
-          📋 Próximas Actividades ({actividades.length})
+          📋 Todas las Actividades ({actividades.length})
         </h2>
 
         {actividades.length === 0 ? (
-          <p style={{ color: '#999', fontSize: '14px' }}>No hay actividades futuras registradas</p>
+          <p style={{ color: '#999', fontSize: '14px' }}>No hay actividades registradas</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table
@@ -369,7 +296,7 @@ export default function ActividadesPage() {
                 </tr>
               </thead>
               <tbody>
-                {actividades.map((act, idx) => (
+                {actividades.map((act) => (
                   <tr key={act.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
                     <td style={{ padding: '12px' }}>{act.titulo}</td>
                     <td style={{ padding: '12px' }}>{act.condominios?.nombre || 'N/A'}</td>
