@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
       apellido_abuelo: body.apellidoAbuelo || null,
       fecha_nacimiento: body.fechaNacimiento || null,
       ciudad: body.ciudad || null,
+      // ✅ NEW: EPS y contactos de emergencia
+      eps: body.eps || null,
+      emergencia_nombre: body.emergenciaNombre || null,
+      emergencia_telefono: body.emergenciaTelefono || null,
+      familiar_nombre: body.familiarNombre || null,
+      familiar_relacion: body.familiarRelacion || null,
+      familiar_telefono: body.familiarTelefono || null,
+      // Términos y contratos
       terminos_aceptados: body.terminosAceptados === true,
       politica_privacidad_aceptada: body.politicaPrivacidadAceptada === true,
       contratos_sponsor_firmado: body.sponsorContractAceptado === true,

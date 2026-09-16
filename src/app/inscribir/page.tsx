@@ -20,6 +20,14 @@ function InscribirPageContent() {
     telefono: '',
     fechaNacimiento: '',
     ciudad: '',
+    // ✅ NEW: EPS y contactos
+    eps: '',
+    emergenciaNombre: '',
+    emergenciaTelefono: '',
+    familiarNombre: '',
+    familiarRelacion: '',
+    familiarTelefono: '',
+    // Términos y contratos
     terminosAceptados: false,
     politicaPrivacidadAceptada: false,
     sponsorContractAceptado: false,
@@ -45,6 +53,13 @@ function InscribirPageContent() {
           telefono: data.telefono || '',
           fechaNacimiento: data.fechaNacimiento || '',
           ciudad: data.ciudad || '',
+          // ✅ NEW: Cargar EPS y contactos
+          eps: data.eps || '',
+          emergenciaNombre: data.emergenciaNombre || '',
+          emergenciaTelefono: data.emergenciaTelefono || '',
+          familiarNombre: data.familiarNombre || '',
+          familiarRelacion: data.familiarRelacion || '',
+          familiarTelefono: data.familiarTelefono || '',
         }));
 
         // Si viene de URL con step específico, usar ese
@@ -80,6 +95,13 @@ function InscribirPageContent() {
       telefono: data.telefono,
       fechaNacimiento: data.fechaNacimiento,
       ciudad: data.ciudad,
+      // ✅ NEW: Capturar EPS y contactos
+      eps: data.eps,
+      emergenciaNombre: data.emergenciaNombre,
+      emergenciaTelefono: data.emergenciaTelefono,
+      familiarNombre: data.familiarNombre,
+      familiarRelacion: data.familiarRelacion,
+      familiarTelefono: data.familiarTelefono,
     }));
 
     sessionStorage.setItem('inscribirData', JSON.stringify({
@@ -162,6 +184,14 @@ function InscribirPageContent() {
           telefono: formData.telefono,
           fechaNacimiento: formData.fechaNacimiento,
           ciudad: formData.ciudad,
+          // ✅ NEW: Agregar EPS y contactos
+          eps: formData.eps,
+          emergenciaNombre: formData.emergenciaNombre,
+          emergenciaTelefono: formData.emergenciaTelefono,
+          familiarNombre: formData.familiarNombre,
+          familiarRelacion: formData.familiarRelacion,
+          familiarTelefono: formData.familiarTelefono,
+          // Términos y contratos
           terminosAceptados: formData.terminosAceptados,
           politicaPrivacidadAceptada: formData.politicaPrivacidadAceptada,
           sponsorContractAceptado: formData.sponsorContractAceptado,
