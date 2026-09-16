@@ -1,16 +1,26 @@
 // /components/AdminPanel.tsx
-// SIMPLIFICADO: Admin único - Todo en 1 vista sin tabs
+// VERSIÓN ALTERNATIVA: Sin dependencias de shadcn/ui
+// Usa Tailwind CSS + HTML puro para máxima compatibilidad
 
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+interface DashboardData {
+  totalCondominios: number;
+  totalParticipantes: number;
+  ingreseMes: number;
+  tasaRetencion: number;
+  actividadesTotal: number;
+  actividadesEste: number;
+  tasaAsistencia: number;
+  participantesActivos: number;
+  suscripcionesActivas: number;
+  pagosPendientes: number;
+  tasaMorosidad: number;
+}
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -19,10 +29,22 @@ export default function AdminPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('general');
+  const [data, setData] = useState<DashboardData>({
+    totalCondominios: 0,
+    totalParticipantes: 0,
+    ingreseMes: 0,
+    tasaRetencion: 0,
+    actividadesTotal: 0,
+    actividadesEste: 0,
+    tasaAsistencia: 0,
+    participantesActivos: 0,
+    suscripcionesActivas: 0,
+    pagosPendientes: 0,
+    tasaMorosidad: 0,
+  });
 
   useEffect(() => {
-    // Verificar autenticación
-    const checkAuth = async () => {
+    const checkAuthAndLoadData = async () => {
       try {
         const email = Cookies.get('user_email');
         const adminStatus = Cookies.get('is_admin') === 'true';
@@ -35,6 +57,23 @@ export default function AdminPanel() {
 
         setUserEmail(email);
         setIsAdmin(true);
+
+        // Aquí cargar datos cuando tengas Supabase conectado
+        // Por ahora, usar datos estáticos para testing
+        setData({
+          totalCondominios: 2,
+          totalParticipantes: 15,
+          ingreseMes: 2100000,
+          tasaRetencion: 87,
+          actividadesTotal: 12,
+          actividadesEste: 7,
+          tasaAsistencia: 85,
+          participantesActivos: 15,
+          suscripcionesActivas: 23,
+          pagosPendientes: 4,
+          tasaMorosidad: 12.5,
+        });
+
         setIsLoading(false);
       } catch (err) {
         console.error('Error validando sesión:', err);
@@ -43,7 +82,7 @@ export default function AdminPanel() {
       }
     };
 
-    checkAuth();
+    checkAuthAndLoadData();
   }, [router]);
 
   const handleLogout = () => {
@@ -57,7 +96,7 @@ export default function AdminPanel() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           <p className="mt-4 text-gray-600">Cargando panel...</p>
         </div>
       </div>
@@ -67,9 +106,9 @@ export default function AdminPanel() {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Alert className="max-w-md border-red-300 bg-red-50">
-          <AlertDescription className="text-red-800">{error}</AlertDescription>
-        </Alert>
+        <div className="max-w-md p-6 border border-red-300 bg-red-50 rounded-lg">
+          <p className="text-red-800">{error}</p>
+        </div>
       </div>
     );
   }
@@ -80,301 +119,253 @@ export default function AdminPanel() {
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Panel de Administración
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
             <p className="text-sm text-gray-500 mt-1">
               Bienvenido/a, <span className="font-medium">{userEmail}</span>
             </p>
           </div>
-          <Button
+          <button
             onClick={handleLogout}
-            variant="outline"
-            className="bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg transition-colors"
           >
             Cerrar sesión
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tarjeta de estado admin */}
-        <Card className="mb-8 bg-blue-50 border-blue-200">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-blue-900">✅ Acceso Admin Completo</CardTitle>
-                <CardDescription className="text-blue-700">
-                  Tienes acceso total a todas las funcionalidades del sistema
-                </CardDescription>
-              </div>
-              <Badge className="bg-blue-600">Admin</Badge>
+        <div className="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-blue-900">✅ Acceso Admin Completo</h2>
+              <p className="text-sm text-blue-700 mt-1">
+                Tienes acceso total a todas las funcionalidades del sistema
+              </p>
             </div>
-          </CardHeader>
-        </Card>
+            <span className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded">
+              Admin
+            </span>
+          </div>
+        </div>
 
-        {/* Tabs con secciones */}
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full rounded-t-lg border-b border-gray-200 bg-gray-50 p-0">
-              <TabsTrigger 
-                value="general"
-                className="rounded-none flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
-              >
-                📊 General
-              </TabsTrigger>
-              <TabsTrigger
-                value="actividades"
-                className="rounded-none flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
-              >
-                👥 Actividades
-              </TabsTrigger>
-              <TabsTrigger
-                value="finanzas"
-                className="rounded-none flex-1 data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
-              >
-                💰 Finanzas
-              </TabsTrigger>
-            </TabsList>
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+          {/* Tab Headers */}
+          <div className="flex border-b border-gray-200 bg-gray-50">
+            <button
+              onClick={() => setActiveTab('general')}
+              className={`flex-1 px-4 py-3 text-center font-medium border-b-2 transition-colors ${
+                activeTab === 'general'
+                  ? 'border-blue-500 text-blue-600 bg-white'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              📊 General
+            </button>
+            <button
+              onClick={() => setActiveTab('actividades')}
+              className={`flex-1 px-4 py-3 text-center font-medium border-b-2 transition-colors ${
+                activeTab === 'actividades'
+                  ? 'border-blue-500 text-blue-600 bg-white'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              👥 Actividades
+            </button>
+            <button
+              onClick={() => setActiveTab('finanzas')}
+              className={`flex-1 px-4 py-3 text-center font-medium border-b-2 transition-colors ${
+                activeTab === 'finanzas'
+                  ? 'border-blue-500 text-blue-600 bg-white'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              💰 Finanzas
+            </button>
+          </div>
 
+          {/* Tab Content */}
+          <div className="p-6">
             {/* TAB 1: GENERAL */}
-            <TabsContent value="general" className="p-6">
+            {activeTab === 'general' && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-900">Gestión General</h2>
-                
-                {/* KPIs */}
+
+                {/* KPIs Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Condominios
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">2</div>
-                      <p className="text-xs text-gray-500 mt-1">activos en el sistema</p>
-                    </CardContent>
-                  </Card>
+                  {/* Card 1: Condominios */}
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Condominios</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.totalCondominios}</p>
+                    <p className="text-xs text-gray-500 mt-1">activos en el sistema</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Participantes
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">15</div>
-                      <p className="text-xs text-gray-500 mt-1">adultos mayores inscritos</p>
-                    </CardContent>
-                  </Card>
+                  {/* Card 2: Participantes */}
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Participantes</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.totalParticipantes}</p>
+                    <p className="text-xs text-gray-500 mt-1">adultos mayores inscritos</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Ingresos (Mes)
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">$2.1M</div>
-                      <p className="text-xs text-gray-500 mt-1">recaudado este mes</p>
-                    </CardContent>
-                  </Card>
+                  {/* Card 3: Ingresos */}
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Ingresos (Mes)</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                      ${(data.ingreseMes / 1000).toFixed(0)}K
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">recaudado este mes</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Retención
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">87%</div>
-                      <p className="text-xs text-gray-500 mt-1">tasa de retención</p>
-                    </CardContent>
-                  </Card>
+                  {/* Card 4: Retención */}
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Retención</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.tasaRetencion}%</p>
+                    <p className="text-xs text-gray-500 mt-1">tasa de retención</p>
+                  </div>
                 </div>
 
                 {/* Botones de acción */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Acciones Rápidas</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-wrap gap-3">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h3 className="font-bold text-gray-900 mb-3">Acciones Rápidas</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                       Ver todos los condominios
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Gestionar usuarios
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Reportes avanzados
-                    </Button>
-                    <Button variant="outline">
-                      Configuración del sistema
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
+                      Configuración
+                    </button>
+                  </div>
+                </div>
               </div>
-            </TabsContent>
+            )}
 
             {/* TAB 2: ACTIVIDADES */}
-            <TabsContent value="actividades" className="p-6">
+            {activeTab === 'actividades' && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-900">Actividades y Asistencias</h2>
 
-                {/* KPIs */}
+                {/* KPIs Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Total Actividades
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">12</div>
-                      <p className="text-xs text-gray-500 mt-1">desde el inicio</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Total Actividades</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.actividadesTotal}</p>
+                    <p className="text-xs text-gray-500 mt-1">desde el inicio</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Este Mes
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">7</div>
-                      <p className="text-xs text-gray-500 mt-1">actividades programadas</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Este Mes</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.actividadesEste}</p>
+                    <p className="text-xs text-gray-500 mt-1">actividades programadas</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Asistencia
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">85%</div>
-                      <p className="text-xs text-gray-500 mt-1">tasa promedio</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Asistencia</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.tasaAsistencia}%</p>
+                    <p className="text-xs text-gray-500 mt-1">tasa promedio</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Participantes Activos
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">35</div>
-                      <p className="text-xs text-gray-500 mt-1">participando regularmente</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Participantes Activos</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.participantesActivos}</p>
+                    <p className="text-xs text-gray-500 mt-1">participando regularmente</p>
+                  </div>
                 </div>
 
                 {/* Acciones */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Acciones Rápidas</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-wrap gap-3">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h3 className="font-bold text-gray-900 mb-3">Acciones Rápidas</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                       Nueva actividad
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Ver cronograma
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Registrar asistencia
-                    </Button>
-                    <Button variant="outline">
-                      Reportes de actividades
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
+                      Reportes
+                    </button>
+                  </div>
+                </div>
               </div>
-            </TabsContent>
+            )}
 
             {/* TAB 3: FINANZAS */}
-            <TabsContent value="finanzas" className="p-6">
+            {activeTab === 'finanzas' && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-gray-900">Gestión Financiera</h2>
 
-                {/* KPIs */}
+                {/* Alerta */}
+                {data.pagosPendientes > 0 && (
+                  <div className="p-4 border border-yellow-300 bg-yellow-50 rounded-lg">
+                    <p className="text-yellow-800">
+                      ⚠️ Hay {data.pagosPendientes} pagos pendientes o vencidos
+                    </p>
+                  </div>
+                )}
+
+                {/* KPIs Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Ingresos (Mes)
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">$3.2M</div>
-                      <p className="text-xs text-gray-500 mt-1">recaudado este mes</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Ingresos (Mes)</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                      ${(data.ingreseMes / 1000000).toFixed(1)}M
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">recaudado este mes</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Suscripciones
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">23</div>
-                      <p className="text-xs text-gray-500 mt-1">activas</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Suscripciones</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.suscripcionesActivas}</p>
+                    <p className="text-xs text-gray-500 mt-1">activas</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Pendientes
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-red-600">4</div>
-                      <p className="text-xs text-gray-500 mt-1">requieren seguimiento</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Pendientes</p>
+                    <p className={`text-3xl font-bold mt-2 ${data.pagosPendientes > 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                      {data.pagosPendientes}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">requieren seguimiento</p>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        Morosidad
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-gray-900">12.5%</div>
-                      <p className="text-xs text-gray-500 mt-1">de suscripciones</p>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <p className="text-sm font-medium text-gray-600">Morosidad</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">{data.tasaMorosidad}%</p>
+                    <p className="text-xs text-gray-500 mt-1">de suscripciones</p>
+                  </div>
                 </div>
 
                 {/* Acciones */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Acciones Rápidas</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-wrap gap-3">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h3 className="font-bold text-gray-900 mb-3">Acciones Rápidas</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                       Nueva suscripción
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Ver suscripciones
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Procesar pagos
-                    </Button>
-                    <Button variant="outline">
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 rounded-lg transition-colors">
                       Reportes financieros
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </div>
       </div>
     </div>
