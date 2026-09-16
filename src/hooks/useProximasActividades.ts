@@ -22,25 +22,24 @@ export function useProximasActividades() {
   useEffect(() => {
     const fetchActividades = async () => {
       try {
-        const token = localStorage.getItem('auth_token');
-        const userId = localStorage.getItem('auth_user_id');
+        // Get user email from localStorage (set during OTP verification)
+        const userEmail = localStorage.getItem('auth_email');
         
-        if (!token || !userId) {
+        if (!userEmail) {
           throw new Error('Usuario no autenticado. Completa /inscribir primero.');
         }
 
-        const response = await fetch('/api/actividades/proximas', {
+        const response = await fetch('/api/actividades/mis-proximas', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            'x-user-id': userId,
+            'x-user-email': userEmail,
           },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          const errorMsg = errorData.error || errorData.message || 'Error al cargar actividades';
+          const errorMsg = errorData.error || 'Error al cargar actividades';
           throw new Error(errorMsg);
         }
 
