@@ -46,6 +46,60 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [userExists, setUserExists] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [emailChecked, setEmailChecked] = useState(false);
+  const [readOnlyFields, setReadOnlyFields] = useState<string[]>([]);
+
+  // ✅ Verificar si el email existe cuando pierde el foco
+  const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const email = e.target.value.trim();
+    
+    if (!email || !email.includes('@')) {
+      return;
+    }
+
+    setCheckingEmail(true);
+    setEmailChecked(false);
+
+    try {
+      const response = await fetch('/api/inscribir/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        console.error('Error checking email');
+        setCheckingEmail(false);
+        return;
+      }
+
+      const result = await response.json();
+
+      if (result.exists && result.data) {
+        // ✅ Usuario EXISTE - traer datos preexistentes
+        console.log('✅ Usuario encontrado:', result.data);
+        setFormData(prev => ({
+          ...prev,
+          ...result.data,
+        }));
+        setUserExists(true);
+        setReadOnlyFields(['nombreAbuelo', 'apellidoAbuelo', 'email']);
+      } else {
+        // Usuario NUEVO
+        console.log('ℹ️ Usuario nuevo - completar todos los campos');
+        setUserExists(false);
+        setReadOnlyFields([]);
+      }
+
+      setEmailChecked(true);
+    } catch (error) {
+      console.error('Error checking email:', error);
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -97,22 +151,33 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
     }
   };
 
+  const isFieldReadOnly = (fieldName: string) => readOnlyFields.includes(fieldName);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Información del Adulto Mayor</h2>
 
+      {userExists && emailChecked && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-blue-800 text-sm">
+            ✅ <strong>Perfil encontrado:</strong> Hemos cargado tus datos previos. Completa cualquier campo faltante.
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Nombre</label>
+          <label className="block text-gray-700 font-semibold mb-2">Nombre {isFieldReadOnly('nombreAbuelo') && '🔒'}</label>
           <input
             type="text"
             name="nombreAbuelo"
             value={formData.nombreAbuelo}
             onChange={handleChange}
+            disabled={isFieldReadOnly('nombreAbuelo')}
             placeholder="Ej: Juan"
             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-              errors.nombreAbuelo ? 'border-red-500' : 'border-gray-300'
-            }`}
+              isFieldReadOnly('nombreAbuelo') ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
+            } ${errors.nombreAbuelo ? 'border-red-500' : 'border-gray-300'}`}
           />
           {errors.nombreAbuelo && (
             <p className="text-red-500 text-sm mt-1">{errors.nombreAbuelo}</p>
@@ -120,16 +185,17 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         </div>
 
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">Apellido</label>
+          <label className="block text-gray-700 font-semibold mb-2">Apellido {isFieldReadOnly('apellidoAbuelo') && '🔒'}</label>
           <input
             type="text"
             name="apellidoAbuelo"
             value={formData.apellidoAbuelo}
             onChange={handleChange}
+            disabled={isFieldReadOnly('apellidoAbuelo')}
             placeholder="Ej: García"
             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-              errors.apellidoAbuelo ? 'border-red-500' : 'border-gray-300'
-            }`}
+              isFieldReadOnly('apellidoAbuelo') ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
+            } ${errors.apellidoAbuelo ? 'border-red-500' : 'border-gray-300'}`}
           />
           {errors.apellidoAbuelo && (
             <p className="text-red-500 text-sm mt-1">{errors.apellidoAbuelo}</p>
@@ -138,130 +204,133 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
       </div>
 
       <div>
-        <label className="block text-gray-700 font-semibold mb-2">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="correo@ejemplo.com"
-          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-            errors.email ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-      </div>
-
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">Teléfono</label>
-        <input
-          type="tel"
-          name="telefono"
-          value={formData.telefono}
-          onChange={handleChange}
-          placeholder="+57 320 1234567"
-          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-            errors.telefono ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-        {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
-      </div>
-
-      <div>
-        <label className="block text-gray-700 font-semibold mb-2">Fecha de Nacimiento</label>
-        <input
-          type="date"
-          name="fechaNacimiento"
-          value={formData.fechaNacimiento}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-            errors.fechaNacimiento ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-        {errors.fechaNacimiento && (
-          <p className="text-red-500 text-sm mt-1">{errors.fechaNacimiento}</p>
+        <label className="block text-gray-700 font-semibold mb-2">Email {isFieldReadOnly('email') && '🔒'}</label>
+        <div className="relative">
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleEmailBlur}
+            disabled={isFieldReadOnly('email')}
+            placeholder="correo@ejemplo.com"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+              isFieldReadOnly('email') ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
+            } ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          {checkingEmail && (
+            <span className="absolute right-3 top-2 text-gray-500 text-sm">Verificando...</span>
+          )}
+        </div>
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">Teléfono</label>
+          <input
+            type="text"
+            name="telefono"
+            value={formData.telefono}
+            onChange={handleChange}
+            placeholder="Ej: 3001234567"
+            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+              errors.telefono ? 'border-red-500' : ''
+            }`}
+          />
+          {errors.telefono && (
+            <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold mb-2">Fecha de Nacimiento</label>
+          <input
+            type="date"
+            name="fechaNacimiento"
+            value={formData.fechaNacimiento}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+              errors.fechaNacimiento ? 'border-red-500' : ''
+            }`}
+          />
+          {errors.fechaNacimiento && (
+            <p className="text-red-500 text-sm mt-1">{errors.fechaNacimiento}</p>
+          )}
+        </div>
       </div>
 
       <div>
         <label className="block text-gray-700 font-semibold mb-2">Ciudad</label>
-        <select
+        <input
+          type="text"
           name="ciudad"
           value={formData.ciudad}
           onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-            errors.ciudad ? 'border-red-500' : 'border-gray-300'
+          placeholder="Ej: Bogotá"
+          className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+            errors.ciudad ? 'border-red-500' : ''
           }`}
-        >
-          <option value="">Selecciona una ciudad</option>
-          <option value="Cajicá">Cajicá</option>
-          <option value="Chía">Chía</option>
-          <option value="Tabio">Tabio</option>
-          <option value="Sopó">Sopó</option>
-          <option value="Zipaquirá">Zipaquirá</option>
-        </select>
-        {errors.ciudad && <p className="text-red-500 text-sm mt-1">{errors.ciudad}</p>}
+        />
+        {errors.ciudad && (
+          <p className="text-red-500 text-sm mt-1">{errors.ciudad}</p>
+        )}
       </div>
 
-      {/* SECCIÓN: EPS */}
-      <div className="border-t pt-6 mt-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Información de Salud</h3>
+      {/* SECCIÓN SALUD */}
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">🏥 Información de Salud</h3>
         <div>
-          <label className="block text-gray-700 font-semibold mb-2">EPS (Entidad Promotora de Salud)</label>
-          <select
+          <label className="block text-gray-700 font-semibold mb-2">EPS</label>
+          <input
+            type="text"
             name="eps"
             value={formData.eps}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-              errors.eps ? 'border-red-500' : 'border-gray-300'
+            placeholder="Ej: Sanitas, Axa, Colsanitas"
+            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+              errors.eps ? 'border-red-500' : ''
             }`}
-          >
-            <option value="">Selecciona tu EPS</option>
-            <option value="Sura">Sura</option>
-            <option value="Sanitas">Sanitas</option>
-            <option value="Axa Colpatria">Axa Colpatria</option>
-            <option value="Coomeva">Coomeva</option>
-            <option value="Famisanar">Famisanar</option>
-            <option value="Capchur">Capchur</option>
-            <option value="Salud Total">Salud Total</option>
-            <option value="Compensar">Compensar</option>
-            <option value="Nueva EPS">Nueva EPS</option>
-            <option value="Otra">Otra</option>
-          </select>
-          {errors.eps && <p className="text-red-500 text-sm mt-1">{errors.eps}</p>}
+          />
+          {errors.eps && (
+            <p className="text-red-500 text-sm mt-1">{errors.eps}</p>
+          )}
         </div>
       </div>
 
-      {/* SECCIÓN: CONTACTO DE EMERGENCIA */}
-      <div className="border-t pt-6 mt-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Contacto de Emergencia</h3>
+      {/* SECCIÓN EMERGENCIA */}
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">🚨 Contacto de Emergencia</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Nombre del Contacto</label>
+            <label className="block text-gray-700 font-semibold mb-2">Nombre</label>
             <input
               type="text"
               name="emergenciaNombre"
               value={formData.emergenciaNombre}
               onChange={handleChange}
-              placeholder="Ej: María García"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                errors.emergenciaNombre ? 'border-red-500' : 'border-gray-300'
+              placeholder="Nombre del contacto"
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                errors.emergenciaNombre ? 'border-red-500' : ''
               }`}
             />
             {errors.emergenciaNombre && (
               <p className="text-red-500 text-sm mt-1">{errors.emergenciaNombre}</p>
             )}
           </div>
+
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Teléfono de Emergencia</label>
+            <label className="block text-gray-700 font-semibold mb-2">Teléfono</label>
             <input
-              type="tel"
+              type="text"
               name="emergenciaTelefono"
               value={formData.emergenciaTelefono}
               onChange={handleChange}
-              placeholder="+57 320 1234567"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                errors.emergenciaTelefono ? 'border-red-500' : 'border-gray-300'
+              placeholder="Ej: 3001234567"
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                errors.emergenciaTelefono ? 'border-red-500' : ''
               }`}
             />
             {errors.emergenciaTelefono && (
@@ -271,71 +340,69 @@ export default function Step1Form({ onSubmit, initialData }: Step1FormProps) {
         </div>
       </div>
 
-      {/* SECCIÓN: FAMILIAR RESPONSABLE */}
-      <div className="border-t pt-6 mt-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Familiar Responsable</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* SECCIÓN FAMILIAR */}
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">👨‍👩‍👧 Contacto Familiar</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Nombre del Familiar</label>
+            <label className="block text-gray-700 font-semibold mb-2">Nombre</label>
             <input
               type="text"
               name="familiarNombre"
               value={formData.familiarNombre}
               onChange={handleChange}
-              placeholder="Ej: Carlos García"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                errors.familiarNombre ? 'border-red-500' : 'border-gray-300'
+              placeholder="Nombre del familiar"
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                errors.familiarNombre ? 'border-red-500' : ''
               }`}
             />
             {errors.familiarNombre && (
               <p className="text-red-500 text-sm mt-1">{errors.familiarNombre}</p>
             )}
           </div>
+
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Relación (Ej: Hijo/a, Nieto/a)</label>
+            <label className="block text-gray-700 font-semibold mb-2">Relación</label>
             <input
               type="text"
               name="familiarRelacion"
               value={formData.familiarRelacion}
               onChange={handleChange}
-              placeholder="Ej: Hijo"
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                errors.familiarRelacion ? 'border-red-500' : 'border-gray-300'
+              placeholder="Ej: Hija, Hijo, Nieto"
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                errors.familiarRelacion ? 'border-red-500' : ''
               }`}
             />
             {errors.familiarRelacion && (
               <p className="text-red-500 text-sm mt-1">{errors.familiarRelacion}</p>
             )}
           </div>
-        </div>
-        <div className="mt-6">
-          <label className="block text-gray-700 font-semibold mb-2">Teléfono del Familiar</label>
-          <input
-            type="tel"
-            name="familiarTelefono"
-            value={formData.familiarTelefono}
-            onChange={handleChange}
-            placeholder="+57 320 1234567"
-            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-              errors.familiarTelefono ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.familiarTelefono && (
-            <p className="text-red-500 text-sm mt-1">{errors.familiarTelefono}</p>
-          )}
-        </div>
-      </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800 text-sm">
-        📧 Se enviará un código de verificación a tu email. Necesitarás este código para continuar.
+          <div>
+            <label className="block text-gray-700 font-semibold mb-2">Teléfono</label>
+            <input
+              type="text"
+              name="familiarTelefono"
+              value={formData.familiarTelefono}
+              onChange={handleChange}
+              placeholder="Ej: 3001234567"
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
+                errors.familiarTelefono ? 'border-red-500' : ''
+              }`}
+            />
+            {errors.familiarTelefono && (
+              <p className="text-red-500 text-sm mt-1">{errors.familiarTelefono}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       <button
         type="submit"
-        disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50 mt-8"
+        disabled={loading || checkingEmail}
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        {loading ? 'Enviando código de verificación...' : 'Continuar al Paso 2'}
+        {loading ? 'Enviando código...' : 'Enviar Código de Verificación'}
       </button>
     </form>
   );
