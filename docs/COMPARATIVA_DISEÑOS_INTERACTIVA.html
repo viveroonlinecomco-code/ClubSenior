@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparativa Diseños Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .design-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .design-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .design-header {
+            padding: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .design-header h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .design-header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .design-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .design-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 48px;
+        }
+
+        .design-content {
+            padding: 24px;
+        }
+
+        .design-section {
+            margin-bottom: 20px;
+        }
+
+        .design-section-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .design-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .design-section li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .design-section li::before {
+            content: '✓';
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .pros {
+            background: #f0fdf4;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .pros-title {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .pros ul {
+            font-size: 13px;
+            color: #155724;
+        }
+
+        .cons {
+            background: #fef2f2;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .cons-title {
+            font-weight: 600;
+            color: #dc2626;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .cons ul {
+            font-size: 13px;
+            color: #991b1b;
+        }
+
+        .cons li::before {
+            content: '⚠';
+            margin-right: 8px;
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-top: 16px;
+        }
+
+        .score-label {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .score-stars {
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        .recommendation-text {
+            color: #b45309;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .decision-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        .decision-section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .decision-btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-design1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-design1:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-design2 {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-design2:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-design3 {
+            background: #f3f4f6;
+            color: #1f2937;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-design3:hover {
+            background: #e5e7eb;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .decision-buttons {
+                flex-direction: column;
+            }
+            
+            .decision-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Comparativa Interactiva - Diseños Admin Dashboard</h1>
+
+        <div class="comparison-grid">
+            <!-- DISEÑO 1 -->
+            <div class="design-card">
+                <div class="design-header">
+                    <h2>1️⃣ Notion/Figma</h2>
+                    <div class="subtitle">Sidebar + Dark Mode + Profissional</div>
+                    <div class="design-badge">⭐ RECOMENDADO</div>
+                </div>
+                <div class="design-image">🎨</div>
+                <div class="design-content">
+                    <div class="pros">
+                        <div class="pros-title">Fortalezas ✅</div>
+                        <ul>
+                            <li>Profesional, escalable</li>
+                            <li>Navegación clara (sidebar)</li>
+                            <li>Dark mode incluido</li>
+                            <li>Inline editing simplificado</li>
+                            <li>Perfecto para 5-20 admins</li>
+                            <li>Mejor UX mobile</li>
+                        </ul>
+                    </div>
+
+                    <div class="cons">
+                        <div class="cons-title">Consideraciones</div>
+                        <ul>
+                            <li>Bundle size + grande (sidebar JS)</li>
+                            <li>Setup inicial más largo</li>
+                        </ul>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Facilidad</div>
+                        <div class="score-stars">★★★★☆</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Escalabilidad</div>
+                        <div class="score-stars">★★★★★</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Rapidez Desarrollo</div>
+                        <div class="score-stars">★★★☆☆</div>
+                    </div>
+
+                    <div class="recommendation">
+                        <div class="recommendation-title">💡 Para ClubSenior</div>
+                        <div class="recommendation-text">
+                            Si quieres admin "serio" que escalable para futuros usuarios
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DISEÑO 2 -->
+            <div class="design-card">
+                <div class="design-header">
+                    <h2>2️⃣ Minimal</h2>
+                    <div class="subtitle">Ultra-Limpio, Full-Width Tables</div>
+                    <div class="design-badge">⚡ FASTEST</div>
+                </div>
+                <div class="design-image">📊</div>
+                <div class="design-content">
+                    <div class="pros">
+                        <div class="pros-title">Fortalezas ✅</div>
+                        <ul>
+                            <li>Súper rápido de codear</li>
+                            <li>Minimal CSS/JS</li>
+                            <li>Máxima visibilidad datos</li>
+                            <li>Cero distracción</li>
+                            <li>Bulk actions fáciles</li>
+                            <li>Bueno para power users</li>
+                        </ul>
+                    </div>
+
+                    <div class="cons">
+                        <div class="cons-title">Consideraciones</div>
+                        <ul>
+                            <li>Menos "profesional"</li>
+                            <li>Mobile: scroll horizontal</li>
+                            <li>Navegación menos clara</li>
+                            <li>Difícil agregar features después</li>
+                        </ul>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Facilidad</div>
+                        <div class="score-stars">★★★★★</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Escalabilidad</div>
+                        <div class="score-stars">★★☆☆☆</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Rapidez Desarrollo</div>
+                        <div class="score-stars">★★★★★</div>
+                    </div>
+
+                    <div class="recommendation">
+                        <div class="recommendation-title">💡 Para ClubSenior</div>
+                        <div class="recommendation-text">
+                            Si solo Elena usa admin (MVP minimalista)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DISEÑO 3 -->
+            <div class="design-card">
+                <div class="design-header">
+                    <h2>3️⃣ Enterprise</h2>
+                    <div class="subtitle">KPIs + Charts + Reports</div>
+                    <div class="design-badge">📈 EJECUTIVO</div>
+                </div>
+                <div class="design-image">📊</div>
+                <div class="design-content">
+                    <div class="pros">
+                        <div class="pros-title">Fortalezas ✅</div>
+                        <ul>
+                            <li>KPIs visibles (usuarios, actividades, asistencia %)</li>
+                            <li>Gráficos Charts.js</li>
+                            <li>Export CSV/PDF integrado</li>
+                            <li>Audit logs visible</li>
+                            <li>"Ejecutivo" para reportes</li>
+                            <li>Impresiona inversionistas</li>
+                        </ul>
+                    </div>
+
+                    <div class="cons">
+                        <div class="cons-title">Consideraciones</div>
+                        <ul>
+                            <li>Más complejo de codear</li>
+                            <li>Charts necesitan data endpoints</li>
+                            <li>Mantenimiento gráficos</li>
+                            <li>MVP overkill (22 Sept)</li>
+                        </ul>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Facilidad</div>
+                        <div class="score-stars">★★★☆☆</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Escalabilidad</div>
+                        <div class="score-stars">★★★★☆</div>
+                    </div>
+
+                    <div class="score">
+                        <div class="score-label">Rapidez Desarrollo</div>
+                        <div class="score-stars">★★☆☆☆</div>
+                    </div>
+
+                    <div class="recommendation">
+                        <div class="recommendation-title">💡 Para ClubSenior</div>
+                        <div class="recommendation-text">
+                            Ideal para Fase 2 (post-lanzamiento). Hoy: overkill
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DECISION SECTION -->
+        <div class="decision-section">
+            <h2>¿Cuál elegimos?</h2>
+            <p style="color: #666; margin-bottom: 24px; font-size: 16px;">
+                👇 Haz clic en tu favorito
+            </p>
+            <div class="decision-buttons">
+                <button class="decision-btn btn-design1" onclick="alert('✅ Elegiste DISEÑO 1 (Notion/Figma)\n\nEmpezamos mañana 17 Sept 9:00 AM\n→ Sidebar profesional\n→ Dark mode\n→ Escalable\n\nContacta a Claude para proceder.')">
+                    🎨 Elegir DISEÑO 1
+                </button>
+                <button class="decision-btn btn-design2" onclick="alert('⚡ Elegiste DISEÑO 2 (Minimal)\n\nPerfecto para MVP rápido\n→ Menos código\n→ Máxima velocidad\n→ Power user focused\n\nContacta a Claude para proceder.')">
+                    📊 Elegir DISEÑO 2
+                </button>
+                <button class="decision-btn btn-design3" onclick="alert('📈 Elegiste DISEÑO 3 (Enterprise)\n\nPerfecto para FASE 2\n→ KPIs + Charts\n→ Export reportes\n→ Ejecutivo\n\nRecomendación: Haz Diseño 1 ahora + Diseño 3 después.\nContacta a Claude para proceder.')">
+                    📊 Elegir DISEÑO 3
+                </button>
+            </div>
+
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e0e0e0;">
+                <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
+                    <strong>Recomendación de Ingeniero SV:</strong>
+                </p>
+                <p style="color: #333; font-size: 16px; font-weight: 500;">
+                    ✅ <strong>DISEÑO 1 (Notion/Figma) AHORA</strong> + <strong>DISEÑO 3 (Enterprise) en Fase 2</strong>
+                </p>
+                <p style="color: #999; font-size: 14px; margin-top: 12px;">
+                    Razón: Diseño 1 es versátil + profesional + escalable. Diseño 3 requiere más data/gráficos que no tenemos listos aún.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ClubSenior - Diseño 3 (Enterprise)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-right button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .kpi-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            color: #27ae60;
+            margin-top: 8px;
+        }
+
+        .kpi-change.down {
+            color: #e74c3c;
+        }
+
+        /* CHARTS SECTION */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* TABLE SECTION */
+        .table-section {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .table-controls button {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #ecf0f1;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .table-controls button:hover {
+            border-color: #bdc3c7;
+            background: #f8f9fa;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-badge.inactive {
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+
+        .action-icon:hover {
+            opacity: 0.7;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📊 Dashboard Administrativo</h1>
+            <div class="header-right">
+                <button class="btn-secondary">📅 Exportar Reporte</button>
+                <button class="btn-primary">⚙️ Configuración</button>
+            </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-label">Usuarios Activos</div>
+                <div class="kpi-value">127</div>
+                <div class="kpi-change">↑ 12 esta semana</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">📅</div>
+                <div class="kpi-label">Actividades</div>
+                <div class="kpi-value">24</div>
+                <div class="kpi-change">↑ 5 programadas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">✅</div>
+                <div class="kpi-label">Asistencia Promedio</div>
+                <div class="kpi-value">78%</div>
+                <div class="kpi-change down">↓ 2% vs. mes anterior</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon">🏢</div>
+                <div class="kpi-label">Condominios</div>
+                <div class="kpi-value">2</div>
+                <div class="kpi-change">Todos activos</div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title">Crecimiento de Usuarios</div>
+                <div class="chart-placeholder">📊 Gráfica de línea (últimos 30 días)</div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Actividades por Módulo</div>
+                <div class="chart-placeholder">📊 Gráfica de pastel (Física, Cognitiva, Social)</div>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-section">
+            <div class="table-header">
+                <div class="table-title">Próximas Actividades</div>
+                <div class="table-controls">
+                    <button>📊 Filtrar</button>
+                    <button>📥 Importar</button>
+                    <button>📤 Exportar</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Actividad</th>
+                        <th>Condominio</th>
+                        <th>Facilitador</th>
+                        <th>Inscritos</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>17 Sept</td>
+                        <td><strong>Yoga Terapéutico</strong></td>
+                        <td>Generación Silver</td>
+                        <td>María Rodríguez</td>
+                        <td>12</td>
+                        <td><span class="status-badge active">Activo</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="action-icon">👁️</button>
+                                <button class="action-icon">✏️</button>
+                                <button class="action-icon">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>18 Sept</td>
+                        <td><strong>Tertulias Literarias</strong></td>
+                        <td>Generación Silver</td>
+                        <td>Carlos López</td>
+                        <td>8</td>
+                        <td><span class="status-badge active">Activo</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="action-icon">👁️</button>
+                                <button class="action-icon">✏️</button>
+                                <button class="action-icon">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>20 Sept</td>
+                        <td><strong>Café & Conversación</strong></td>
+                        <td>Condominio Central</td>
+                        <td>Ana García</td>
+                        <td>15</td>
+                        <td><span class="status-badge active">Activo</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="action-icon">👁️</button>
+                                <button class="action-icon">✏️</button>
+                                <button class="action-icon">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>22 Sept</td>
+                        <td><strong>Taller de Memoria</strong></td>
+                        <td>Generación Silver</td>
+                        <td>José Martínez</td>
+                        <td>10</td>
+                        <td><span class="status-badge inactive">Inactivo</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="action-icon">👁️</button>
+                                <button class="action-icon">✏️</button>
+                                <button class="action-icon">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            ClubSenior Admin Dashboard © 2026 | Última actualización: 16 Sept 23:00 GMT-5
+        </div>
+    </div>
+</body>
+</html>

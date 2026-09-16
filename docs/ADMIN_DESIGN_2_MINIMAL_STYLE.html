@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ClubSenior - Diseño 2 (Minimal)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: white;
+            color: #1f2937;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 18px;
+            color: #0066ff;
+        }
+
+        .breadcrumbs {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .breadcrumbs span {
+            margin: 0 6px;
+            color: #d1d5db;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 12px 8px 32px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 12px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .toolbar-input {
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            flex: 1;
+            max-width: 250px;
+        }
+
+        .toolbar-select {
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0066ff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0052cc;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-icon {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 10px 12px;
+        }
+
+        .btn-icon:hover {
+            background: #e5e7eb;
+        }
+
+        /* TABLE - FULL WIDTH */
+        .table-wrapper {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            user-select: none;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            display: inline-block;
+        }
+
+        .action-menu {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 16px;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: #0066ff;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pagination button {
+            padding: 6px 10px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .pagination button:hover {
+            background: #f3f4f6;
+        }
+
+        .pagination button.active {
+            background: #0066ff;
+            color: white;
+            border-color: #0066ff;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                padding: 16px;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">ClubSenior</div>
+            <div class="breadcrumbs">
+                Admin <span>/</span> Actividades
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="admin-info">
+                <span>Elena</span>
+                <div class="avatar">E</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <div class="page-title">Actividades</div>
+        <div class="page-subtitle">Gestiona todas las actividades de los condominios</div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <input type="text" class="toolbar-input" placeholder="Buscar por título...">
+                <select class="toolbar-select">
+                    <option>Todos los condominios</option>
+                    <option>Generación Silver</option>
+                    <option>Condominio Central</option>
+                </select>
+                <select class="toolbar-select">
+                    <option>Todos los módulos</option>
+                    <option>Física</option>
+                    <option>Cognitiva</option>
+                    <option>Social</option>
+                </select>
+            </div>
+            <div class="toolbar-buttons">
+                <button class="btn btn-icon">⚙️</button>
+                <button class="btn btn-primary">+ Nueva</button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40px"><input type="checkbox" class="checkbox"></th>
+                        <th>Fecha</th>
+                        <th>Título</th>
+                        <th>Condominio</th>
+                        <th>Módulo</th>
+                        <th>Facilitador</th>
+                        <th>Hora</th>
+                        <th>Estado</th>
+                        <th style="width: 80px">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>17 Sep</td>
+                        <td><strong>Yoga Terapéutico</strong></td>
+                        <td>Generación Silver</td>
+                        <td>Física</td>
+                        <td>María Rodríguez</td>
+                        <td>14:00 - 15:00</td>
+                        <td><span class="status active">Activo</span></td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn">✏️</button>
+                                <button class="action-btn">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>18 Sep</td>
+                        <td><strong>Tertulias Literarias</strong></td>
+                        <td>Generación Silver</td>
+                        <td>Cognitiva</td>
+                        <td>Carlos López</td>
+                        <td>15:30 - 17:00</td>
+                        <td><span class="status active">Activo</span></td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn">✏️</button>
+                                <button class="action-btn">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>20 Sep</td>
+                        <td><strong>Café & Conversación</strong></td>
+                        <td>Condominio Central</td>
+                        <td>Social</td>
+                        <td>Ana García</td>
+                        <td>16:00 - 17:30</td>
+                        <td><span class="status active">Activo</span></td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn">✏️</button>
+                                <button class="action-btn">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>22 Sep</td>
+                        <td><strong>Taller de Memoria</strong></td>
+                        <td>Generación Silver</td>
+                        <td>Cognitiva</td>
+                        <td>José Martínez</td>
+                        <td>14:30 - 15:30</td>
+                        <td><span class="status inactive">Inactivo</span></td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn">✏️</button>
+                                <button class="action-btn">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>24 Sep</td>
+                        <td><strong>Pintura Guiada</strong></td>
+                        <td>Condominio Central</td>
+                        <td>Social</td>
+                        <td>Laura Sánchez</td>
+                        <td>15:00 - 16:30</td>
+                        <td><span class="status active">Activo</span></td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn">✏️</button>
+                                <button class="action-btn">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <span>Mostrando 5 de 12 actividades</span>
+                <div class="pagination-buttons">
+                    <button>←</button>
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <button>→</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
