@@ -123,6 +123,10 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
       setMessage('✅ Perfil actualizado correctamente');
       setIsEditing(false);
       
+      // ✅ Limpiar localStorage (datos ya sincronizados a BD)
+      localStorage.removeItem('inscribirDraft');
+      localStorage.removeItem('inscribirDraft_timestamp');
+      
       if (onSave) {
         onSave(result.user);
       }

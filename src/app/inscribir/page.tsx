@@ -37,10 +37,23 @@ function InscribirPageContent() {
     planSeleccionado: 'mensual',
   });
 
-  // ✅ Load form data from sessionStorage on mount
+  // ✅ AUTO-SAVE to localStorage every 3 seconds
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (Object.values(formData).some(v => v)) { // Solo si hay datos
+        localStorage.setItem('inscribirDraft', JSON.stringify(formData));
+        localStorage.setItem('inscribirDraft_timestamp', new Date().toISOString());
+      }
+    }, 3000);
+
+    return () => clearInterval(autoSaveInterval);
+  }, [formData]);
+
+  // ✅ Load form data from localStorage OR sessionStorage on mount
   useEffect(() => {
     try {
-      const inscribirData = sessionStorage.getItem('inscribirData');
+      // Prioridad: sessionStorage (más reciente) → localStorage (persistente)
+      const inscribirData = sessionStorage.getItem('inscribirData') || localStorage.getItem('inscribirDraft');
       const stepFromUrl = searchParams?.get('step') ? parseInt(searchParams.get('step')!) : 1;
 
       if (inscribirData) {
