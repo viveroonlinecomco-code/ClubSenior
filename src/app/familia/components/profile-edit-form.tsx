@@ -39,6 +39,9 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
   
   const isReadOnly = (fieldName: string) => readOnlyFields.includes(fieldName);
   
+  // Aceptaciones siempre son read-only (responsabilidad legal)
+  const acceptanceReadOnly = ['contratos_aceptados', 'terminos_aceptados', 'politica_privacidad_aceptada'];
+  
   const [formData, setFormData] = useState({
     nombre_abuelo: initialData.nombre_abuelo || '',
     apellido_abuelo: initialData.apellido_abuelo || '',
@@ -224,10 +227,10 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
             </div>
           </div>
 
-          {/* ACEPTACIONES */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">✅ Aceptaciones</h4>
-            <div className="space-y-2">
+          {/* ACEPTACIONES - READ ONLY (Legal) */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">🔐 Aceptaciones (Protegidas por Ley)</h4>
+            <div className="space-y-3">
               <p className="flex items-center gap-2">
                 <span className={formData.contratos_aceptados ? '✅' : '❌'} />
                 <span className="text-gray-900">Contratos aceptados</span>
@@ -241,6 +244,9 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
                 <span className="text-gray-900">Política de privacidad</span>
               </p>
             </div>
+            <p className="text-xs text-amber-700 mt-4">
+              ℹ️ Estas aceptaciones son legalmente vinculantes y no pueden ser modificadas. Se registran desde la fecha de suscripción.
+            </p>
           </div>
         </div>
       </div>
@@ -375,23 +381,26 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
             </div>
           </div>
 
-          {/* ACEPTACIONES */}
-          <div className="pb-6 border-b">
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">✅ Aceptaciones</h4>
+          {/* ACEPTACIONES - READ ONLY (Legal) */}
+          <div className="pb-6 border-b bg-amber-50 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">🔐 Aceptaciones (Protegidas por Ley)</h4>
             <div className="space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" name="contratos_aceptados" checked={formData.contratos_aceptados} onChange={handleChange} className="w-4 h-4" />
-                <span className="text-gray-900">Aceptar contratos</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" name="terminos_aceptados" checked={formData.terminos_aceptados} onChange={handleChange} className="w-4 h-4" />
-                <span className="text-gray-900">Aceptar términos y condiciones</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" name="politica_privacidad_aceptada" checked={formData.politica_privacidad_aceptada} onChange={handleChange} className="w-4 h-4" />
-                <span className="text-gray-900">Aceptar política de privacidad</span>
-              </label>
+              <div className="flex items-center gap-3">
+                <span className={formData.contratos_aceptados ? '✅' : '❌'} />
+                <span className="text-gray-900">Contratos aceptados</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={formData.terminos_aceptados ? '✅' : '❌'} />
+                <span className="text-gray-900">Términos y condiciones</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={formData.politica_privacidad_aceptada ? '✅' : '❌'} />
+                <span className="text-gray-900">Política de privacidad</span>
+              </div>
             </div>
+            <p className="text-xs text-amber-700 mt-4">
+              ℹ️ Estas aceptaciones no pueden ser modificadas. Se registran como vinculantes desde tu suscripción.
+            </p>
           </div>
 
           <div className="flex gap-4 pt-4">

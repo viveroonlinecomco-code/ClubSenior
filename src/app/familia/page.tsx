@@ -197,25 +197,9 @@ export default function FamiliaPage() {
               </div>
 
               <div className="space-y-4">
-                {data?.asistencias && (
-                  <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-                    <div className="text-gray-600 text-sm font-semibold mb-2">ASISTENCIA</div>
-                    <p className="text-2xl font-bold text-blue-500 mb-1">
-                      {data.asistencias.asistencias} / {data.asistencias.total}
-                    </p>
-                    <div className="w-full bg-gray-300 rounded-full h-2">
-                      <div
-                        className="bg-blue-500 hover:bg-blue-600 transition:bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${data.asistencias.tasa}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-gray-600 text-xs mt-2">{data.asistencias.tasa}% de asistencia</p>
-                  </div>
-                )}
-
                 <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
                   <div className="text-gray-600 text-sm font-semibold mb-2">USUARIO</div>
-                  <p className="text-sm text-gray-900 font-semibold">{data?.user.nombre || 'Usuario'} {data?.user.apellido || ''}</p>
+                  <p className="text-sm text-gray-900 font-semibold">{data?.user.nombre_abuelo || data?.user.nombre || 'Usuario'} {data?.user.apellido_abuelo || data?.user.apellido || ''}</p>
                   <p className="text-xs text-gray-500 mt-1">{data?.user.email}</p>
                 </div>
               </div>
@@ -307,16 +291,7 @@ export default function FamiliaPage() {
               </div>
             )}
 
-            {!noSuscripcion && (
-              <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-900">Asistencia Reciente</h2>
-                </div>
-                <div className="overflow-x-auto">
-                  <AttendanceTable limit={5} />
-                </div>
-              </div>
-            )}
+
           </div>
         )}
 
@@ -346,37 +321,61 @@ export default function FamiliaPage() {
             
             {data?.suscripcion && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 Estado de Suscripción</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">💳 Estado de Suscripción</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Plan</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {data.suscripcion.plan === 'mensual' ? 'Plan Mensual ($150.000)' : 'Plan Por Sesión ($40.000)'}
-                    </p>
+                <div className="space-y-6">
+                  {/* Estado General */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Plan Actual</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {data.suscripcion.plan === 'mensual' ? '📅 Plan Mensual' : '💰 Plan Por Sesión'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {data.suscripcion.plan === 'mensual' ? '$150.000 / mes' : '$40.000 / sesión'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Estado</p>
+                      <p className={`text-lg font-semibold flex items-center gap-2 ${
+                        data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' 
+                          ? 'text-green-600' 
+                          : 'text-yellow-600'
+                      }`}>
+                        {data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' ? '✅ ACTIVA' : '⏳ ' + data.suscripcion.estado}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Condominio */}
                   <div>
-                    <p className="text-sm text-gray-600">Estado</p>
-                    <p className={`text-lg font-semibold ${
-                      data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' 
-                        ? 'text-green-600' 
-                        : 'text-yellow-600'
-                    }`}>
-                      ✅ {data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' ? 'ACTIVA' : data.suscripcion.estado}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Condominio</p>
+                    <p className="text-sm text-gray-600">Condominio / Conjunto</p>
                     <p className="text-lg font-semibold text-gray-900">{data.suscripcion.condominio || '-'}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Último Pago</p>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {data.suscripcion.fecha_pago 
-                        ? new Date(data.suscripcion.fecha_pago).toLocaleDateString('es-CO')
-                        : '-'
-                      }
-                    </p>
+
+                  {/* Fechas de Pago y Renovación */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div>
+                      <p className="text-sm text-gray-600">Último Pago</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {data.suscripcion.fecha_pago 
+                          ? new Date(data.suscripcion.fecha_pago).toLocaleDateString('es-CO')
+                          : '-'
+                        }
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Renovación Automática</p>
+                      <p className="text-lg font-semibold text-blue-600 flex items-center gap-1">
+                        🔄 Cada 30 días
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {data.suscripcion.plan === 'mensual' 
+                          ? 'Se renueva automáticamente a inicio de cada mes'
+                          : 'Renovación según uso de sesiones'
+                        }
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
