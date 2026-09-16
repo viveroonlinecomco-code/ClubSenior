@@ -1,18 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Step1Form from './components/step1-form';
 import Step2Form from './components/step2-form';
 import Step2BContratosForm from './components/step2b-contratos-form';
 import Step3Form from './components/step3-form';
 
-export default function InscribirPage() {
+function InscribirPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const stepFromUrl = searchParams?.get('step') ? parseInt(searchParams.get('step')!) : 1;
   
-  const [currentStep, setCurrentStep] = useState(stepFromUrl);
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [formData, setFormData] = useState({
     nombreAbuelo: '',
     apellidoAbuelo: '',
@@ -26,14 +26,16 @@ export default function InscribirPage() {
     participantContractAceptado: false,
     sponsorFirma: '',
     participantFirma: '',
-    planSeleccionado: 'individual',
+    planSeleccionado: 'mensual',
   });
 
-  // Load form data from sessionStorage if returning from OTP verification
+  // ✅ Load form data from sessionStorage on mount
   useEffect(() => {
-    const inscribirData = sessionStorage.getItem('inscribirData');
-    if (inscribirData) {
-      try {
+    try {
+      const inscribirData = sessionStorage.getItem('inscribirData');
+      const stepFromUrl = searchParams?.get('step') ? parseInt(searchParams.get('step')!) : 1;
+
+      if (inscribirData) {
         const data = JSON.parse(inscribirData);
         setFormData(prev => ({
           ...prev,
@@ -44,22 +46,32 @@ export default function InscribirPage() {
           fechaNacimiento: data.fechaNacimiento || '',
           ciudad: data.ciudad || '',
         }));
-      } catch (err) {
-        console.error('Error loading inscribir data:', err);
+
+        // Si viene de URL con step específico, usar ese
+        if (stepFromUrl > 1) {
+          setCurrentStep(stepFromUrl);
+        } else {
+          setCurrentStep(1);
+        }
+      } else {
+        // Sin datos en sessionStorage, redirigir a Paso 1
+        if (stepFromUrl > 1) {
+          console.warn('⚠️ Acceso directo a Paso', stepFromUrl, 'sin datos. Redirigiendo a Paso 1.');
+          setCurrentStep(1);
+        } else {
+          setCurrentStep(1);
+        }
       }
+
+      setIsLoaded(true);
+    } catch (err) {
+      console.error('Error loading inscribir data:', err);
+      setCurrentStep(1);
+      setIsLoaded(true);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleStep1Submit = (data: any) => {
-    // Verificar que el usuario tiene auth_token (pasó por OTP)
-    const token = localStorage.getItem('auth_token');
-
-    if (!token) {
-      alert('Debes completar la verificación de OTP primero.');
-      router.push('/signin');
-      return;
-    }
-
     setFormData(prev => ({
       ...prev,
       nombreAbuelo: data.nombreAbuelo,
@@ -69,6 +81,12 @@ export default function InscribirPage() {
       fechaNacimiento: data.fechaNacimiento,
       ciudad: data.ciudad,
     }));
+
+    sessionStorage.setItem('inscribirData', JSON.stringify({
+      ...formData,
+      ...data,
+    }));
+
     setCurrentStep(2);
   };
 
@@ -89,23 +107,22 @@ export default function InscribirPage() {
       sponsorFirma: data.sponsorFirma,
       participantFirma: data.participantFirma,
     }));
-    // Guardar contratos en API y esperar resultado
-    const result = await saveContracts(data);
+    
+    const result = await saveContratos(data);
     if (result.success) {
       setCurrentStep(4);
     } else {
-      console.error('No se pudieron guardar los contratos. Intenta de nuevo.');
-      // Aquí se podría mostrar un toast/error al usuario
+      alert(`❌ Error guardando contratos:\n${result.message}`);
     }
   };
 
-  const saveContracts = async (data: any): Promise<{ success: boolean; message?: string }> => {
+  const saveContratos = async (data: any): Promise<{ success: boolean; message?: string }> => {
     try {
       const response = await fetch('/api/contratos/guardar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          usuarioId: formData.email, // Usar email como ID temporal
+          usuarioId: formData.email,
           email: formData.email,
           sponsorContractAceptado: data.sponsorContractAceptado,
           participantContractAceptado: data.participantContractAceptado,
@@ -115,15 +132,12 @@ export default function InscribirPage() {
       });
       
       const responseData = await response.json();
-      
       if (!response.ok) {
-        console.error('Error guardando contratos:', responseData);
         return { success: false, message: responseData.error || 'Error desconocido' };
       }
       
-      return { success: true, message: 'Contratos guardados correctamente' };
+      return { success: true };
     } catch (error: any) {
-      console.error('Error al guardar contratos:', error);
       return { success: false, message: error.message };
     }
   };
@@ -137,8 +151,7 @@ export default function InscribirPage() {
 
       console.log('Paso 4 - Completando registro y generando enlace Wompi...');
 
-      // PASO 1: Registrar usuario (crear en BD)
-      console.log('1️⃣ Registrando usuario...');
+      // PASO 1: Registrar usuario
       const registerResponse = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -160,15 +173,10 @@ export default function InscribirPage() {
       const registerData = await registerResponse.json();
 
       if (!registerResponse.ok) {
-        // Si el usuario ya existe, continuar (no es error)
-        if (registerResponse.status === 409) {
-          console.log('Usuario ya existe, continuando...');
-        } else {
+        if (registerResponse.status !== 409) {
           throw new Error(registerData.error || 'Error registrando usuario');
         }
       } else {
-        console.log('✅ Usuario registrado exitosamente:', registerData);
-        // Guardar token en localStorage si se retorna
         if (registerData.token) {
           localStorage.setItem('auth_token', registerData.token);
           localStorage.setItem('auth_email', formData.email);
@@ -176,7 +184,6 @@ export default function InscribirPage() {
       }
 
       // PASO 2: Generar enlace de Wompi para pago
-      console.log('2️⃣ Generando enlace de pago Wompi...');
       const wompiResponse = await fetch('/api/pagos/crear-inscripcion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -189,29 +196,16 @@ export default function InscribirPage() {
       const wompiData = await wompiResponse.json();
 
       if (!wompiResponse.ok) {
-        console.error('Error generando enlace Wompi:', wompiData);
         throw new Error(wompiData.error || 'No se pudo generar el enlace de pago');
       }
 
-      console.log('✅ Enlace Wompi generado:', wompiData.referencia);
-
-      // PASO 3: Redirigir a Wompi para completar el pago
-      // ✅ Wompi maneja TODO el pago de forma segura
-      console.log('3️⃣ Redirigiendo a Wompi...');
-      console.log('Enlace:', wompiData.wompi_checkout_url);
-      
-      // Mostrar un mensaje de espera
+      // PASO 3: Redirigir a Wompi
       alert(`Redirigiendo a Wompi para completar el pago de ${data.planSeleccionado === 'mensual' ? '$150.000' : '$40.000'}...`);
-      
-      // Redirigir a Wompi
       window.location.href = wompiData.wompi_checkout_url;
 
     } catch (error: any) {
       console.error('❌ Error en handleStep3Submit:', error);
-      alert(
-        'Error completando registro: ' +
-          (error.message || 'Por favor intenta de nuevo')
-      );
+      alert('Error completando registro: ' + (error.message || 'Por favor intenta de nuevo'));
     }
   };
 
@@ -220,6 +214,17 @@ export default function InscribirPage() {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  // Mostrar loading mientras se carga
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Cargando formulario...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-950 dark:to-blue-950 py-12 px-4 sm:py-16">
@@ -273,7 +278,7 @@ export default function InscribirPage() {
               >
                 {step < currentStep ? '✓' : step}
               </div>
-              {idx < 2 && (
+              {idx < 3 && (
                 <div
                   className={`flex-1 h-1 mx-2 rounded-full transition-all duration-300 ${
                     step < currentStep
@@ -332,5 +337,19 @@ export default function InscribirPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function InscribirPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Cargando formulario...</p>
+        </div>
+      </div>
+    }>
+      <InscribirPageContent />
+    </Suspense>
   );
 }
