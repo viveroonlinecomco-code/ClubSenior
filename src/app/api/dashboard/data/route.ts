@@ -173,11 +173,13 @@ export async function GET(request: NextRequest) {
         contratos_participant_firmado: usuario?.contratos_participant_firmado || false,
         inscripcion_completada: usuario?.inscripcion_completada || false,
       },
-      suscripcion: suscripcion ? {
-        ...suscripcion,
-        plan: usuario?.suscripcion_plan || suscripcion?.plan_type,
-        estado: usuario?.suscripcion_estado || 'activa',
-        fecha_pago: usuario?.fecha_pago_ultimo || null,
+      // ✅ ARREGLO: Si usuario tiene suscripcion_estado, usarlo aunque tabla suscripciones esté vacía
+      suscripcion: (suscripcion || usuario?.suscripcion_estado) ? {
+        ...(suscripcion || {}),
+        plan: usuario?.suscripcion_plan || suscripcion?.plan_type || 'mensual',
+        estado: usuario?.suscripcion_estado || suscripcion?.estado || 'activa',
+        fecha_pago: usuario?.fecha_pago_ultimo || suscripcion?.fecha_pago || null,
+        condominio: usuario?.condominio || null,
       } : null,
       reportes,
       asistencias,

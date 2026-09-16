@@ -9,6 +9,7 @@ import SubscriptionCard from './components/subscription-card';
 import ReportsSection from './components/reports-section';
 import AttendanceTable from './components/attendance-table';
 import PaymentHistory from './components/payment-history';
+import ProfileEditForm from './components/profile-edit-form';
 
 export default function FamiliaPage() {
   const router = useRouter();
@@ -320,118 +321,56 @@ export default function FamiliaPage() {
         )}
 
         {activeTab === 'profile' && (
-          <div>
-            <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">👤 Mi Perfil</h2>
-                <p className="text-gray-600 text-sm mt-1">Edita tu información personal</p>
-              </div>
-              
-              <div className="p-8 max-w-2xl">
-                <div className="space-y-6">
-                  {/* Información Personal */}
+          <div className="space-y-6">
+            <ProfileEditForm
+              initialData={{
+                nombre_abuelo: data?.user.nombre || '',
+                apellido_abuelo: data?.user.apellido || '',
+                fecha_nacimiento: data?.user.fecha_nacimiento || '',
+                ciudad: data?.user.ciudad || '',
+                condominio: data?.suscripcion?.condominio || '',
+                phone: data?.user.phone || '',
+                email: data?.user.email || '',
+              }}
+            />
+            
+            {data?.suscripcion && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">📋 Estado de Suscripción</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Información Personal</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Nombre
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={data?.user.nombre || ''}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          disabled
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Completado en inscripción</p>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Apellido
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={data?.user.apellido || ''}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          disabled
-                        />
-                        <p className="text-xs text-gray-500 mt-1">Completado en inscripción</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        defaultValue={data?.user.email || ''}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        disabled
-                      />
-                      <p className="text-xs text-gray-500 mt-1">No puede modificarse</p>
-                    </div>
+                    <p className="text-sm text-gray-600">Plan</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {data.suscripcion.plan === 'mensual' ? 'Plan Mensual ($150.000)' : 'Plan Por Sesión ($40.000)'}
+                    </p>
                   </div>
-
-                  {/* Información de Suscripción */}
-                  {data?.suscripcion && (
-                    <div className="pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Plan de Suscripción</h3>
-                      
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <p className="text-sm text-gray-600 mb-2">
-                          <span className="font-semibold text-gray-900">Estado:</span>{' '}
-                          <span className={`font-semibold ${
-                            data.suscripcion.estado === 'activa' ? 'text-green-600' : 'text-yellow-600'
-                          }`}>
-                            {data.suscripcion.estado === 'activa' ? '✓ Activa' : data.suscripcion.estado}
-                          </span>
-                        </p>
-                        <p className="text-sm text-gray-600 mb-2">
-                          <span className="font-semibold text-gray-900">Condominio:</span>{' '}
-                          {data.suscripcion.condominio_id || 'No definido'}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold text-gray-900">Desde:</span>{' '}
-                          {data.suscripcion.fecha_inicio 
-                            ? new Date(data.suscripcion.fecha_inicio).toLocaleDateString('es-CO')
-                            : 'No definida'
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Botones de Acción */}
-                  <div className="pt-6 border-t border-gray-200 flex gap-4">
-                    <button
-                      onClick={() => window.location.href = '/inscribir'}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition"
-                    >
-                      📝 Completar/Editar Inscripción
-                    </button>
-                    
-                    <button
-                      onClick={() => window.location.href = '/pagar?plan=actualizar'}
-                      className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
-                    >
-                      💳 Actualizar Suscripción
-                    </button>
+                  <div>
+                    <p className="text-sm text-gray-600">Estado</p>
+                    <p className={`text-lg font-semibold ${
+                      data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' 
+                        ? 'text-green-600' 
+                        : 'text-yellow-600'
+                    }`}>
+                      ✅ {data.suscripcion.estado === 'activa' || data.suscripcion.estado === 'ACTIVA' ? 'ACTIVA' : data.suscripcion.estado}
+                    </p>
                   </div>
-
-                  {/* Información adicional */}
-                  <div className="pt-6 border-t border-gray-200 bg-gray-50 rounded-lg p-4">
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold">💡 Nota:</span> Para modificar tu información personal (nombre, apellido, etc.), 
-                      por favor accede a "Completar/Editar Inscripción". 
-                      Ahí podrás actualizar todos tus datos.
+                  <div>
+                    <p className="text-sm text-gray-600">Condominio</p>
+                    <p className="text-lg font-semibold text-gray-900">{data.suscripcion.condominio || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Último Pago</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {data.suscripcion.fecha_pago 
+                        ? new Date(data.suscripcion.fecha_pago).toLocaleDateString('es-CO')
+                        : '-'
+                      }
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
