@@ -1,6 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface Condominio {
+  id: string;
+  nombre: string;
+}
 
 interface ProfileEditFormProps {
   initialData: {
@@ -19,6 +24,9 @@ export default function ProfileEditForm({ initialData, onSave }: ProfileEditForm
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [condominios, setCondominios] = useState<Condominio[]>([]);
+  const [condominiosLoading, setCondominiosLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     nombre_abuelo: initialData.nombre_abuelo || '',
     apellido_abuelo: initialData.apellido_abuelo || '',
@@ -27,6 +35,28 @@ export default function ProfileEditForm({ initialData, onSave }: ProfileEditForm
     condominio: initialData.condominio || '',
     phone: initialData.phone || '',
   });
+
+  // ✅ Cargar lista de condominios al montar
+  useEffect(() => {
+    const fetchCondominios = async () => {
+      setCondominiosLoading(true);
+      try {
+        const response = await fetch('/api/condominios/list');
+        if (response.ok) {
+          const data = await response.json();
+          setCondominios(data);
+        } else {
+          console.error('Error fetching condominios');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setCondominiosLoading(false);
+      }
+    };
+
+    fetchCondominios();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -200,13 +230,22 @@ export default function ProfileEditForm({ initialData, onSave }: ProfileEditForm
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">Condominio / Conjunto</label>
-              <input
-                type="text"
+              <select
                 name="condominio"
                 value={formData.condominio}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                disabled={condominiosLoading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              >
+                <option value="">
+                  {condominiosLoading ? 'Cargando condominios...' : 'Selecciona un condominio'}
+                </option>
+                {condominios.map((cond) => (
+                  <option key={cond.id} value={cond.nombre}>
+                    {cond.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
