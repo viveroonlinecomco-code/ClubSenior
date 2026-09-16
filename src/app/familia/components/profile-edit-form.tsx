@@ -25,8 +25,10 @@ interface ProfileEditFormProps {
     contratos_aceptados?: boolean;
     terminos_aceptados?: boolean;
     politica_privacidad_aceptada?: boolean;
+    contratos_fecha_aceptacion?: string;
+    updated_at?: string;
   };
-  readOnlyFields?: string[]; // Email, nombre_abuelo, apellido_abuelo, etc.
+  readOnlyFields?: string[];
   onSave?: (data: any) => void;
 }
 
@@ -227,25 +229,69 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
             </div>
           </div>
 
-          {/* ACEPTACIONES - READ ONLY (Legal) */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">🔐 Aceptaciones (Protegidas por Ley)</h4>
-            <div className="space-y-3">
-              <p className="flex items-center gap-2">
+          {/* ACEPTACIONES - DOCUMENTADAS CON FECHA */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">📋 Aceptaciones Registradas</h4>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
                 <span className={formData.contratos_aceptados ? '✅' : '❌'} />
-                <span className="text-gray-900">Contratos aceptados</span>
-              </p>
-              <p className="flex items-center gap-2">
+                <div>
+                  <p className="text-gray-900 font-semibold">Contratos aceptados</p>
+                  {formData.contratos_aceptados && initialData.contratos_fecha_aceptacion && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.contratos_fecha_aceptacion).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  )}
+                  {formData.contratos_aceptados && !initialData.contratos_fecha_aceptacion && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
                 <span className={formData.terminos_aceptados ? '✅' : '❌'} />
-                <span className="text-gray-900">Términos y condiciones</span>
-              </p>
-              <p className="flex items-center gap-2">
+                <div>
+                  <p className="text-gray-900 font-semibold">Términos y condiciones</p>
+                  {formData.terminos_aceptados && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
                 <span className={formData.politica_privacidad_aceptada ? '✅' : '❌'} />
-                <span className="text-gray-900">Política de privacidad</span>
-              </p>
+                <div>
+                  <p className="text-gray-900 font-semibold">Política de privacidad</p>
+                  {formData.politica_privacidad_aceptada && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-amber-700 mt-4">
-              ℹ️ Estas aceptaciones son legalmente vinculantes y no pueden ser modificadas. Se registran desde la fecha de suscripción.
+            <p className="text-xs text-green-700 mt-4">
+              ✓ Estas aceptaciones se registran como consentimiento informado desde la fecha indicada. No se pueden modificar retroactivamente.
             </p>
           </div>
         </div>
@@ -381,25 +427,69 @@ export default function ProfileEditForm({ initialData, readOnlyFields = [], onSa
             </div>
           </div>
 
-          {/* ACEPTACIONES - READ ONLY (Legal) */}
-          <div className="pb-6 border-b bg-amber-50 rounded-lg p-4">
-            <h4 className="text-lg font-semibold text-gray-800 mb-4">🔐 Aceptaciones (Protegidas por Ley)</h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
+          {/* ACEPTACIONES - DOCUMENTADAS CON FECHA (No editables) */}
+          <div className="pb-6 border-b bg-green-50 rounded-lg p-4">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">📋 Aceptaciones Registradas</h4>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
                 <span className={formData.contratos_aceptados ? '✅' : '❌'} />
-                <span className="text-gray-900">Contratos aceptados</span>
+                <div>
+                  <p className="text-gray-900 font-semibold">Contratos aceptados</p>
+                  {formData.contratos_aceptados && initialData.contratos_fecha_aceptacion && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.contratos_fecha_aceptacion).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  )}
+                  {formData.contratos_aceptados && !initialData.contratos_fecha_aceptacion && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3">
                 <span className={formData.terminos_aceptados ? '✅' : '❌'} />
-                <span className="text-gray-900">Términos y condiciones</span>
+                <div>
+                  <p className="text-gray-900 font-semibold">Términos y condiciones</p>
+                  {formData.terminos_aceptados && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3">
                 <span className={formData.politica_privacidad_aceptada ? '✅' : '❌'} />
-                <span className="text-gray-900">Política de privacidad</span>
+                <div>
+                  <p className="text-gray-900 font-semibold">Política de privacidad</p>
+                  {formData.politica_privacidad_aceptada && initialData.updated_at && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      {new Date(initialData.updated_at).toLocaleDateString('es-CO', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-            <p className="text-xs text-amber-700 mt-4">
-              ℹ️ Estas aceptaciones no pueden ser modificadas. Se registran como vinculantes desde tu suscripción.
+            <p className="text-xs text-green-700 mt-4">
+              ✓ Estas aceptaciones se registran como consentimiento informado desde la fecha indicada. No se pueden modificar retroactivamente.
             </p>
           </div>
 

@@ -315,6 +315,8 @@ export default function FamiliaPage() {
                 contratos_aceptados: data?.user.contratos_aceptados || false,
                 terminos_aceptados: data?.user.terminos_aceptados || false,
                 politica_privacidad_aceptada: data?.user.politica_privacidad_aceptada || false,
+                contratos_fecha_aceptacion: data?.user.contratos_fecha_aceptacion || '',
+                updated_at: data?.user.updated_at || '',
               }}
               readOnlyFields={['email', 'nombre_abuelo', 'apellido_abuelo', 'condominio']}
             />

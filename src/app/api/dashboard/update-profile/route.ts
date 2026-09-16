@@ -42,21 +42,33 @@ export async function POST(request: NextRequest) {
     // Obtener datos a actualizar
     const body = await request.json();
     const {
+      nombreAbuelo,
       nombre_abuelo,
+      apellidoAbuelo,
       apellido_abuelo,
       fecha_nacimiento,
+      fechaNacimiento,
       ciudad,
       condominio,
       phone,
+      telefono,
       eps,
+      emergenciaNombre,
       emergencia_nombre,
+      emergenciaTelefono,
       emergencia_telefono,
+      familiarNombre,
       familiar_nombre,
+      familiarRelacion,
       familiar_relacion,
+      familiarTelefono,
       familiar_telefono,
       contratos_aceptados,
+      contratosAceptados,
       terminos_aceptados,
+      terminosAceptados,
       politica_privacidad_aceptada,
+      politicaPrivacidadAceptada,
     } = body;
 
     // Conectar a Supabase
@@ -72,25 +84,61 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Construir objeto de actualización con todos los campos
+    // Construir objeto de actualización - Normalizar nombres
     const updateData: any = {};
     
-    if (nombre_abuelo !== undefined) updateData.nombre_abuelo = nombre_abuelo;
-    if (apellido_abuelo !== undefined) updateData.apellido_abuelo = apellido_abuelo;
-    if (fecha_nacimiento !== undefined) updateData.fecha_nacimiento = fecha_nacimiento;
-    if (ciudad !== undefined) updateData.ciudad = ciudad;
-    if (condominio !== undefined) updateData.condominio = condominio;
-    if (phone !== undefined) updateData.phone = phone;
-    if (eps !== undefined) updateData.eps = eps;
-    if (emergencia_nombre !== undefined) updateData.emergencia_nombre = emergencia_nombre;
-    if (emergencia_telefono !== undefined) updateData.emergencia_telefono = emergencia_telefono;
-    if (familiar_nombre !== undefined) updateData.familiar_nombre = familiar_nombre;
-    if (familiar_relacion !== undefined) updateData.familiar_relacion = familiar_relacion;
-    if (familiar_telefono !== undefined) updateData.familiar_telefono = familiar_telefono;
-    if (contratos_aceptados !== undefined) updateData.contratos_aceptados = contratos_aceptados;
-    if (terminos_aceptados !== undefined) updateData.terminos_aceptados = terminos_aceptados;
-    if (politica_privacidad_aceptada !== undefined) updateData.politica_privacidad_aceptada = politica_privacidad_aceptada;
-    if (updateData.phone) updateData.updated_at = new Date().toISOString(); // Marcar como actualizado
+    // Campos personales (soportar ambos formatos: camelCase y snake_case)
+    if (nombreAbuelo !== undefined || nombre_abuelo !== undefined) 
+      updateData.nombre_abuelo = nombreAbuelo || nombre_abuelo;
+    
+    if (apellidoAbuelo !== undefined || apellido_abuelo !== undefined) 
+      updateData.apellido_abuelo = apellidoAbuelo || apellido_abuelo;
+    
+    if (fecha_nacimiento !== undefined || fechaNacimiento !== undefined) 
+      updateData.fecha_nacimiento = fecha_nacimiento || fechaNacimiento;
+    
+    if (ciudad !== undefined) 
+      updateData.ciudad = ciudad;
+    
+    if (condominio !== undefined) 
+      updateData.condominio = condominio;
+    
+    if (phone !== undefined || telefono !== undefined) 
+      updateData.phone = phone || telefono;
+    
+    // Salud
+    if (eps !== undefined) 
+      updateData.eps = eps;
+    
+    // Emergencia (soportar ambos formatos)
+    if (emergenciaNombre !== undefined || emergencia_nombre !== undefined) 
+      updateData.emergencia_nombre = emergenciaNombre || emergencia_nombre;
+    
+    if (emergenciaTelefono !== undefined || emergencia_telefono !== undefined) 
+      updateData.emergencia_telefono = emergenciaTelefono || emergencia_telefono;
+    
+    // Familiar (soportar ambos formatos)
+    if (familiarNombre !== undefined || familiar_nombre !== undefined) 
+      updateData.familiar_nombre = familiarNombre || familiar_nombre;
+    
+    if (familiarRelacion !== undefined || familiar_relacion !== undefined) 
+      updateData.familiar_relacion = familiarRelacion || familiar_relacion;
+    
+    if (familiarTelefono !== undefined || familiar_telefono !== undefined) 
+      updateData.familiar_telefono = familiarTelefono || familiar_telefono;
+    
+    // Aceptaciones legales
+    if (contratos_aceptados !== undefined || contratosAceptados !== undefined) 
+      updateData.contratos_aceptados = contratos_aceptados !== undefined ? contratos_aceptados : contratosAceptados;
+    
+    if (terminos_aceptados !== undefined || terminosAceptados !== undefined) 
+      updateData.terminos_aceptados = terminos_aceptados !== undefined ? terminos_aceptados : terminosAceptados;
+    
+    if (politica_privacidad_aceptada !== undefined || politicaPrivacidadAceptada !== undefined) 
+      updateData.politica_privacidad_aceptada = politica_privacidad_aceptada !== undefined ? politica_privacidad_aceptada : politicaPrivacidadAceptada;
+    
+    // Marcar actualización siempre
+    updateData.updated_at = new Date().toISOString();
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(

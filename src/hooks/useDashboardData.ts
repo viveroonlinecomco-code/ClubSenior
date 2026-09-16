@@ -26,6 +26,8 @@ export interface DashboardData {
     contratos_sponsor_firmado?: boolean;
     contratos_participant_firmado?: boolean;
     inscripcion_completada?: boolean;
+    contratos_fecha_aceptacion?: string;
+    updated_at?: string;
   };
   suscripcion: any;
   reportes: any[];
