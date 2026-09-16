@@ -103,12 +103,37 @@ export default function VerificarOtpPage() {
           }
         }
 
-        setSuccessMessage('✅ Correo verificado! Redirigiendo al Paso 2...');
+        // ✅ Verificar si usuario ya existe y está completado
+        const checkUserResponse = await fetch('/api/auth/check-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        const userData = await checkUserResponse.json();
+        console.log('[VERIFY-OTP] User check:', userData);
+
+        let redirectUrl = '/inscribir?step=2'; // Default: new user
+
+        if (userData.exists && userData.inscripcion_completada) {
+          // Usuario ya completó registro → ir a dashboard
+          console.log('[VERIFY-OTP] ✅ Usuario existente, redirigiendo a dashboard');
+          redirectUrl = '/familia';
+        } else if (userData.exists && !userData.inscripcion_completada) {
+          // Usuario existe pero no completó registro → continuar registro
+          console.log('[VERIFY-OTP] Usuario parcial, continuando registro');
+          redirectUrl = '/inscribir?step=2';
+        } else {
+          // Usuario nuevo → comenzar registro desde Paso 2
+          console.log('[VERIFY-OTP] Usuario nuevo, comenzando registro');
+          redirectUrl = '/inscribir?step=2';
+        }
+
+        setSuccessMessage(`✅ Correo verificado! Redirigiendo...`);
         sessionStorage.removeItem('pendingEmail');
         // DO NOT remove inscribirData - needed for Paso 2
         setTimeout(() => {
-          // ✅ CRITICAL FIX: Return to inscribir step 2, NOT familia
-          router.push('/inscribir?step=2');
+          router.push(redirectUrl);
         }, 2000);
       }
     } catch (error: any) {
