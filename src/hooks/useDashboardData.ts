@@ -10,6 +10,7 @@ export interface DashboardData {
     apellido?: string;
     ciudad?: string;
     fecha_nacimiento?: string;
+    phone?: string;
     terminos_aceptados?: boolean;
     politica_privacidad_aceptada?: boolean;
     contratos_sponsor_firmado?: boolean;

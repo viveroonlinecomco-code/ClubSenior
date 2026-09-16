@@ -167,6 +167,7 @@ export async function GET(request: NextRequest) {
         apellido: usuario?.apellido_abuelo || 'Grupo Plateado',
         ciudad: usuario?.ciudad || null,
         fecha_nacimiento: usuario?.fecha_nacimiento || null,
+        phone: usuario?.phone || null,
         terminos_aceptados: usuario?.terminos_aceptados || false,
         politica_privacidad_aceptada: usuario?.politica_privacidad_aceptada || false,
         contratos_sponsor_firmado: usuario?.contratos_sponsor_firmado || false,
