@@ -1,40 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+/**
+ * POST /api/admin/asistencias/marcar
+ * Guardar asistencias para una actividad programada
+ */
 export async function POST(request: NextRequest) {
   try {
-    const { actividad_id, asistencias } = await request.json();
+    const body = await request.json();
+    const { actividades_programadas_id, asistencias } = body;
 
-    if (!actividad_id || !asistencias || !Array.isArray(asistencias)) {
+    if (!actividades_programadas_id || !asistencias || !Array.isArray(asistencias)) {
       return NextResponse.json(
-        { error: 'actividad_id y asistencias array son requeridos' },
+        { error: 'actividades_programadas_id y asistencias array son requeridos' },
         { status: 400 }
       );
     }
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { cookies: { getAll: () => [] } }
+    // Validar que la programación existe
+    const checkProg = await fetch(
+      `${supabaseUrl}/rest/v1/actividades_programadas?id=eq.${actividades_programadas_id}&select=id`,
+      {
+        headers: {
+          'apikey': supabaseKey!,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
     );
 
-    // ✅ Validar que la actividad existe
-    const { data: actividad, error: actError } = await supabase
-      .from('actividades')
-      .select('id')
-      .eq('id', actividad_id)
-      .single();
-
-    if (actError || !actividad) {
+    const progData = await checkProg.json();
+    if (!Array.isArray(progData) || progData.length === 0) {
       return NextResponse.json(
-        { error: 'Actividad no encontrada' },
+        { error: 'Actividad programada no encontrada' },
         { status: 404 }
       );
     }
 
-    // ✅ Procesar asistencias en lote
+    // Procesar asistencias
     const registrosValidos = asistencias.filter(
-      (a) => a.participante_id && typeof a.asistio === 'boolean'
+      (a: any) => a.participante_id && typeof a.asistio === 'boolean'
     );
 
     if (registrosValidos.length === 0) {
@@ -44,34 +50,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ✅ Upsert: actualizar si existe, crear si no
-    const { data, error } = await supabase
-      .from('asistencias')
-      .upsert(
-        registrosValidos.map((a) => ({
-          actividad_id,
+    // Upsert asistencias
+    const response = await fetch(`${supabaseUrl}/rest/v1/asistencias`, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey!,
+        'Authorization': `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation',
+      },
+      body: JSON.stringify(
+        registrosValidos.map((a: any) => ({
+          actividades_programadas_id,
           participante_id: a.participante_id,
           asistio: a.asistio,
           updated_at: new Date().toISOString(),
-        })),
-        { onConflict: 'actividad_id,participante_id' }
-      )
-      .select();
+        }))
+      ),
+    });
 
-    if (error) {
-      console.error('[MARK ATTENDANCE] Error:', error.message);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[MARK ATTENDANCE] Error:', data);
       return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
+        { error: data.message || 'Error al guardar asistencias' },
+        { status: response.status }
       );
     }
 
-    console.log('[MARK ATTENDANCE] ✅ Registradas:', (data || []).length);
+    console.log('[MARK ATTENDANCE] ✅ Registradas:', Array.isArray(data) ? data.length : 1);
 
     return NextResponse.json({
       success: true,
-      total: (data || []).length,
-      mensaje: `✅ ${(data || []).length} asistencias registradas`,
+      total: Array.isArray(data) ? data.length : 1,
+      mensaje: `✅ ${Array.isArray(data) ? data.length : 1} asistencias registradas`,
     });
   } catch (error: any) {
     console.error('[MARK ATTENDANCE] Exception:', error.message);
@@ -82,87 +95,76 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * GET /api/admin/asistencias/marcar
+ * Obtener asistencias registradas para una actividad programada
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const actividad_id = searchParams.get('actividad_id');
+    const actividades_programadas_id = searchParams.get('actividades_programadas_id');
 
-    if (!actividad_id) {
+    if (!actividades_programadas_id) {
       return NextResponse.json(
-        { error: 'actividad_id requerido' },
+        { error: 'actividades_programadas_id requerido' },
         { status: 400 }
       );
     }
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { cookies: { getAll: () => [] } }
+    // Obtener participantes del condominio
+    const progResponse = await fetch(
+      `${supabaseUrl}/rest/v1/actividades_programadas?id=eq.${actividades_programadas_id}&select=condominio_id`,
+      {
+        headers: {
+          'apikey': supabaseKey!,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
     );
 
-    // ✅ Step 1: Obtener actividad + condominio
-    const { data: actividad, error: actError } = await supabase
-      .from('actividades')
-      .select('condominio_id')
-      .eq('id', actividad_id)
-      .single();
-
-    if (actError || !actividad) {
+    const progData = await progResponse.json();
+    if (!Array.isArray(progData) || progData.length === 0) {
       return NextResponse.json(
-        { error: 'Actividad no encontrada' },
+        { error: 'Actividad programada no encontrada' },
         { status: 404 }
       );
     }
 
-    // ✅ Step 2: Obtener participantes del condominio
-    const { data: participantes, error: partError } = await supabase
-      .from('participantes')
-      .select('id, nombre, edad, genero')
-      .eq('condominio_id', actividad.condominio_id)
-      .order('nombre', { ascending: true });
+    const condominio_id = progData[0].condominio_id;
 
-    if (partError) {
-      console.error('[GET PARTICIPANTS] Error:', partError.message);
-      return NextResponse.json(
-        { error: partError.message },
-        { status: 500 }
-      );
-    }
-
-    // ✅ Step 3: Obtener asistencias de esta actividad
-    const { data: asistenciasData, error: asiError } = await supabase
-      .from('asistencias')
-      .select('participante_id, asistio')
-      .eq('actividad_id', actividad_id);
-
-    if (asiError) {
-      console.error('[GET ASISTENCIAS] Error:', asiError.message);
-      return NextResponse.json(
-        { error: asiError.message },
-        { status: 500 }
-      );
-    }
-
-    // ✅ Step 4: Mapear asistencias
-    const asistenciasMap = new Map(
-      (asistenciasData || []).map((a: any) => [a.participante_id, a.asistio])
+    // Obtener participantes del condominio
+    const partResponse = await fetch(
+      `${supabaseUrl}/rest/v1/participantes?condominio_id=eq.${condominio_id}&select=id,nombre,edad&order=nombre.asc`,
+      {
+        headers: {
+          'apikey': supabaseKey!,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
     );
 
-    const participantesEnriquecidos = (participantes || []).map((p: any) => ({
-      id: p.id,
-      nombre: p.nombre,
-      edad: p.edad,
-      genero: p.genero,
-      asistio: asistenciasMap.get(p.id) ?? false,
-    }));
+    const participantes = await partResponse.json();
+
+    // Obtener asistencias ya registradas
+    const asiResponse = await fetch(
+      `${supabaseUrl}/rest/v1/asistencias?actividades_programadas_id=eq.${actividades_programadas_id}&select=participante_id,asistio`,
+      {
+        headers: {
+          'apikey': supabaseKey!,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
+    );
+
+    const asistencias = await asiResponse.json();
 
     return NextResponse.json({
       success: true,
-      participantes: participantesEnriquecidos,
-      total: participantesEnriquecidos.length,
+      participantes: Array.isArray(participantes) ? participantes : [],
+      asistencias: Array.isArray(asistencias) ? asistencias : [],
     });
   } catch (error: any) {
-    console.error('[GET PARTICIPANTS] Exception:', error.message);
+    console.error('[GET ATTENDANCE] Exception:', error.message);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
