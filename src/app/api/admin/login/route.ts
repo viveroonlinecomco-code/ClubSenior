@@ -166,12 +166,53 @@ export async function POST(request: NextRequest) {
 
     const email = validatedData.email.toLowerCase();
 
-    // ✅ Validación: Solo Elena puede recibir OTP
-    if (email !== 'promesaobca@gmail.com') {
-      console.warn(`${context} Intento login no autorizado:`, email);
+    // ✅ Validación: Verificar que el email tiene rol admin en user_roles
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Supabase not configured');
+      }
+
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/user_roles?email=eq.${encodeURIComponent(email)}&select=*,roles(name)`,
+        {
+          method: 'GET',
+          headers: {
+            'apikey': supabaseKey || '',
+            'Authorization': `Bearer ${supabaseKey || ''}`,
+          } as HeadersInit,
+        }
+      );
+
+      const userRoles = await response.json();
+      console.log(`${context} User roles query for ${email}:`, userRoles);
+
+      if (!Array.isArray(userRoles) || userRoles.length === 0) {
+        console.warn(`${context} No admin roles found for email: ${email}`);
+        return NextResponse.json(
+          { error: 'No tienes acceso admin' },
+          { status: 403 }
+        );
+      }
+
+      // Verificar que tiene al menos un rol 'admin'
+      const hasAdminRole = userRoles.some((ur: any) => ur.roles?.name === 'admin');
+      if (!hasAdminRole) {
+        console.warn(`${context} User ${email} no tiene rol admin`);
+        return NextResponse.json(
+          { error: 'No tienes acceso admin' },
+          { status: 403 }
+        );
+      }
+
+      console.log(`${context} ✅ User ${email} tiene acceso admin`);
+    } catch (error) {
+      console.error(`${context} Error checking admin roles:`, error);
       return NextResponse.json(
-        { error: 'No tienes acceso admin' },
-        { status: 403 }
+        { error: 'Error verificando permisos' },
+        { status: 500 }
       );
     }
 
